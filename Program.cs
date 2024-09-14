@@ -8,8 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// MongoDB context
+builder.Services.AddSingleton<MongoDBContext>();
+
 // JWT Authentication
-var key = builder.Configuration["JwtKey"];  // Ensure you've set this in appsettings.json
+var key = builder.Configuration["JwtKey"];
+builder.Services.AddSingleton<AuthService>(new AuthService(new MongoDBContext(builder.Configuration), key));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -28,15 +33,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Register the AuthService
-builder.Services.AddSingleton<AuthService>(new AuthService(key));
-
-// Add Controllers (if needed in the future)
+// Add Controllers
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -44,10 +46,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
-//app.UseAuthentication();  // Add this to enable JWT Authentication
-//app.UseAuthorization();
-
-app.MapControllers();  // This will map controllers when we create them
 
 app.Run();
