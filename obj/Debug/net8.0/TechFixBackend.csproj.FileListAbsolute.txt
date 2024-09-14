@@ -89,3 +89,4 @@
 /Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/bin/Debug/net8.0/runtimes/linux/native/libmongocrypt.so
 /Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/bin/Debug/net8.0/runtimes/osx/native/libmongocrypt.dylib
 /Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/bin/Debug/net8.0/runtimes/win/native/mongocrypt.dll
+/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/obj/Debug/net8.0/TechFixBackend.sourcelink.json

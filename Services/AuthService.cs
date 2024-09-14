@@ -37,9 +37,9 @@ public class AuthService
     }
 
     // Login an existing user
-    public string Login(string username, string password)
+    public string Login(string email, string password)
     {
-        var user = _users.Find(u => u.Username == username).FirstOrDefault();
+        var user = _users.Find(u => u.Email == email).FirstOrDefault();
         if (user == null || !VerifyPassword(password, user.PasswordHash))
         {
             throw new Exception("Invalid username or password");

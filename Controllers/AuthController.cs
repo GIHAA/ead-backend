@@ -34,7 +34,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                var token = _authService.Login(model.Username, model.Password);
+                var token = _authService.Login(model.Email, model.Password);
                 return Ok(new { Token = token });
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace TechFixBackend.Controllers
 
     public class LoginModel
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }
