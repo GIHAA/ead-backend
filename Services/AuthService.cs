@@ -18,9 +18,9 @@ public class AuthService
     }
 
     // Register a new user
-    public void Register(string username, string email, string password)
+    public void Register(string username, string email, string password, string role = "customer")
     {
-        var existingUser = _users.Find(u => u.Username == username || u.Email == email).FirstOrDefault();
+        var existingUser = _users.Find(u => u.Email == email).FirstOrDefault();
         if (existingUser != null)
         {
             throw new Exception("Username or Email already exists");
@@ -28,25 +28,25 @@ public class AuthService
 
         var user = new User
         {
-            Username = username,
             Email = email,
-            PasswordHash = HashPassword(password)
+            PasswordHash = HashPassword(password),
+            Role = role
         };
 
         _users.InsertOne(user);
     }
 
     // Login an existing user
-    public string Login(string username, string password)
+    public string Login(string email, string password)
     {
-        var user = _users.Find(u => u.Username == username).FirstOrDefault();
+        var user = _users.Find(u => u.Email == email).FirstOrDefault();
         if (user == null || !VerifyPassword(password, user.PasswordHash))
         {
             throw new Exception("Invalid username or password");
         }
 
         // Generate JWT token if login is successful
-        return GenerateJwtToken(user.Id);
+        return GenerateJwtToken(user.Id, user.Role);
     }
 
     // Hash the password
@@ -64,17 +64,82 @@ public class AuthService
     }
 
     // Generate a JWT token
-    private string GenerateJwtToken(string userId)
+    private string GenerateJwtToken(string userId, string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_key);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userId) }),
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.Role, role)
+            }),
             Expires = DateTime.UtcNow.AddHours(3),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public (List<User> users, long totalUsers) GetUsers(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        // Get total count of users
+        long totalUsers = _users.CountDocuments(u => true);
+
+        // Fetch paginated users
+        var pagedUsers = _users
+            .Find(u => true)
+            .Skip((pageNumber - 1) * pageSize)
+            .Limit(pageSize)
+            .ToList();
+
+        return (pagedUsers, totalUsers);
+    }
+
+
+    public User GetUserById(string userId)
+    {
+        return _users.Find(u => u.Id == userId).FirstOrDefault();
+    }
+
+    public User UpdateUserFields(User existingUser, UserUpdateModel updateModel)
+    {
+        // Only update fields if they are provided (not null)
+        if (!string.IsNullOrEmpty(updateModel.Email))
+            existingUser.Email = updateModel.Email;
+
+        if (!string.IsNullOrEmpty(updateModel.Role))
+            existingUser.Role = updateModel.Role;
+
+        if (!string.IsNullOrEmpty(updateModel.Name))
+            existingUser.Name = updateModel.Name;
+
+        if (!string.IsNullOrEmpty(updateModel.Address))
+            existingUser.Address = updateModel.Address;
+
+        if (!string.IsNullOrEmpty(updateModel.PhoneNumber))
+            existingUser.PhoneNumber = updateModel.PhoneNumber;
+
+        if (!string.IsNullOrEmpty(updateModel.Status))
+            existingUser.Status = updateModel.Status;
+
+        if (updateModel.VendorRating.HasValue)
+            existingUser.VendorRating = updateModel.VendorRating.Value;
+
+        return existingUser;
+    }
+
+    public void UpdateUser(string userId, User updatedUser)
+    {
+        _users.ReplaceOne(u => u.Id == userId, updatedUser);
+    }
+
+    public void DeleteUser(string userId)
+    {
+        _users.DeleteOne(u => u.Id == userId);
     }
 }

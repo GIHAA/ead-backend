@@ -6,7 +6,22 @@ public class User
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
-    public string Username { get; set; }
+
     public string Email { get; set; }
-    public string PasswordHash { get; set; }  // Storing hashed passwords
+    
+    public string PasswordHash { get; set; } 
+    
+    public string Role { get; set; } = "customer";
+
+    public string Name { get; set; }
+    
+    public string Address { get; set; }
+    
+    public string PhoneNumber { get; set; }
+    
+    public string Status { get; set; }
+    
+    public DateTime AccountCreationDate { get; set; } = DateTime.UtcNow;
+    
+    public float? VendorRating { get; set; }
 }
