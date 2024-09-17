@@ -10,6 +10,8 @@ builder.Services.AddSwaggerGen();
 
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
+builder.Services.AddSingleton<OrderService>();
+
 
 // JWT Authentication
 var key = builder.Configuration["JwtKey"];
