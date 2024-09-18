@@ -1,7 +1,5 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
 
 
 public class Order
@@ -31,7 +29,6 @@ public class OrderItem
     public string ProductId { get; set; }
     public int Quantity { get; set; }
     public float Price { get; set; }
-
-    // Total price for this item (Quantity * Price)
+    public string Status { get; set; } = "Processing";
     public float TotalPrice => Quantity * Price;
 }

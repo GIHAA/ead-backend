@@ -19,14 +19,26 @@ public class OrderItemModel
     public string ProductId { get; set; }
     public int Quantity { get; set; }
     public float Price { get; set; }
+    public string Status { get; set; } // Status of the product (e.g., "Processing", "Shipped", "Delivered")
 }
+
 
 public class OrderUpdateModel
 {
     public string DeliveryAddress { get; set; }
+    public List<OrderItemModel> Items { get; set; } // New or updated items list
 }
 
 public class OrderStatusUpdateModel
 {
     public string Status { get; set; } // Shipped, Delivered, Canceled
 }
+
+
+
+public class OrderItemStatusUpdateModel
+{
+    public string Status { get; set; } // e.g., "Processing", "Shipped", "Delivered"
+}
+
+

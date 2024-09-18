@@ -29,23 +29,23 @@ namespace TechFixBackend.Controllers
         }
 
         // GET: api/order/all
-    [HttpGet]
-public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
-{
-    try
-    {
-        var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize);
-        if (orders == null || !orders.Any())
+        [HttpGet]
+        public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(new { Message = "No orders found." });
+            try
+            {
+                var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize);
+                if (orders == null || !orders.Any())
+                {
+                    return Ok(new { Message = "No orders found." });
+                }
+                return Ok(new { totalOrders, orders });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
-        return Ok(new { totalOrders, orders });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { Message = ex.Message });
-    }
-}
 
 
 
@@ -57,7 +57,7 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
             if (order == null)
                 return NotFound(new { Message = "Order not found" });
 
-            return Ok(order); // TotalAmount will be included in the response
+            return Ok(order); 
         }
 
         // PUT: api/order/update/{orderId}
@@ -110,17 +110,14 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
             }
         }
 
-        // PUT: api/order/status/{orderId}
-        [HttpPut("status/{orderId}")]
+
+        // PUT: api/order/update-status/{orderId}
+        [HttpPut("update-status/{orderId}")]
         public IActionResult UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateModel statusUpdateModel)
         {
             try
             {
-                var existingOrder = _orderService.GetOrderById(orderId);
-                if (existingOrder == null)
-                    return NotFound(new { Message = "Order not found" });
-
-                _orderService.UpdateOrderStatus(existingOrder, statusUpdateModel);
+                _orderService.UpdateOrderStatus(orderId, statusUpdateModel.Status);
                 return Ok(new { Message = "Order status updated successfully" });
             }
             catch (Exception ex)
@@ -128,5 +125,30 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+
+        // PUT: api/order/update-item-status/{orderId}/{productId}
+        [HttpPut("update-item-status/{orderId}/{productId}")]
+        public IActionResult UpdateOrderItemStatus(string orderId, string productId, [FromBody] OrderItemStatusUpdateModel statusUpdateModel)
+        {
+            try
+            {
+                _orderService.UpdateOrderItemStatus(orderId, productId, statusUpdateModel.Status);
+                return Ok(new { Message = "Order item status updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
+
+
     }
+
+
+
+
+
 }
