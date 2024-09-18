@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace TechFixBackend.Controllers
 {
@@ -14,63 +13,119 @@ namespace TechFixBackend.Controllers
             _orderService = orderService;
         }
 
-        // POST: api/order
-        [HttpPost]
-        public IActionResult CreateOrder([FromBody] CreateOrderModel model)
+        // POST: api/order/create
+        [HttpPost("create")]
+        public IActionResult CreateOrder([FromBody] OrderModel orderModel)
         {
-            var order = new Order
+            try
             {
-                CustomerId = model.CustomerId,
-                OrderDate = model.OrderDate,
-                TotalAmount = model.TotalAmount,
-                DeliveryAddress = model.DeliveryAddress,
-                DeliveryStatus = model.DeliveryStatus,
-            };
-
-            var newOrder = _orderService.CreateOrder(order);
-            return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
+                _orderService.CreateOrder(orderModel);
+                return Ok(new { Message = "Order created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
-        // GET: api/order
+        // GET: api/order/all
         [HttpGet]
-        public IActionResult GetOrders()
+        public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
         {
-            var orders = _orderService.GetOrders();
-            return Ok(orders);
+            try
+            {
+                var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize);
+                if (orders == null || !orders.Any())
+                {
+                    return Ok(new { Message = "No orders found." });
+                }
+                return Ok(new { totalOrders, orders });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
-        // GET: api/order/{id}
-        [HttpGet("{id}")]
-        public IActionResult GetOrder(string id)
-        {
-            var order = _orderService.GetOrderById(id);
-            if (order == null)
-                return NotFound();
-            return Ok(order);
-        }
 
-        // PUT: api/order/{id}
-        [HttpPut("{id}")]
-        public IActionResult UpdateOrder(string id, [FromBody] Order updatedOrder)
+        // GET: api/order/view/{orderId}
+        [HttpGet("view/{orderId}")]
+        public IActionResult ViewOrder(string orderId)
         {
-            var existingOrder = _orderService.GetOrderById(id);
-            if (existingOrder == null)
-                return NotFound(new { Message = "Order not found" });
-
-            _orderService.UpdateOrder(id, updatedOrder);
-            return Ok(new { Message = "Order updated successfully" });
-        }
-
-        // DELETE: api/order/{id}
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOrder(string id)
-        {
-            var order = _orderService.GetOrderById(id);
+            var order = _orderService.GetOrderById(orderId);
             if (order == null)
                 return NotFound(new { Message = "Order not found" });
 
-            _orderService.DeleteOrder(id);
-            return Ok(new { Message = "Order deleted successfully" });
+            return Ok(order); // TotalAmount will be included in the response
+        }
+
+        // PUT: api/order/update/{orderId}
+        [HttpPut("update/{orderId}")]
+        public IActionResult UpdateOrder(string orderId, [FromBody] OrderUpdateModel updateModel)
+        {
+            try
+            {
+                var existingOrder = _orderService.GetOrderById(orderId);
+                if (existingOrder == null)
+                    return NotFound(new { Message = "Order not found" });
+
+                // Ensure the order can be updated before dispatch
+                if (existingOrder.Status == "Shipped" || existingOrder.Status == "Delivered")
+                {
+                    return BadRequest(new { Message = "Cannot update order after dispatch" });
+                }
+
+                _orderService.UpdateOrder(existingOrder, updateModel);
+                return Ok(new { Message = "Order updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        // PUT: api/order/cancel/{orderId}
+        [HttpPut("cancel/{orderId}")]
+        public IActionResult CancelOrder(string orderId)
+        {
+            try
+            {
+                var existingOrder = _orderService.GetOrderById(orderId);
+                if (existingOrder == null)
+                    return NotFound(new { Message = "Order not found" });
+
+                // Ensure the order can only be canceled before dispatch
+                if (existingOrder.Status == "Shipped" || existingOrder.Status == "Delivered")
+                {
+                    return BadRequest(new { Message = "Cannot cancel order after dispatch" });
+                }
+
+                _orderService.CancelOrder(existingOrder);
+                return Ok(new { Message = "Order canceled successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        // PUT: api/order/status/{orderId}
+        [HttpPut("status/{orderId}")]
+        public IActionResult UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateModel statusUpdateModel)
+        {
+            try
+            {
+                var existingOrder = _orderService.GetOrderById(orderId);
+                if (existingOrder == null)
+                    return NotFound(new { Message = "Order not found" });
+
+                _orderService.UpdateOrderStatus(existingOrder, statusUpdateModel);
+                return Ok(new { Message = "Order status updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }

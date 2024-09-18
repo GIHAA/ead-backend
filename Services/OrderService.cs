@@ -1,4 +1,5 @@
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 
 public class OrderService
@@ -11,24 +12,80 @@ public class OrderService
     }
 
     // Create a new order
-    public Order CreateOrder(Order order)
+    public void CreateOrder(OrderModel orderModel)
     {
+        var order = new Order
+        {
+            CustomerId = orderModel.CustomerId,
+            Items = orderModel.Items.ConvertAll(i => new OrderItem
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity,
+                Price = i.Price
+            }),
+            DeliveryAddress = orderModel.DeliveryAddress
+        };
+
+        // Calculate total amount for the order
+        order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
+
         _orders.InsertOne(order);
-        return order;
     }
 
     // Get all orders
-    public List<Order> GetOrders() => _orders.Find(order => true).ToList();
+    public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
 
-    // Get a single order by ID
-    public Order GetOrderById(string orderId) =>
-        _orders.Find(order => order.Id == orderId).FirstOrDefault();
+        // Get total count of orders
+        long totalOrders = _orders.CountDocuments(o => true);
 
-    // Update an order
-    public void UpdateOrder(string orderId, Order updatedOrder) =>
-        _orders.ReplaceOne(order => order.Id == orderId, updatedOrder);
+        // Fetch paginated orders
+        var pagedOrders = _orders
+            .Find(o => true)
+            .Skip((pageNumber - 1) * pageSize)
+            .Limit(pageSize)
+            .ToList();
 
-    // Delete an order
-    public void DeleteOrder(string orderId) =>
-        _orders.DeleteOne(order => order.Id == orderId);
+        return (pagedOrders, totalOrders);
+    }
+
+
+    // Get order by ID
+    public Order GetOrderById(string orderId)
+    {
+        return _orders.Find(o => o.Id == orderId).FirstOrDefault();
+    }
+
+    // Update order details (before dispatch)
+    public void UpdateOrder(Order existingOrder, OrderUpdateModel updateModel)
+    {
+        if (!string.IsNullOrEmpty(updateModel.DeliveryAddress))
+        {
+            existingOrder.DeliveryAddress = updateModel.DeliveryAddress;
+        }
+
+        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
+    }
+
+    // Cancel order (before dispatch)
+    public void CancelOrder(Order existingOrder)
+    {
+        existingOrder.Status = "Canceled";
+        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
+    }
+
+    // Update order status (e.g., Shipped, Delivered)
+    public void UpdateOrderStatus(Order existingOrder, OrderStatusUpdateModel statusUpdateModel)
+    {
+        existingOrder.Status = statusUpdateModel.Status;
+
+        if (statusUpdateModel.Status == "Shipped")
+        {
+            existingOrder.DispatchedDate = DateTime.UtcNow;
+        }
+
+        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
+    }
 }

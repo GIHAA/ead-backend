@@ -1,7 +1,6 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-
 public class Order
 {
     [BsonId]
@@ -10,13 +9,26 @@ public class Order
 
     public string CustomerId { get; set; }
 
-    public DateTime OrderDate { get; set; }
+    public List<OrderItem> Items { get; set; }
 
-    public string OrderStatus { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+
+    public string Status { get; set; } = "Processing";
 
     public float TotalAmount { get; set; }
 
     public string DeliveryAddress { get; set; }
 
     public string DeliveryStatus { get; set; }
+    public DateTime? DispatchedDate { get; set; }
+}
+
+public class OrderItem
+{
+    public string ProductId { get; set; }
+    public int Quantity { get; set; }
+    public float Price { get; set; }
+
+    // Total price for this item (Quantity * Price)
+    public float TotalPrice => Quantity * Price;
 }
