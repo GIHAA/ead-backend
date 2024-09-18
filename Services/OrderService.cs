@@ -12,44 +12,44 @@ public class OrderService
     }
 
     // Create a new order
-    public void CreateOrder(OrderModel orderModel)
+public void CreateOrder(OrderModel orderModel)
+{
+    var order = new Order
     {
-        var order = new Order
+        CustomerId = orderModel.CustomerId,
+        Items = orderModel.Items.ConvertAll(i => new OrderItem
         {
-            CustomerId = orderModel.CustomerId,
-            Items = orderModel.Items.ConvertAll(i => new OrderItem
-            {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-                Price = i.Price
-            }),
-            DeliveryAddress = orderModel.DeliveryAddress
-        };
+            ProductId = i.ProductId,
+            Quantity = i.Quantity,
+            Price = i.Price
+        }),
+        DeliveryAddress = orderModel.DeliveryAddress
+    };
 
-        // Calculate total amount for the order
-        order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
+    // Calculate total amount for the order
+    order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
 
-        _orders.InsertOne(order);
-    }
+    _orders.InsertOne(order);
+}
 
     // Get all orders
-    public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize)
-    {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
+public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize)
+{
+    if (pageNumber < 1) pageNumber = 1;
+    if (pageSize < 1) pageSize = 10;
 
-        // Get total count of orders
-        long totalOrders = _orders.CountDocuments(o => true);
+    // Get total count of orders
+    long totalOrders = _orders.CountDocuments(o => true);
 
-        // Fetch paginated orders
-        var pagedOrders = _orders
-            .Find(o => true)
-            .Skip((pageNumber - 1) * pageSize)
-            .Limit(pageSize)
-            .ToList();
+    // Fetch paginated orders
+    var pagedOrders = _orders
+        .Find(o => true)
+        .Skip((pageNumber - 1) * pageSize)
+        .Limit(pageSize)
+        .ToList();
 
-        return (pagedOrders, totalOrders);
-    }
+    return (pagedOrders, totalOrders);
+}
 
 
     // Get order by ID

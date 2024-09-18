@@ -29,23 +29,24 @@ namespace TechFixBackend.Controllers
         }
 
         // GET: api/order/all
-        [HttpGet]
-        public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
+    [HttpGet]
+public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10)
+{
+    try
+    {
+        var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize);
+        if (orders == null || !orders.Any())
         {
-            try
-            {
-                var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize);
-                if (orders == null || !orders.Any())
-                {
-                    return Ok(new { Message = "No orders found." });
-                }
-                return Ok(new { totalOrders, orders });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            return Ok(new { Message = "No orders found." });
         }
+        return Ok(new { totalOrders, orders });
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { Message = ex.Message });
+    }
+}
+
 
 
         // GET: api/order/view/{orderId}
