@@ -10,6 +10,8 @@ public class AuthService
 {
     private readonly IMongoCollection<User> _users;
     private readonly string _key;
+    private readonly object _vendorRepository;
+    private readonly object _authService;
 
     public AuthService(MongoDBContext context, string key)
     {
@@ -142,4 +144,18 @@ public class AuthService
     {
         _users.DeleteOne(u => u.Id == userId);
     }
+
+    public async Task<User> GetUserByIdAsync(string userId)
+    {
+        return await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> UpdateUserAsync(string userId, User updatedUser)
+    {
+        var result = await _users.ReplaceOneAsync(u => u.Id == userId, updatedUser);
+        return result.ModifiedCount > 0;
+    }
+
+   
+
 }
