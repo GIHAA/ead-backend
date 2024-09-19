@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechFixBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+432ea9d9c079cd1a8c3c0ee4c1930dcb13689c7f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64315bfbc60b520fe99298d5f3ed253c3e21a382")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechFixBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechFixBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
