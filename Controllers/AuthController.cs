@@ -32,10 +32,13 @@ namespace TechFixBackend.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel model)
         {
+            
             try
             {
+                
                 var token = _authService.Login(model.Email, model.Password);
                 return Ok(new { Token = token });
+                
             }
             catch (Exception ex)
             {

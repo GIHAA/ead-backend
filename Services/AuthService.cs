@@ -39,6 +39,7 @@ public class AuthService
     // Login an existing user
     public string Login(string email, string password)
     {
+       
         var user = _users.Find(u => u.Email == email).FirstOrDefault();
         if (user == null || !VerifyPassword(password, user.PasswordHash))
         {
