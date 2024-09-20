@@ -8,11 +8,13 @@ namespace TechFixBackend.Services
     {
         private readonly IVendorRepository _vendorRepository;
         private readonly AuthService _authService;
+        private readonly NotificationService _notificationService;
 
-        public VendorService(IVendorRepository vendorRepository, AuthService authService)
+        public VendorService(IVendorRepository vendorRepository, AuthService authService, NotificationService notificationService)
         {
             _vendorRepository = vendorRepository;
             _authService = authService;
+            _notificationService = notificationService;
         }
 
         // Retrieves all vendors with pagination
@@ -43,15 +45,23 @@ namespace TechFixBackend.Services
             {
                 VendorName = vendorDto.VendorName,
                 IsActive = vendorDto.IsActive,
-                UserId = userId
+                VendorId = userId 
             };
 
             // Insert the vendor into the database
             await _vendorRepository.CreateVendorAsync(vendor);
 
-            // Update user's vendor list if needed
-            user.VendorIds.Add(vendor.Id);
-            await _authService.UpdateUserAsync(userId, user);
+            //// Update user's vendor list if needed
+            //user.VendorIds.Add(vendor.Id);
+            //var updateModel = new UserUpdateModel
+            //{
+            //    Role = user.Role,
+            //    VendorIds = user.VendorIds
+            //};
+            //await _authService.UpdateUserAsync(userId, updateModel);
+
+            // Send a notification to the user about vendor creation
+            await _notificationService.SendNotificationToUserAsync(userId, $"Vendor '{vendor.VendorName}' created successfully.");
 
             return vendor;
         }
@@ -68,33 +78,32 @@ namespace TechFixBackend.Services
             vendor.AverageRating = vendorDto.AverageRating;
             vendor.Comments = vendorDto.Comments;
 
-            return await _vendorRepository.UpdateVendorAsync(vendorId, vendor);
+            var updated = await _vendorRepository.UpdateVendorAsync(vendorId, vendor);
+
+            if (updated)
+            {
+                // Send a notification to the user about vendor update
+                await _notificationService.SendNotificationToUserAsync(vendor.VendorId, $"Vendor '{vendor.VendorName}' updated successfully.");
+            }
+
+            return updated;
         }
 
         // Deletes a vendor by its ID
         public async Task<bool> DeleteVendorAsync(string vendorId)
         {
-            return await _vendorRepository.DeleteVendorAsync(vendorId);
-        }
-
-        // Assigns a vendor to a specific user
-        public async Task<bool> AssignVendorToUser(string vendorId, string userId)
-        {
             var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
-            var user = await _authService.GetUserByIdAsync(userId);
+            if (vendor == null) return false;
 
-            if (vendor == null || user == null) return false;
+            var deleted = await _vendorRepository.DeleteVendorAsync(vendorId);
 
-            // Update the vendor's UserId
-            vendor.UserId = userId;
-            var updated = await _vendorRepository.UpdateVendorAsync(vendorId, vendor);
-            if (!updated) return false;
+            if (deleted)
+            {
+                // Send a notification to the user about vendor deletion
+                await _notificationService.SendNotificationToUserAsync(vendor.VendorId, $"Vendor '{vendor.VendorName}' deleted successfully.");
+            }
 
-            // Update the user's vendor list
-            user.VendorIds.Add(vendorId);
-            var userUpdated = await _authService.UpdateUserAsync(userId, user);
-
-            return userUpdated;
+            return deleted;
         }
 
         // Retrieves vendors associated with a specific user
@@ -105,7 +114,5 @@ namespace TechFixBackend.Services
 
             return await _vendorRepository.GetVendorsByUserIdAsync(userId);
         }
-
-      
     }
 }
