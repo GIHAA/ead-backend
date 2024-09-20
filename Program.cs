@@ -1,6 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using TechFixBackend.Repository;
+using TechFixBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,13 @@ builder.Services.AddAuthentication(options =>
 // Add Controllers
 builder.Services.AddControllers();
 
+// Add Repository
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
+
+// Add Service
+builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IProductService, ProductService>(); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline

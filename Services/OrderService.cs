@@ -30,21 +30,24 @@ public class OrderService
     }
 
     // Get all orders
-    public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize)
-    {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
+  public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize, string customerId = null)
+{
+    if (pageNumber < 1) pageNumber = 1;
+    if (pageSize < 1) pageSize = 10;
 
-        long totalOrders = _orders.CountDocuments(o => true);
+    var filter = string.IsNullOrEmpty(customerId) ? Builders<Order>.Filter.Empty : Builders<Order>.Filter.Eq(o => o.CustomerId, customerId);
 
-        var pagedOrders = _orders
-            .Find(o => true)
-            .Skip((pageNumber - 1) * pageSize)
-            .Limit(pageSize)
-            .ToList();
+    long totalOrders = _orders.CountDocuments(filter);
 
-        return (pagedOrders, totalOrders);
-    }
+    var pagedOrders = _orders
+        .Find(filter)
+        .Skip((pageNumber - 1) * pageSize)
+        .Limit(pageSize)
+        .ToList();
+
+    return (pagedOrders, totalOrders);
+}
+
 
 
     // Get order by ID
@@ -96,6 +99,8 @@ public class OrderService
         existingOrder.TotalAmount = existingOrder.Items.Sum(i => i.TotalPrice);
         _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
     }
+
+
 
 
     // Cancel order (before dispatch)
