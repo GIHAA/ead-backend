@@ -43,7 +43,9 @@ namespace TechFixBackend.Services
             // Create a new vendor object
             var vendor = new Vendor
             {
-                VendorName = vendorDto.VendorName,
+                VendorName = user.Name,
+                Comments   = vendorDto.Comments,
+                AverageRating = vendorDto.AverageRating,
                 IsActive = vendorDto.IsActive,
                 VendorId = userId 
             };

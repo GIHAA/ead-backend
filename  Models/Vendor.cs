@@ -21,7 +21,7 @@ namespace TechFixBackend._Models
         [BsonElement("isActive")]
         public bool IsActive { get; set; } 
 
-        [BsonElement("userId")]
+        [BsonElement("VendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public required string VendorId { get; set; } 
     }
