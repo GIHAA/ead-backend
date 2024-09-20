@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TechFixBackend.Repository;
 using TechFixBackend.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -13,10 +12,15 @@ builder.Services.AddSwaggerGen();
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
 
-// JWT Authentication
-var key = builder.Configuration["JwtKey"];
-builder.Services.AddSingleton<AuthService>(new AuthService(new MongoDBContext(builder.Configuration), key));
+// Register the IUserRepository and its implementation
+builder.Services.AddScoped<TechFixBackend.Repository.IUserRepository, TechFixBackend.Repository.UserRepository>();
 
+// Register AuthService with proper DI
+var key = builder.Configuration["JwtKey"];
+builder.Services.AddScoped<AuthService>(provider =>
+    new AuthService(provider.GetRequiredService<IUserRepository>(), key));
+
+// Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,11 +42,10 @@ builder.Services.AddAuthentication(options =>
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add Repository
+// Add Vendor Repository and Service
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
-
-// Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -56,6 +59,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 
 app.Run();

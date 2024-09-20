@@ -9,8 +9,6 @@ namespace TechFixBackend._Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } 
 
-        public int VendorId { get; set; } 
-
         [BsonElement("vendorName")] // Specifies the name of the field in MongoDB
         public string VendorName { get; set; } 
 
@@ -25,6 +23,6 @@ namespace TechFixBackend._Models
 
         [BsonElement("userId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; } 
+        public required string VendorId { get; set; } 
     }
 }

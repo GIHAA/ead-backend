@@ -15,11 +15,11 @@ namespace TechFixBackend.Controllers
 
         // POST: api/auth/register
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             try
             {
-                _authService.Register(model.Username, model.Email, model.Password, model.Role);
+                await _authService.RegisterAsync(model.Email, model.Password, model.Role);
                 return Ok(new { Message = "Registration successful" });
             }
             catch (Exception ex)
@@ -30,11 +30,11 @@ namespace TechFixBackend.Controllers
 
         // POST: api/auth/login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
             {
-                var token = _authService.Login(model.Email, model.Password);
+                var token = await _authService.LoginAsync(model.Email, model.Password);
                 return Ok(new { Token = token });
             }
             catch (Exception ex)
@@ -45,9 +45,9 @@ namespace TechFixBackend.Controllers
 
         // GET: api/auth/users?pageNumber=1&pageSize=10
         [HttpGet("users")]
-        public IActionResult GetUsers(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
-            var (pagedUsers, totalUsers) = _authService.GetUsers(pageNumber, pageSize);
+            var (pagedUsers, totalUsers) = await _authService.GetUsersAsync(pageNumber, pageSize);
 
             var response = new
             {
@@ -61,36 +61,31 @@ namespace TechFixBackend.Controllers
             return Ok(response);
         }
 
-
         // GET: api/auth/user/{id}
         [HttpGet("user/{id}")]
-        public IActionResult GetUser(string id)
+        public async Task<IActionResult> GetUser(string id)
         {
-            var user = _authService.GetUserById(id);
-            if (user == null)
-                return NotFound();
+            try
+            {
+                var user = await _authService.GetUserByIdAsync(id);
+                if (user == null)
+                    return NotFound(new { Message = "User not found" });
 
-            return Ok(user);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         // PUT: api/auth/user/{id}
         [HttpPut("user/{id}")]
-        public IActionResult UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
         {
             try
             {
-                // log 
-                Console.WriteLine("UpdateUser");
-                // Retrieve the user from the database
-                var existingUser = _authService.GetUserById(id);
-                if (existingUser == null)
-                    return NotFound(new { Message = "User not found" });
-
-                // Update only the provided fields
-                existingUser = _authService.UpdateUserFields(existingUser, updateModel);
-
-                // Save the updated user
-                _authService.UpdateUser(id, existingUser);
+                await _authService.UpdateUserAsync(id, updateModel);
                 return Ok(new { Message = "User updated successfully" });
             }
             catch (Exception ex)
@@ -101,11 +96,11 @@ namespace TechFixBackend.Controllers
 
         // DELETE: api/auth/user/{id}
         [HttpDelete("user/{id}")]
-        public IActionResult DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             try
             {
-                _authService.DeleteUser(id);
+                await _authService.DeleteUserAsync(id);
                 return Ok(new { Message = "User deleted successfully" });
             }
             catch (Exception ex)
@@ -114,6 +109,4 @@ namespace TechFixBackend.Controllers
             }
         }
     }
-
-   
 }

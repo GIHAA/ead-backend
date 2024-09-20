@@ -13,7 +13,7 @@ namespace TechFixBackend.Services
         Task<Vendor> CreateVendorAsync(VendorCreateDto vendorDto, string userId);
         Task<bool> UpdateVendorAsync(string vendorId, VendorUpdateDto vendorDto);
         Task<bool> DeleteVendorAsync(string vendorId);
-        Task<bool> AssignVendorToUser(string vendorId, string userId);
+       // Task<bool> AssignVendorToUser(string vendorId, string userId);
         Task<List<Vendor>> GetVendorsByUserAsync(string userId);
     }
 }

@@ -43,15 +43,15 @@ namespace TechFixBackend.Services
             {
                 VendorName = vendorDto.VendorName,
                 IsActive = vendorDto.IsActive,
-                UserId = userId
+                VendorId = userId
             };
 
             // Insert the vendor into the database
             await _vendorRepository.CreateVendorAsync(vendor);
 
             // Update user's vendor list if needed
-            user.VendorIds.Add(vendor.Id);
-            await _authService.UpdateUserAsync(userId, user);
+            //user.VendorIds.Add(vendor.Id);
+            //await _authService.UpdateUserAsync(userId, user);
 
             return vendor;
         }
@@ -78,24 +78,24 @@ namespace TechFixBackend.Services
         }
 
         // Assigns a vendor to a specific user
-        public async Task<bool> AssignVendorToUser(string vendorId, string userId)
-        {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
-            var user = await _authService.GetUserByIdAsync(userId);
+        //public async Task<bool> AssignVendorToUser(string vendorId, string userId)
+        //{
+        //    var vendor = await _vendorRepository.GetVendorByIdAsync(vendorId);
+        //    var user = await _authService.GetUserByIdAsync(userId);
 
-            if (vendor == null || user == null) return false;
+        //    if (vendor == null || user == null) return false;
 
-            // Update the vendor's UserId
-            vendor.UserId = userId;
-            var updated = await _vendorRepository.UpdateVendorAsync(vendorId, vendor);
-            if (!updated) return false;
+        //    // Update the vendor's UserId
+        //    vendor.UserId = userId;
+        //    var updated = await _vendorRepository.UpdateVendorAsync(vendorId, vendor);
+        //    if (!updated) return false;
 
-            // Update the user's vendor list
-            user.VendorIds.Add(vendorId);
-            var userUpdated = await _authService.UpdateUserAsync(userId, user);
+        //    // Update the user's vendor list
+        //    user.VendorIds.Add(vendorId);
+        //    var userUpdated = await _authService.UpdateUserAsync(userId, user);
 
-            return userUpdated;
-        }
+        //    return userUpdated;
+        //}
 
         // Retrieves vendors associated with a specific user
         public async Task<List<Vendor>> GetVendorsByUserAsync(string userId)

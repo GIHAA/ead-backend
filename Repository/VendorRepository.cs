@@ -51,7 +51,7 @@ namespace TechFixBackend.Repository
         // Get vendors by UserId
         public async Task<List<Vendor>> GetVendorsByUserIdAsync(string userId)
         {
-            return await _vendors.Find(v => v.UserId == userId).ToListAsync();
+            return await _vendors.Find(v => v.VendorId == userId).ToListAsync();
         }
 
 

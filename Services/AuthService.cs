@@ -1,28 +1,26 @@
-using MongoDB.Driver;
-using System;
+
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TechFixBackend.Repository;
 
 public class AuthService
 {
-    private readonly IMongoCollection<User> _users;
+    private readonly IUserRepository _userRepository;
     private readonly string _key;
-    private readonly object _vendorRepository;
-    private readonly object _authService;
 
-    public AuthService(MongoDBContext context, string key)
+    public AuthService(IUserRepository userRepository, string key)
     {
-        _users = context.Users;
+        _userRepository = userRepository;
         _key = key;
     }
 
     // Register a new user
-    public void Register(string username, string email, string password, string role = "customer")
+    public async Task RegisterAsync(string email, string password, string role = "customer")
     {
-        var existingUser = _users.Find(u => u.Email == email).FirstOrDefault();
+        var existingUser = await _userRepository.GetUserByEmailAsync(email);
         if (existingUser != null)
         {
             throw new Exception("Username or Email already exists");
@@ -32,16 +30,17 @@ public class AuthService
         {
             Email = email,
             PasswordHash = HashPassword(password),
-            Role = role
+            Role = role,
+            AccountCreationDate = DateTime.UtcNow
         };
 
-        _users.InsertOne(user);
+        await _userRepository.AddUserAsync(user);
     }
 
     // Login an existing user
-    public string Login(string email, string password)
+    public async Task<string> LoginAsync(string email, string password)
     {
-        var user = _users.Find(u => u.Email == email).FirstOrDefault();
+        var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null || !VerifyPassword(password, user.PasswordHash))
         {
             throw new Exception("Invalid username or password");
@@ -49,6 +48,64 @@ public class AuthService
 
         // Generate JWT token if login is successful
         return GenerateJwtToken(user.Id, user.Role);
+    }
+
+    // Get a paginated list of users
+    public async Task<(List<User> users, long totalUsers)> GetUsersAsync(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var users = await _userRepository.GetUsersAsync(pageNumber, pageSize);
+        var totalUsers = await _userRepository.GetTotalUsersAsync();
+
+        return (users, totalUsers);
+    }
+
+    // Get a user by their ID
+    public async Task<User> GetUserByIdAsync(string userId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        return user;
+    }
+
+    // Update user fields
+    public async Task<bool> UpdateUserAsync(string userId, UserUpdateModel updateModel)
+    {
+        var existingUser = await _userRepository.GetUserByIdAsync(userId);
+        if (existingUser == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        // Update only provided fields
+        existingUser = UpdateUserFields(existingUser, updateModel);
+
+        // Attempt to update the user in the repository
+        var updated = await _userRepository.UpdateUserAsync(userId, existingUser);
+        if (!updated)
+        {
+            throw new Exception("User update failed");
+        }
+
+        // Return the update status
+        return updated;
+    }
+
+
+    // Delete a user by their ID
+    public async Task DeleteUserAsync(string userId)
+    {
+        var deleted = await _userRepository.DeleteUserAsync(userId);
+        if (!deleted)
+        {
+            throw new Exception("User deletion failed");
+        }
     }
 
     // Hash the password
@@ -84,31 +141,8 @@ public class AuthService
         return tokenHandler.WriteToken(token);
     }
 
-    public (List<User> users, long totalUsers) GetUsers(int pageNumber, int pageSize)
-    {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
-
-        // Get total count of users
-        long totalUsers = _users.CountDocuments(u => true);
-
-        // Fetch paginated users
-        var pagedUsers = _users
-            .Find(u => true)
-            .Skip((pageNumber - 1) * pageSize)
-            .Limit(pageSize)
-            .ToList();
-
-        return (pagedUsers, totalUsers);
-    }
-
-
-    public User GetUserById(string userId)
-    {
-        return _users.Find(u => u.Id == userId).FirstOrDefault();
-    }
-
-    public User UpdateUserFields(User existingUser, UserUpdateModel updateModel)
+    // Helper to update user fields
+    private User UpdateUserFields(User existingUser, UserUpdateModel updateModel)
     {
         // Only update fields if they are provided (not null)
         if (!string.IsNullOrEmpty(updateModel.Email))
@@ -134,28 +168,4 @@ public class AuthService
 
         return existingUser;
     }
-
-    public void UpdateUser(string userId, User updatedUser)
-    {
-        _users.ReplaceOne(u => u.Id == userId, updatedUser);
-    }
-
-    public void DeleteUser(string userId)
-    {
-        _users.DeleteOne(u => u.Id == userId);
-    }
-
-    public async Task<User> GetUserByIdAsync(string userId)
-    {
-        return await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
-    }
-
-    public async Task<bool> UpdateUserAsync(string userId, User updatedUser)
-    {
-        var result = await _users.ReplaceOneAsync(u => u.Id == userId, updatedUser);
-        return result.ModifiedCount > 0;
-    }
-
-   
-
 }
