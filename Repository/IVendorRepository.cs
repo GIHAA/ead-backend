@@ -21,5 +21,7 @@ namespace TechFixBackend.Repository
         // Delete a vendor by ObjectId
         Task<bool> DeleteVendorAsync(string vendorId);
         Task<List<Vendor>> GetVendorsByUserIdAsync(string userId);
+
+       
     }
 }

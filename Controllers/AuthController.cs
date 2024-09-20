@@ -32,10 +32,12 @@ namespace TechFixBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            
             try
             {
                 var token = await _authService.LoginAsync(model.Email, model.Password);
                 return Ok(new { Token = token });
+                
             }
             catch (Exception ex)
             {

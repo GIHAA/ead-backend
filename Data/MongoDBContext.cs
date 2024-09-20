@@ -12,6 +12,8 @@ public class MongoDBContext
     }
 
     public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
+    public IMongoCollection<Order> Orders => _database.GetCollection<Order>("Orders");
     public IMongoCollection<Vendor> Vendors => _database.GetCollection<Vendor>("Vendors");
+    public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
 
 }
