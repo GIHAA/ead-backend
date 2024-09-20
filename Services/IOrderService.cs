@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;
-using TechFixBackend.Models;
+using TechFixBackend._Models;
 
 namespace TechFixBackend.Services
 {

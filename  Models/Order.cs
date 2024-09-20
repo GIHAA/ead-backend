@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 
-namespace TechFixBackend.Models
+namespace TechFixBackend._Models
 {
     public class Order
     {

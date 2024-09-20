@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;
-using TechFixBackend.Models;
+using TechFixBackend._Models;
 using TechFixBackend.Repository;
 
 namespace TechFixBackend.Services

@@ -1,7 +1,7 @@
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend.Models;
+using TechFixBackend._Models;
 
 namespace TechFixBackend.Repository
 {
