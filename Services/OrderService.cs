@@ -1,182 +1,123 @@
-using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TechFixBackend.Dtos;
+using TechFixBackend.Models;
+using TechFixBackend.Repository;
 
-public class OrderService
+namespace TechFixBackend.Services
 {
-    private readonly IMongoCollection<Order> _orders;
-
-    public OrderService(MongoDBContext context)
+    public class OrderService : IOrderService
     {
-        _orders = context.Orders;
-    }
+        private readonly IOrderRepository _orderRepository;
 
-    // Create a new order
-    public void CreateOrder(OrderModel orderModel)
-    {
-        var order = new Order
+        public OrderService(IOrderRepository orderRepository)
         {
-            CustomerId = orderModel.CustomerId,
-            Items = orderModel.Items.ConvertAll(i => new OrderItem
-            {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-                Price = i.Price
-            }),
-            DeliveryAddress = orderModel.DeliveryAddress
-        };
-
-        order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
-
-        _orders.InsertOne(order);
-    }
-
-    // Get all orders
-  public (List<Order> orders, long totalOrders) GetAllOrders(int pageNumber, int pageSize, string customerId = null)
-{
-    if (pageNumber < 1) pageNumber = 1;
-    if (pageSize < 1) pageSize = 10;
-
-    var filter = string.IsNullOrEmpty(customerId) ? Builders<Order>.Filter.Empty : Builders<Order>.Filter.Eq(o => o.CustomerId, customerId);
-
-    long totalOrders = _orders.CountDocuments(filter);
-
-    var pagedOrders = _orders
-        .Find(filter)
-        .Skip((pageNumber - 1) * pageSize)
-        .Limit(pageSize)
-        .ToList();
-
-    return (pagedOrders, totalOrders);
-}
-
-
-
-    // Get order by ID
-    public Order GetOrderById(string orderId)
-    {
-        return _orders.Find(o => o.Id == orderId).FirstOrDefault();
-    }
-    public void UpdateOrder(Order existingOrder, OrderUpdateModel updateModel)
-    {
-        if (!string.IsNullOrEmpty(updateModel.DeliveryAddress))
-        {
-            existingOrder.DeliveryAddress = updateModel.DeliveryAddress;
+            _orderRepository = orderRepository;
         }
-        if (updateModel.Items != null && updateModel.Items.Any())
-        {
-            foreach (var item in updateModel.Items)
-            {
-                var existingItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
 
-                if (existingItem != null)
+        public async Task CreateOrderAsync(CreateOrderDto createOrderDto)
+        {
+            var order = new Order
+            {
+                CustomerId = createOrderDto.CustomerId,
+                Items = createOrderDto.Items.Select(i => new OrderItem
                 {
-                    if (existingItem.Status == "Processing")
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    Price = i.Price
+                }).ToList(),
+                DeliveryAddress = createOrderDto.DeliveryAddress
+            };
+
+            order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
+
+            await _orderRepository.CreateOrderAsync(order);
+        }
+
+        public async Task<(List<Order> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
+        {
+            return await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
+        }
+
+        public async Task<Order> GetOrderByIdAsync(string orderId)
+        {
+            return await _orderRepository.GetOrderByIdAsync(orderId);
+        }
+
+        public async Task UpdateOrderAsync(string orderId, OrderUpdateDto updateDto)
+        {
+            var existingOrder = await GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+
+            if (!string.IsNullOrEmpty(updateDto.DeliveryAddress))
+            {
+                existingOrder.DeliveryAddress = updateDto.DeliveryAddress;
+            }
+
+            if (updateDto.Items != null && updateDto.Items.Any())
+            {
+                foreach (var item in updateDto.Items)
+                {
+                    var existingItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+
+                    if (existingItem != null)
                     {
-                        if (item.Quantity <= 0)
+                        if (existingItem.Status == "Processing")
                         {
-                            existingOrder.Items.Remove(existingItem);
+                            existingItem.Quantity = item.Quantity;
                         }
                         else
                         {
-                            existingItem.Quantity = item.Quantity;
+                            throw new InvalidOperationException($"Cannot update item '{existingItem.ProductId}' as it is not in 'Processing' status.");
                         }
                     }
                     else
                     {
-                        throw new InvalidOperationException($"Cannot update item '{existingItem.ProductId}' as it is not in 'Processing' status.");
+                        existingOrder.Items.Add(new OrderItem
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity,
+                            Price = item.Price
+                        });
                     }
                 }
-                else
-                {
-                    existingOrder.Items.Add(new OrderItem
-                    {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        Price = item.Price
-                    });
-                }
             }
+
+            existingOrder.TotalAmount = existingOrder.Items.Sum(i => i.TotalPrice);
+            await _orderRepository.UpdateOrderAsync(existingOrder);
         }
-        existingOrder.TotalAmount = existingOrder.Items.Sum(i => i.TotalPrice);
-        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
-    }
 
-
-
-
-    // Cancel order (before dispatch)
-    public void CancelOrder(Order existingOrder)
-    {
-        existingOrder.Status = "Canceled";
-        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
-    }
-    public void UpdateOrderStatus(Order existingOrder, OrderStatusUpdateModel statusUpdateModel)
-    {
-        existingOrder.Status = statusUpdateModel.Status;
-
-        if (statusUpdateModel.Status == "Shipped")
+        public async Task CancelOrderAsync(string orderId)
         {
-            existingOrder.DispatchedDate = DateTime.UtcNow;
+            var existingOrder = await GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+
+            await _orderRepository.CancelOrderAsync(existingOrder);
         }
 
-        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
-    }
-
-
-
-    //updating
-    public void UpdateOrderStatus(string orderId, string newStatus)
-    {
-        var existingOrder = _orders.Find(o => o.Id == orderId).FirstOrDefault();
-
-        if (existingOrder == null)
-            throw new Exception("Order not found.");
-
-        existingOrder.Status = newStatus;
-
-        if (newStatus == "Shipped")
+        public async Task UpdateOrderStatusAsync(string orderId, string status)
         {
-            existingOrder.DispatchedDate = DateTime.UtcNow;
+            var existingOrder = await GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+
+            existingOrder.Status = status;
+            if (status == "Shipped") existingOrder.DispatchedDate = DateTime.UtcNow;
+
+            await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
-        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
+        public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string status)
+        {
+            var existingOrder = await GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+
+            var orderItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (orderItem == null) throw new Exception("Order item not found.");
+
+            orderItem.Status = status;
+            await _orderRepository.UpdateOrderAsync(existingOrder);
+        }
     }
-
-
-
-    public void UpdateOrderItemStatus(string orderId, string productId, string newStatus)
-    {
-        var existingOrder = _orders.Find(o => o.Id == orderId).FirstOrDefault();
-
-        if (existingOrder == null)
-            throw new Exception("Order not found.");
-
-        var orderItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == productId);
-
-        if (orderItem == null)
-            throw new Exception("Order item not found.");
-
-
-        orderItem.Status = newStatus;
-
-        _orders.ReplaceOne(o => o.Id == existingOrder.Id, existingOrder);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-

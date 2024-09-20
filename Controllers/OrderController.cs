@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using TechFixBackend.Dtos;
+using TechFixBackend.Services;
 
 namespace TechFixBackend.Controllers
 {
@@ -6,20 +9,19 @@ namespace TechFixBackend.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly OrderService _orderService;
+        private readonly IOrderService _orderService;
 
-        public OrderController(OrderService orderService)
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
         }
 
-        // POST: api/order/create
         [HttpPost("create")]
-        public IActionResult CreateOrder([FromBody] OrderModel orderModel)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
         {
             try
             {
-                _orderService.CreateOrder(orderModel);
+                await _orderService.CreateOrderAsync(createOrderDto);
                 return Ok(new { Message = "Order created successfully" });
             }
             catch (Exception ex)
@@ -28,55 +30,37 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        // GET: api/Order
         [HttpGet]
-public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
-{
-    try
-    {
-        var (orders, totalOrders) = _orderService.GetAllOrders(pageNumber, pageSize, customerId);
-        if (orders == null || !orders.Any())
-        {
-            return Ok(new { Message = "No orders found." });
-        }
-        return Ok(new { totalOrders, orders });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { Message = ex.Message });
-    }
-}
-
-
-
-        // GET: api/order/view/{orderId}
-        [HttpGet("view/{orderId}")]
-        public IActionResult ViewOrder(string orderId)
-        {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null)
-                return NotFound(new { Message = "Order not found" });
-
-            return Ok(order); 
-        }
-
-        // PUT: api/order/update/{orderId}
-        [HttpPut("update/{orderId}")]
-        public IActionResult UpdateOrder(string orderId, [FromBody] OrderUpdateModel updateModel)
+        public async Task<IActionResult> GetAllOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
         {
             try
             {
-                var existingOrder = _orderService.GetOrderById(orderId);
-                if (existingOrder == null)
-                    return NotFound(new { Message = "Order not found" });
+                var (orders, totalOrders) = await _orderService.GetAllOrdersAsync(pageNumber, pageSize, customerId);
+                if (orders == null || !orders.Any()) return Ok(new { Message = "No orders found." });
 
-                // Ensure the order can be updated before dispatch
-                if (existingOrder.Status == "Shipped" || existingOrder.Status == "Delivered")
-                {
-                    return BadRequest(new { Message = "Cannot update order after dispatch" });
-                }
+                return Ok(new { totalOrders, orders });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
 
-                _orderService.UpdateOrder(existingOrder, updateModel);
+        [HttpGet("view/{orderId}")]
+        public async Task<IActionResult> ViewOrder(string orderId)
+        {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null) return NotFound(new { Message = "Order not found" });
+
+            return Ok(order);
+        }
+
+        [HttpPut("update/{orderId}")]
+        public async Task<IActionResult> UpdateOrder(string orderId, [FromBody] OrderUpdateDto updateDto)
+        {
+            try
+            {
+                await _orderService.UpdateOrderAsync(orderId, updateDto);
                 return Ok(new { Message = "Order updated successfully" });
             }
             catch (Exception ex)
@@ -85,23 +69,12 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10, string 
             }
         }
 
-        // PUT: api/order/cancel/{orderId}
         [HttpPut("cancel/{orderId}")]
-        public IActionResult CancelOrder(string orderId)
+        public async Task<IActionResult> CancelOrder(string orderId)
         {
             try
             {
-                var existingOrder = _orderService.GetOrderById(orderId);
-                if (existingOrder == null)
-                    return NotFound(new { Message = "Order not found" });
-
-                // Ensure the order can only be canceled before dispatch
-                if (existingOrder.Status == "Shipped" || existingOrder.Status == "Delivered")
-                {
-                    return BadRequest(new { Message = "Cannot cancel order after dispatch" });
-                }
-
-                _orderService.CancelOrder(existingOrder);
+                await _orderService.CancelOrderAsync(orderId);
                 return Ok(new { Message = "Order canceled successfully" });
             }
             catch (Exception ex)
@@ -110,14 +83,12 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10, string 
             }
         }
 
-
-        // PUT: api/order/update-status/{orderId}
         [HttpPut("update-status/{orderId}")]
-        public IActionResult UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateModel statusUpdateModel)
+        public async Task<IActionResult> UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateDto statusUpdateDto)
         {
             try
             {
-                _orderService.UpdateOrderStatus(orderId, statusUpdateModel.Status);
+                await _orderService.UpdateOrderStatusAsync(orderId, statusUpdateDto.Status);
                 return Ok(new { Message = "Order status updated successfully" });
             }
             catch (Exception ex)
@@ -126,14 +97,12 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10, string 
             }
         }
 
-
-        // PUT: api/order/update-item-status/{orderId}/{productId}
         [HttpPut("update-item-status/{orderId}/{productId}")]
-        public IActionResult UpdateOrderItemStatus(string orderId, string productId, [FromBody] OrderItemStatusUpdateModel statusUpdateModel)
+        public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, [FromBody] OrderItemStatusUpdateDto statusUpdateDto)
         {
             try
             {
-                _orderService.UpdateOrderItemStatus(orderId, productId, statusUpdateModel.Status);
+                await _orderService.UpdateOrderItemStatusAsync(orderId, productId, statusUpdateDto.Status);
                 return Ok(new { Message = "Order item status updated successfully" });
             }
             catch (Exception ex)
@@ -141,14 +110,5 @@ public IActionResult GetAllOrders(int pageNumber = 1, int pageSize = 10, string 
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
-
-
-
     }
-
-
-
-
-
 }

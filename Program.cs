@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
-builder.Services.AddSingleton<OrderService>();
+
 
 
 // JWT Authentication
@@ -43,10 +43,12 @@ builder.Services.AddControllers();
 // Add Repository
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>(); 
+builder.Services.AddScoped<IOrderService, OrderService>(); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
