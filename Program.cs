@@ -1,24 +1,36 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using TechFixBackend.Hubs;
 using TechFixBackend.Repository;
 using TechFixBackend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
 
 // Register the IUserRepository and its implementation
-builder.Services.AddScoped<TechFixBackend.Repository.IUserRepository, TechFixBackend.Repository.UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Register the NotificationService
+builder.Services.AddScoped<NotificationService>();
 
 // Register AuthService with proper DI
 var key = builder.Configuration["JwtKey"];
 builder.Services.AddScoped<AuthService>(provider =>
-    new AuthService(provider.GetRequiredService<IUserRepository>(), key));
+    new AuthService(
+        provider.GetRequiredService<IUserRepository>(),
+        provider.GetRequiredService<NotificationService>(), 
+        key
+    ));
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -48,7 +60,6 @@ builder.Services.AddScoped<IVendorService, VendorService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -59,5 +70,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Configure SignalR endpoints
+app.MapHub<NotificationHub>("/notifications");
 
 app.Run();

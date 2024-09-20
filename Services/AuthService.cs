@@ -1,25 +1,33 @@
-
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using TechFixBackend.Repository;
+using TechFixBackend.Services;
 
 public class AuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly NotificationService _notificationService;
     private readonly string _key;
 
-    public AuthService(IUserRepository userRepository, string key)
+    
+    public AuthService(IUserRepository userRepository, NotificationService notificationService, string key)
     {
-        _userRepository = userRepository;
-        _key = key;
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+        _key = key ?? throw new ArgumentNullException(nameof(key));
     }
 
     // Register a new user
     public async Task RegisterAsync(string email, string password, string role = "customer")
     {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentException("Email and password must be provided.");
+        }
+
         var existingUser = await _userRepository.GetUserByEmailAsync(email);
         if (existingUser != null)
         {
@@ -35,11 +43,19 @@ public class AuthService
         };
 
         await _userRepository.AddUserAsync(user);
+
+        // Send a notification to the user about registration
+        await SendNotificationSafely(user.Id, $"Welcome {user.Email}, your account has been successfully created.");
     }
 
     // Login an existing user
     public async Task<string> LoginAsync(string email, string password)
     {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentException("Email and password must be provided.");
+        }
+
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null || !VerifyPassword(password, user.PasswordHash))
         {
@@ -47,7 +63,12 @@ public class AuthService
         }
 
         // Generate JWT token if login is successful
-        return GenerateJwtToken(user.Id, user.Role);
+        var token = GenerateJwtToken(user.Id, user.Role);
+
+        // Send a notification to the user about successful login
+        await SendNotificationSafely(user.Id, "Login successful. Welcome back!");
+
+        return token;
     }
 
     // Get a paginated list of users
@@ -65,6 +86,11 @@ public class AuthService
     // Get a user by their ID
     public async Task<User> GetUserByIdAsync(string userId)
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
         var user = await _userRepository.GetUserByIdAsync(userId);
         if (user == null)
         {
@@ -77,6 +103,11 @@ public class AuthService
     // Update user fields
     public async Task<bool> UpdateUserAsync(string userId, UserUpdateModel updateModel)
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
         var existingUser = await _userRepository.GetUserByIdAsync(userId);
         if (existingUser == null)
         {
@@ -93,19 +124,34 @@ public class AuthService
             throw new Exception("User update failed");
         }
 
-        // Return the update status
+        // Send a notification to the user about the update
+        await SendNotificationSafely(userId, "Your profile has been updated successfully.");
+
         return updated;
     }
-
 
     // Delete a user by their ID
     public async Task DeleteUserAsync(string userId)
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
         var deleted = await _userRepository.DeleteUserAsync(userId);
         if (!deleted)
         {
             throw new Exception("User deletion failed");
         }
+
+        // Send a notification to the user about account deletion
+        await SendNotificationSafely(userId, "Your account has been deleted successfully.");
     }
 
     // Hash the password
@@ -167,5 +213,19 @@ public class AuthService
             existingUser.VendorRating = updateModel.VendorRating.Value;
 
         return existingUser;
+    }
+
+    // Safe notification sending method
+    private async Task SendNotificationSafely(string userId, string message)
+    {
+        try
+        {
+            await _notificationService.SendNotificationToUserAsync(userId, message);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception for debugging, but don't interrupt the main process
+            Console.WriteLine($"Notification sending failed: {ex.Message}");
+        }
     }
 }
