@@ -209,8 +209,6 @@ public class AuthService
         if (!string.IsNullOrEmpty(updateModel.Status))
             existingUser.Status = updateModel.Status;
 
-        if (updateModel.VendorRating.HasValue)
-            existingUser.VendorRating = updateModel.VendorRating.Value;
 
         return existingUser;
     }
