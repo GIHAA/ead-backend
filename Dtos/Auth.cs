@@ -1,4 +1,5 @@
 // Data transfer objects for requests
+
 public class RegisterModel
 {
     public string Username { get; set; }
@@ -20,5 +21,6 @@ public class UserUpdateModel
     public string? Address { get; set; } 
     public string? PhoneNumber { get; set; } 
     public string? Status { get; set; } 
-    public float? VendorRating { get; set; } 
+    public float? VendorRating { get; set; }
+    public List<string> VendorIds { get; internal set; }
 }
