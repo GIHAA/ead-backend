@@ -24,4 +24,5 @@ public class User
     public DateTime AccountCreationDate { get; set; } = DateTime.UtcNow;
     
     public float? VendorRating { get; set; }
+    public List<string> VendorIds { get; set; } = new List<string>();
 }
