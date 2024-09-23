@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using TechFixBackend.Hubs;
 using TechFixBackend.Repository;
 using TechFixBackend.Services;
@@ -9,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "TechFixBackend", Version = "v1" });
+});
 
 // Add SignalR
 builder.Services.AddSignalR();
@@ -58,11 +62,14 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>(); 
-builder.Services.AddScoped<IOrderService, OrderService>(); 
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<FeedbackService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

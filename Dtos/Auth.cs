@@ -2,10 +2,11 @@
 
 public class RegisterModel
 {
-    public string Username { get; set; }
+   // public string Username { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public string Role { get; set; } = "customer";
+    public string? Status { get; set; }
 }
 
 public class LoginModel
@@ -22,5 +23,5 @@ public class UserUpdateModel
     public string? PhoneNumber { get; set; } 
     public string? Status { get; set; } 
     public float? VendorRating { get; set; }
-    public List<string> VendorIds { get; internal set; }
+    public List<string>? VendorIds { get; internal set; }
 }

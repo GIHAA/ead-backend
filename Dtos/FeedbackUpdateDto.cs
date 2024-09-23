@@ -1,8 +1,8 @@
-namespace TechFixBackend.Dtos
+﻿namespace TechFixBackend.Dtos
 {
     public class FeedbackUpdateDto
     {
-        public string FeedbackMessage { get; set; }
-        public int Rating { get; set; }
+        public float Rating { get; set; } 
+        public string Comment { get; set; }
     }
 }

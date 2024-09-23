@@ -1,4 +1,4 @@
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace TechFixBackend._Models
@@ -9,22 +9,26 @@ namespace TechFixBackend._Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("CustomerId")]
+        [BsonElement("vendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string CustomerId { get; set; }
+        public string VendorId { get; set; } // ObjectId of the Vendor (User with a vendor role)
 
-        [BsonElement("VendorId")]
+        [BsonElement("customerId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string VendorId { get; set; }
+        public string CustomerId { get; set; } // ObjectId of the Customer providing feedback
 
-        [BsonElement("Rating")]
-        public int Rating { get; set; }
+        [BsonElement("productId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ProductId { get; set; } // ObjectId of the Product related to this feedback
 
-        [BsonElement("Comment")]
+        [BsonElement("rating")]
+        public float Rating { get; set; } 
+
+        [BsonElement("comment")]
         public string Comment { get; set; }
 
-        [BsonElement("FeedbackDate")]
-        public string FeedbackDate { get; set; }
+        [BsonElement("createdDate")]
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow; 
     }
   
 }
