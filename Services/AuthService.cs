@@ -12,7 +12,6 @@ public class AuthService
     private readonly NotificationService _notificationService;
     private readonly string _key;
 
-    
     public AuthService(IUserRepository userRepository, NotificationService notificationService, string key)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -71,36 +70,7 @@ public class AuthService
         return token;
     }
 
-    // Get a paginated list of users
-    public async Task<(List<User> users, long totalUsers)> GetUsersAsync(int pageNumber, int pageSize)
-    {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
-
-        var users = await _userRepository.GetUsersAsync(pageNumber, pageSize);
-        var totalUsers = await _userRepository.GetTotalUsersAsync();
-
-        return (users, totalUsers);
-    }
-
-    // Get a user by their ID
-    public async Task<User> GetUserByIdAsync(string userId)
-    {
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("User ID must be provided.");
-        }
-
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        if (user == null)
-        {
-            throw new Exception("User not found");
-        }
-
-        return user;
-    }
-
-    // Update user fields
+    // Modify user account details
     public async Task<bool> UpdateUserAsync(string userId, UserUpdateModel updateModel)
     {
         if (string.IsNullOrEmpty(userId))
@@ -130,8 +100,8 @@ public class AuthService
         return updated;
     }
 
-    // Delete a user by their ID
-    public async Task DeleteUserAsync(string userId)
+    // Deactivate the user's account
+    public async Task DeactivateAccountAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
         {
@@ -144,14 +114,67 @@ public class AuthService
             throw new Exception("User not found");
         }
 
-        var deleted = await _userRepository.DeleteUserAsync(userId);
-        if (!deleted)
+        user.Status = "Deactivated";
+        var updated = await _userRepository.UpdateUserAsync(userId, user);
+        if (!updated)
         {
-            throw new Exception("User deletion failed");
+            throw new Exception("Account deactivation failed");
         }
 
-        // Send a notification to the user about account deletion
-        await SendNotificationSafely(userId, "Your account has been deleted successfully.");
+        await SendNotificationSafely(userId, "Your account has been deactivated. Please contact support if you wish to reactivate it.");
+    }
+
+    // Request reactivation of the user's account
+    public async Task RequestAccountReactivationAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        if (user.Status != "Deactivated")
+        {
+            throw new Exception("Account is not deactivated. No reactivation required.");
+        }
+
+        // Notify the CSR/Administrator about the reactivation request
+        await SendNotificationSafely(userId, "Your reactivation request has been submitted. Awaiting approval.");
+    }
+
+    // Approve reactivation of the user's account (handled by CSR/Administrator)
+    public async Task ApproveAccountReactivationAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        if (user.Status != "Deactivated")
+        {
+            throw new Exception("Account is not deactivated.");
+        }
+
+        user.Status = "Active";
+        var updated = await _userRepository.UpdateUserAsync(userId, user);
+        if (!updated)
+        {
+            throw new Exception("Account reactivation failed");
+        }
+
+        // Notify the user about account activation
+        await SendNotificationSafely(userId, "Your account has been reactivated. You can now log in.");
     }
 
     // Hash the password
@@ -209,8 +232,6 @@ public class AuthService
         if (!string.IsNullOrEmpty(updateModel.Status))
             existingUser.Status = updateModel.Status;
 
-        if (updateModel.VendorRating.HasValue)
-            existingUser.VendorRating = updateModel.VendorRating.Value;
 
         return existingUser;
     }
@@ -227,5 +248,60 @@ public class AuthService
             // Log the exception for debugging, but don't interrupt the main process
             Console.WriteLine($"Notification sending failed: {ex.Message}");
         }
+    }
+
+    // Get a paginated list of users
+    public async Task<(List<User> users, long totalUsers)> GetUsersAsync(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        // Fetch the list of users with pagination
+        var users = await _userRepository.GetUsersAsync(pageNumber, pageSize);
+        var totalUsers = await _userRepository.GetTotalUsersAsync();
+
+        return (users, totalUsers);
+    }
+
+    // Delete a user by their ID
+    public async Task<bool> DeleteUserAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        var deleted = await _userRepository.DeleteUserAsync(userId);
+        if (!deleted)
+        {
+            throw new Exception("User deletion failed");
+        }
+
+        
+        await SendNotificationSafely(userId, "Your account has been deleted successfully.");
+
+        return true;
+    }
+
+    public async Task<User> GetUserByIdAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User ID must be provided.");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        return user;
     }
 }

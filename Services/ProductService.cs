@@ -10,12 +10,12 @@ namespace TechFixBackend.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly IVendorRepository _vendorRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ProductService(IProductRepository productRepository, IVendorRepository vendorRepository)
+        public ProductService(IProductRepository productRepository, IUserRepository userRepository)
         {
             _productRepository = productRepository;
-            _vendorRepository = vendorRepository;
+            _userRepository = userRepository;
         }
 
         // Retrieves all products with vendor details populated
@@ -27,7 +27,7 @@ namespace TechFixBackend.Services
             foreach (var product in products)
             {
                 // Fetch vendor details individually using existing method
-                var vendor = await _vendorRepository.GetVendorByIdAsync(product.VendorId );
+                var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
                 
                 // Map product to include vendor information
                 var productWithVendor = new ProductWithVendorDto
@@ -56,7 +56,7 @@ namespace TechFixBackend.Services
             if (product == null) return null;
 
             // Fetch the vendor based on VendorId  using existing method
-            var vendor = await _vendorRepository.GetVendorByIdAsync(product.VendorId );
+            var vendor = await _userRepository.GetUserByIdAsync(product.VendorId );
 
             // Map product to include vendor information
             return new ProductWithVendorDto
@@ -75,7 +75,7 @@ namespace TechFixBackend.Services
 
         public async Task<Product> CreateProductAsync(ProductCreateDto productDto)
         {
-            var vendor = await _vendorRepository.GetVendorByIdAsync(productDto.VendorId );
+            var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId );
             if (vendor == null)
             {
                 throw new Exception("Vendor not found");

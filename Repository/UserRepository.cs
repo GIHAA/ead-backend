@@ -31,11 +31,19 @@ namespace TechFixBackend.Repository
 
         public async Task AddUserAsync(User user)
         {
+            if (user.Role != "vendor")
+            {
+                user.AverageRating = null;
+            }
             await _users.InsertOneAsync(user);
         }
 
         public async Task<bool> UpdateUserAsync(string userId, User updatedUser)
         {
+            if (updatedUser.Role != "vendor")
+            {
+                updatedUser.AverageRating = null;
+            }
             var result = await _users.ReplaceOneAsync(u => u.Id == userId, updatedUser);
             return result.ModifiedCount > 0;
         }

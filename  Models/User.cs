@@ -11,7 +11,7 @@ public class User
     
     public string PasswordHash { get; set; } 
     
-    public string Role { get; set; } = "customer";
+    public string Role { get; set; } = "customer"; // Roles: "customer", "admin", "vendor", "csr"
 
     public string Name { get; set; }
     
@@ -22,7 +22,8 @@ public class User
     public string Status { get; set; }
     
     public DateTime AccountCreationDate { get; set; } = DateTime.UtcNow;
-    
-    public float? VendorRating { get; set; }
-    public List<string> VendorIds { get; set; } = new List<string>();
+
+    // Ensure AverageRating is set and used only for vendor roles
+    [BsonIgnoreIfNull]
+    public float? AverageRating { get; set; } 
 }
