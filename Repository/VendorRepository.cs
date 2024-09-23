@@ -5,9 +5,9 @@ namespace TechFixBackend.Repository
 {
     public class VendorRepository(MongoDBContext context) : IVendorRepository
     {
-        private readonly IMongoCollection<Vendor> _vendors = context.Vendors;
+        private readonly IMongoCollection<User> _vendors = context.Users;
 
-        public async Task<(List<Vendor> vendors, long totalVendors)> GetVendorsAsync(int pageNumber, int pageSize)
+        public async Task<(List<User> vendors, long totalVendors)> GetVendorsAsync(int pageNumber, int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
@@ -23,19 +23,19 @@ namespace TechFixBackend.Repository
         }
 
         // Get vendor by ObjectId as string
-        public async Task<Vendor> GetVendorByIdAsync(string vendorId)
+        public async Task<User> GetVendorByIdAsync(string vendorId)
         {
             return await _vendors.Find(v => v.Id == vendorId).FirstOrDefaultAsync();
         }
 
         // Create a new vendor
-        public async Task CreateVendorAsync(Vendor vendor)
+        public async Task CreateVendorAsync(User vendor)
         {
             await _vendors.InsertOneAsync(vendor);
         }
 
         // Update an existing vendor using ObjectId
-        public async Task<bool> UpdateVendorAsync(string vendorId, Vendor updatedVendor)
+        public async Task<bool> UpdateVendorAsync(string vendorId, User updatedVendor)
         {
             var result = await _vendors.ReplaceOneAsync(v => v.Id == vendorId, updatedVendor);
             return result.ModifiedCount > 0;
@@ -49,9 +49,9 @@ namespace TechFixBackend.Repository
         }
 
         // Get vendors by UserId
-        public async Task<List<Vendor>> GetVendorsByUserIdAsync(string userId)
+        public async Task<List<User>> GetVendorsByUserIdAsync(string userId)
         {
-            return await _vendors.Find(v => v.VendorId == userId).ToListAsync();
+            return await _vendors.Find(v => v.Id == userId).ToListAsync();
         }
 
 

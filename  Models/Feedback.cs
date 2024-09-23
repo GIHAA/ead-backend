@@ -7,7 +7,7 @@ namespace TechFixBackend._Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } 
+        public string Id { get; set; }
 
         [BsonElement("vendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -25,9 +25,10 @@ namespace TechFixBackend._Models
         public float Rating { get; set; } 
 
         [BsonElement("comment")]
-        public string Comment { get; set; } 
+        public string Comment { get; set; }
 
         [BsonElement("createdDate")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow; 
     }
+  
 }

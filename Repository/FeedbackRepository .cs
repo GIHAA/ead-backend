@@ -10,8 +10,8 @@ namespace TechFixBackend.Repository
 
         public FeedbackRepository(MongoDBContext context)
         {
-            _feedbackCollection = context.Feedback;  
-            _userCollection = context.Users;         
+            _feedbackCollection = context.Feedback;
+            _userCollection = context.Users;
         }
 
         // Add feedback to the Feedback collection

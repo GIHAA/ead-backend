@@ -7,20 +7,20 @@ namespace TechFixBackend.Repository
     public interface IVendorRepository
     {
         // Get all vendors with pagination
-        Task<(List<Vendor> vendors, long totalVendors)> GetVendorsAsync(int pageNumber, int pageSize);
+        Task<(List<User> vendors, long totalVendors)> GetVendorsAsync(int pageNumber, int pageSize);
 
         // Get vendor by ObjectId
-        Task<Vendor> GetVendorByIdAsync(string vendorId);
+        Task<User> GetVendorByIdAsync(string vendorId);
 
         // Create a new vendor
-        Task CreateVendorAsync(Vendor vendor);
+        Task CreateVendorAsync(User vendor);
 
         // Update an existing vendor
-        Task<bool> UpdateVendorAsync(string vendorId, Vendor updatedVendor);
+        Task<bool> UpdateVendorAsync(string vendorId, User updatedVendor);
 
         // Delete a vendor by ObjectId
         Task<bool> DeleteVendorAsync(string vendorId);
-        Task<List<Vendor>> GetVendorsByUserIdAsync(string userId);
+        Task<List<User>> GetVendorsByUserIdAsync(string userId);
 
        
     }

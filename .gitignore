@@ -1,4 +1,4 @@
-bin/
-obj/
-obj/
-.vs/
+# Ignore obj and bin directories
+/obj/
+/bin/
+/.vs/TechFixBackend
