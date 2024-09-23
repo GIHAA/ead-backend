@@ -55,13 +55,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 
 // Add Vendor Repository and Service
-builder.Services.AddScoped<IVendorRepository, VendorRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Add Service
-builder.Services.AddScoped<IVendorService, VendorService>();
-builder.Services.AddScoped<IProductService, ProductService>(); 
 builder.Services.AddScoped<IOrderService, OrderService>(); 
 var app = builder.Build();
 
