@@ -32,6 +32,11 @@ namespace TechFixBackend.Repository
             await _products.InsertOneAsync(product);
         }
 
+        public async Task<long> GetTotalProductsAsync()
+        {
+            return await _products.CountDocumentsAsync(u => true);
+        }
+
         public async Task<bool> UpdateProductAsync(string productId, Product updatedProduct)
         {
             var result = await _products.ReplaceOneAsync(p => p.Id == productId, updatedProduct);
