@@ -5,6 +5,7 @@ using TechFixBackend._Models;
 using TechFixBackend.Dtos;
 using TechFixBackend.Repository;
 
+
 namespace TechFixBackend.Services
 {
     public class ProductService : IProductService
@@ -19,8 +20,11 @@ namespace TechFixBackend.Services
         }
 
         // Retrieves all products with vendor details populated
-        public async Task<List<ProductWithVendorDto>> GetAllProductsAsync(int pageNumber, int pageSize)
+        public async Task<(List<ProductWithVendorDto> products , long totalProducts) > GetAllProductsAsync(int pageNumber, int pageSize)
         {
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
             var products = await _productRepository.GetProductsAsync(pageNumber, pageSize);
             var productsWithVendors = new List<ProductWithVendorDto>();
 
@@ -45,8 +49,10 @@ namespace TechFixBackend.Services
 
                 productsWithVendors.Add(productWithVendor);
             }
+            var totalProducts = await _productRepository.GetTotalProductsAsync();
 
-            return productsWithVendors;
+
+            return (productsWithVendors , totalProducts);
         }
 
         // Retrieves a specific product by its ID with vendor details populated

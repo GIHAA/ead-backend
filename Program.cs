@@ -39,12 +39,12 @@ builder.Services.AddScoped<AuthService>(provider =>
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.SetIsOriginAllowed(_ => true) // Allows any origin
                .AllowAnyMethod()
                .AllowAnyHeader()
-               .AllowCredentials();
+               .AllowCredentials(); // This requires listing specific origins
     });
 });
 
@@ -92,7 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAllOrigins"); // Enable CORS
+app.UseCors("AllowAll"); // Enable CORS
 app.UseAuthentication();
 app.UseAuthorization();
 
