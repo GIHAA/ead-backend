@@ -34,16 +34,16 @@ namespace TechFixBackend.Controllers
                 }
 
                 // Get users and total count
-                var (pagedUsers, totalUsers) = await _productService.GetAllProductsAsync(pageNumber, pageSize);
+                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize);
 
                 // Check if no users are found
-                if (pagedUsers == null || !pagedUsers.Any())
+                if (pagedProducts == null || !pagedProducts.Any())
                 {
                     return NotFound(new { Message = "No users found." });
                 }
 
                 // Calculate total pages
-                int totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
+                int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
                 // Ensure pageNumber does not exceed totalPages
                 if (pageNumber > totalPages && totalPages > 0)
@@ -53,11 +53,11 @@ namespace TechFixBackend.Controllers
 
                 var response = new
                 {
-                    TotalRecords = totalUsers,
+                    TotalRecords = totalProducts,
                     TotalPages = totalPages,
                     CurrentPage = pageNumber,
                     PageSize = pageSize,
-                    Users = pagedUsers
+                    Products = pagedProducts  
                 };
 
                 return Ok(response);
