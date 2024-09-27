@@ -19,10 +19,7 @@ namespace TechFixBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(int pageNumber = 1, int pageSize = 10)
         {
-            // var products = await _productService.GetAllProductsAsync(pageNumber, pageSize);
-            // return Ok(products);
 
-            
             try
             {
                 
