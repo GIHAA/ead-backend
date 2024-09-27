@@ -36,6 +36,19 @@ builder.Services.AddScoped<AuthService>(provider =>
         key
     ));
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
+
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -79,8 +92,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAllOrigins"); // Enable CORS
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Configure SignalR endpoints
