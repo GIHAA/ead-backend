@@ -21,8 +21,6 @@ builder.Services.AddSignalR();
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
 
-// Register the IUserRepository and its implementation
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Register the NotificationService
 builder.Services.AddScoped<NotificationService>();
@@ -35,6 +33,19 @@ builder.Services.AddScoped<AuthService>(provider =>
         provider.GetRequiredService<NotificationService>(),
         key
     ));
+
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.SetIsOriginAllowed(_ => true) // Allows any origin
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials(); // This requires listing specific origins
+    });
+});
+
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -58,17 +69,20 @@ builder.Services.AddAuthentication(options =>
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add Vendor Repository and Service
+// Add  Repository and Service
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IProductCatRepository, ProductCatRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<FeedbackService>();
+builder.Services.AddScoped<IProductCatService, ProductCatService>();
 
 // Add CORS policy to allow requests from the Android emulator
 builder.Services.AddCors(options =>
@@ -94,6 +108,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Configure SignalR endpoints
