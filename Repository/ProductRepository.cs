@@ -14,13 +14,27 @@ namespace TechFixBackend.Repository
             _products = context.Products;
         }
 
-        public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize)
+       public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string search = "")
         {
-            return await _products.Find(p => true)
+            // Apply search filter
+            var filter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                                             p.ProductDescription.ToLower().Contains(search.ToLower()));
+
+            return await _products.Find(filter)
                 .Skip((pageNumber - 1) * pageSize)
                 .Limit(pageSize)
                 .ToListAsync();
         }
+
+        public async Task<long> GetTotalProductsAsync(string search = "")
+        {
+            // Apply search filter
+            var filter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                                             p.ProductDescription.ToLower().Contains(search.ToLower()));
+
+            return await _products.CountDocumentsAsync(filter);
+        }
+
 
         public async Task<Product> GetProductByIdAsync(string productId)
         {

@@ -69,6 +69,8 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        // get all without pagination 
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProductCats()
         {

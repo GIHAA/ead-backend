@@ -20,19 +20,19 @@ namespace TechFixBackend.Services
         }
 
         // Retrieves all products with vendor details populated
-        public async Task<(List<ProductWithVendorDto> products , long totalProducts) > GetAllProductsAsync(int pageNumber, int pageSize)
+        public async Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize, string search = "")
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
-            var products = await _productRepository.GetProductsAsync(pageNumber, pageSize);
+            var products = await _productRepository.GetProductsAsync(pageNumber, pageSize, search);
             var productsWithVendors = new List<ProductWithVendorDto>();
 
             foreach (var product in products)
             {
                 // Fetch vendor details individually using existing method
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
-                
+
                 // Map product to include vendor information
                 var productWithVendor = new ProductWithVendorDto
                 {
@@ -49,10 +49,10 @@ namespace TechFixBackend.Services
 
                 productsWithVendors.Add(productWithVendor);
             }
-            var totalProducts = await _productRepository.GetTotalProductsAsync();
 
+            var totalProducts = await _productRepository.GetTotalProductsAsync(search);
 
-            return (productsWithVendors , totalProducts);
+            return (productsWithVendors, totalProducts);
         }
 
         // Retrieves a specific product by its ID with vendor details populated
@@ -62,7 +62,7 @@ namespace TechFixBackend.Services
             if (product == null) return null;
 
             // Fetch the vendor based on VendorId  using existing method
-            var vendor = await _userRepository.GetUserByIdAsync(product.VendorId );
+            var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
 
             // Map product to include vendor information
             return new ProductWithVendorDto
@@ -81,7 +81,7 @@ namespace TechFixBackend.Services
 
         public async Task<Product> CreateProductAsync(ProductCreateDto productDto)
         {
-            var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId );
+            var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
             if (vendor == null)
             {
                 throw new Exception("Vendor not found");
@@ -89,7 +89,7 @@ namespace TechFixBackend.Services
 
             var product = new Product
             {
-                VendorId  = productDto.VendorId ,
+                VendorId = productDto.VendorId,
                 ProductName = productDto.ProductName,
                 ProductDescription = productDto.ProductDescription,
                 Category = productDto.Category,
