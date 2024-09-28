@@ -21,8 +21,6 @@ builder.Services.AddSignalR();
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
 
-// Register the IUserRepository and its implementation
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Register the NotificationService
 builder.Services.AddScoped<NotificationService>();
@@ -71,17 +69,20 @@ builder.Services.AddAuthentication(options =>
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add Vendor Repository and Service
+// Add  Repository and Service
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IProductCatRepository, ProductCatRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>(); 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<FeedbackService>();
+builder.Services.AddScoped<IProductCatService, ProductCatService>();
 
 var app = builder.Build();
 
@@ -92,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll"); // Enable CORS
+app.UseCors("AllowAll"); 
 app.UseAuthentication();
 app.UseAuthorization();
 
