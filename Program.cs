@@ -94,6 +94,13 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
+
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
@@ -105,7 +112,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowEmulator");
+app.UseCors("AllowAll");
+app.MapControllers().RequireCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 
