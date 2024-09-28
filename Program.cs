@@ -76,7 +76,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowEmulator",
         builder =>
         {
-            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215") // Allow both HTTPS and HTTP requests from Android emulator
+            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215") 
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
