@@ -32,7 +32,7 @@ var key = builder.Configuration["JwtKey"];
 builder.Services.AddScoped<AuthService>(provider =>
     new AuthService(
         provider.GetRequiredService<IUserRepository>(),
-        provider.GetRequiredService<NotificationService>(), 
+        provider.GetRequiredService<NotificationService>(),
         key
     ));
 
@@ -60,15 +60,27 @@ builder.Services.AddControllers();
 
 // Add Vendor Repository and Service
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
-builder.Services.AddScoped<IProductService, ProductService>(); 
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<FeedbackService>();
+
+// Add CORS policy to allow requests from the Android emulator
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowEmulator",
+        builder =>
+        {
+            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215") // Allow both HTTPS and HTTP requests from Android emulator
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -79,6 +91,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -86,4 +99,5 @@ app.MapControllers();
 // Configure SignalR endpoints
 app.MapHub<NotificationHub>("/notifications");
 
+app.UseHttpsRedirection();
 app.Run();
