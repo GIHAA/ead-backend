@@ -7,7 +7,7 @@ namespace TechFixBackend.Services
 {
     public interface IProductService
     {
-        Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize);
+        Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize , string search = "");
         Task<ProductWithVendorDto> GetProductByIdAsync(string productId);
         Task<Product> CreateProductAsync(ProductCreateDto productDto);
         Task<bool> UpdateProductAsync(string productId, ProductUpdateDto productDto);

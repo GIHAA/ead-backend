@@ -9,7 +9,7 @@ namespace TechFixBackend._Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-         [BsonElement("VendorId")]
+        [BsonElement("VendorId")]
         [BsonRepresentation(BsonType.ObjectId)] // This will reference the Vendor's _id field
         public string VendorId { get; set; }
 
