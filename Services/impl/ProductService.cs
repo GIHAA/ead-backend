@@ -12,11 +12,13 @@ namespace TechFixBackend.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProductCatRepository _producuCatsRepository;
 
-        public ProductService(IProductRepository productRepository, IUserRepository userRepository)
+        public ProductService(IProductRepository productRepository, IUserRepository userRepository , IProductCatRepository producuCatsRepository)
         {
             _productRepository = productRepository;
             _userRepository = userRepository;
+            _producuCatsRepository = producuCatsRepository;
         }
 
         // Retrieves all products with vendor details populated
@@ -32,6 +34,7 @@ namespace TechFixBackend.Services
             {
                 // Fetch vendor details individually using existing method
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+                var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
 
                 // Map product to include vendor information
                 var productWithVendor = new ProductWithVendorDto
@@ -40,7 +43,7 @@ namespace TechFixBackend.Services
                     Vendor = vendor, // Populate vendor details
                     ProductName = product.ProductName,
                     ProductDescription = product.ProductDescription,
-                    Category = product.Category,
+                    Category = category, // Populate category details
                     Price = product.Price,
                     StockQuantity = product.StockQuantity,
                     ProductStatus = product.ProductStatus,
@@ -63,6 +66,7 @@ namespace TechFixBackend.Services
 
             // Fetch the vendor based on VendorId  using existing method
             var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+            var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
 
             // Map product to include vendor information
             return new ProductWithVendorDto
@@ -71,7 +75,7 @@ namespace TechFixBackend.Services
                 Vendor = vendor, // Populate vendor details
                 ProductName = product.ProductName,
                 ProductDescription = product.ProductDescription,
-                Category = product.Category,
+                Category = category, // Populate category details
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
                 ProductStatus = product.ProductStatus,
@@ -87,12 +91,18 @@ namespace TechFixBackend.Services
                 throw new Exception("Vendor not found");
             }
 
+            var category = await _producuCatsRepository.GetProductCatByIdAsync(productDto.CategoryId);
+            if (category == null)
+            {
+                throw new Exception("Category not found");
+            }
+
             var product = new Product
             {
                 VendorId = productDto.VendorId,
                 ProductName = productDto.ProductName,
                 ProductDescription = productDto.ProductDescription,
-                Category = productDto.Category,
+                CategoryId = productDto.CategoryId,
                 Price = productDto.Price,
                 StockQuantity = productDto.StockQuantity,
                 ProductStatus = productDto.ProductStatus,
@@ -108,9 +118,21 @@ namespace TechFixBackend.Services
             var existingProduct = await _productRepository.GetProductByIdAsync(productId);
             if (existingProduct == null) return false;
 
+            var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
+            if (vendor == null)
+            {
+                throw new Exception("Vendor not found");
+            }
+
+            var category = await _producuCatsRepository.GetProductCatByIdAsync(productDto.CategoryId);
+            if (category == null)
+            {
+                throw new Exception("Category not found");
+            }
+
             existingProduct.ProductName = productDto.ProductName;
             existingProduct.ProductDescription = productDto.ProductDescription;
-            existingProduct.Category = productDto.Category;
+            existingProduct.CategoryId = productDto.CategoryId;
             existingProduct.Price = productDto.Price;
             existingProduct.StockQuantity = productDto.StockQuantity;
             existingProduct.ProductStatus = productDto.ProductStatus;
