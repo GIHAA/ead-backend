@@ -30,7 +30,7 @@ var key = builder.Configuration["JwtKey"];
 builder.Services.AddScoped<AuthService>(provider =>
     new AuthService(
         provider.GetRequiredService<IUserRepository>(),
-        provider.GetRequiredService<NotificationService>(), 
+        provider.GetRequiredService<NotificationService>(),
         key
     ));
 
@@ -72,17 +72,36 @@ builder.Services.AddControllers();
 // Add  Repository and Service
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>(); 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IProductCatRepository, ProductCatRepository>();
 
 // Add Service
 builder.Services.AddScoped<IVendorService, VendorService>();
-builder.Services.AddScoped<IProductService, ProductService>(); 
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<IProductCatService, ProductCatService>();
+
+// Add CORS policy to allow requests from the Android emulator
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowEmulator",
+        builder =>
+        {
+            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215") 
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -93,7 +112,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll"); 
+app.UseCors("AllowAll");
+app.MapControllers().RequireCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -102,4 +122,5 @@ app.MapControllers();
 // Configure SignalR endpoints
 app.MapHub<NotificationHub>("/notifications");
 
+app.UseHttpsRedirection();
 app.Run();
