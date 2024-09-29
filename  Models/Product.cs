@@ -10,7 +10,7 @@ namespace TechFixBackend._Models
         public string Id { get; set; }
 
         [BsonElement("VendorId")]
-        [BsonRepresentation(BsonType.ObjectId)] // This will reference the Vendor's _id field
+        [BsonRepresentation(BsonType.ObjectId)] 
         public string VendorId { get; set; }
 
         [BsonElement("ProductName")] 
@@ -19,8 +19,8 @@ namespace TechFixBackend._Models
         [BsonElement("ProductDescription")] 
         public string ProductDescription { get; set; }
 
-        [BsonElement("Category")] 
-        public string Category { get; set; }
+        [BsonElement("CategoryId")] 
+        public string CategoryId { get; set; }
 
         [BsonElement("Price")] 
         public double Price { get; set; }
