@@ -44,10 +44,6 @@ namespace TechFixBackend.Repository
             await _orders.ReplaceOneAsync(o => o.Id == order.Id, order);
         }
 
-        public async Task CancelOrderAsync(Order order)
-        {
-            order.Status = "Canceled";
-            await _orders.ReplaceOneAsync(o => o.Id == order.Id, order);
-        }
+
     }
 }

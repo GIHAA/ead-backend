@@ -30,4 +30,10 @@ namespace TechFixBackend.Dtos
     {
         public string Status { get; set; }
     }
+
+    public class RequestCancelOrderDto
+    {
+        public string Reason { get; set; } // Optional cancellation reason provided by the customer
+
+    }
 }
