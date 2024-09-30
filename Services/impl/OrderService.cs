@@ -89,12 +89,28 @@ namespace TechFixBackend.Services
             await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
-        public async Task CancelOrderAsync(string orderId)
+        public async Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto)
         {
             var existingOrder = await GetOrderByIdAsync(orderId);
             if (existingOrder == null) throw new Exception("Order not found.");
 
-            await _orderRepository.CancelOrderAsync(existingOrder);
+            // Initialize the Cancellation property if it's null
+            if (existingOrder.Cancellation == null)
+            {
+                existingOrder.Cancellation = new Cancellation();
+            }
+
+            if (!string.IsNullOrEmpty(cancelOrderDto.Reason))
+            {
+                existingOrder.Cancellation.Reason = cancelOrderDto.Reason;
+            }
+
+            // Set the cancellation as requested
+            existingOrder.Cancellation.Requested = true;
+            existingOrder.Cancellation.Status = "requested";
+            existingOrder.Cancellation.RequestedAt = DateTime.UtcNow; // Optionally add the timestamp
+            
+            await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
         public async Task UpdateOrderStatusAsync(string orderId, string status)

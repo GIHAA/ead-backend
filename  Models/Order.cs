@@ -31,6 +31,9 @@ namespace TechFixBackend._Models
 
         
         public DateTime? DispatchedDate { get; set; }
+
+        // New Cancellation property
+        public Cancellation? Cancellation { get; set; }
     }
 
     public class OrderItem
@@ -50,5 +53,23 @@ namespace TechFixBackend._Models
 
         
         public float TotalPrice => Quantity * Price;
+    }
+
+
+    public class Cancellation
+    {
+        public bool Requested { get; set; } = false;
+
+
+        public string Status { get; set; } = "none";  // "requested", "approved", "denied"
+
+
+        public string Reason { get; set; }  // Reason provided by the customer
+
+
+        public DateTime? RequestedAt { get; set; }  // Timestamp for the cancellation request
+        
+
+        public DateTime? ResolvedAt { get; set; }  // Timestamp for when the request was resolved
     }
 }
