@@ -51,7 +51,7 @@ namespace TechFixBackend.Repository
 
         public Task<List<ProductCat>> GetAllProductCatAsync()
         {
-            return _productCats.Find(p => true).ToListAsync();
+            return _productCats.Find(p => p.CatStatus == 0 ).ToListAsync();
         }
     }
 }

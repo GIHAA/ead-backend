@@ -48,7 +48,7 @@ public class AuthService
     }
 
     // Login an existing user
-    public async Task<string> LoginAsync(string email, string password)
+    public async Task<(string Token, User User)> LoginAsync(string email, string password)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
@@ -61,13 +61,17 @@ public class AuthService
             throw new Exception("Invalid username or password");
         }
 
+        // Remove the password hash from the user object for security reasons
+        user.PasswordHash = null;
+
         // Generate JWT token if login is successful
         var token = GenerateJwtToken(user.Id, user.Role);
 
         // Send a notification to the user about successful login
         await SendNotificationSafely(user.Id, "Login successful. Welcome back!");
 
-        return token;
+        // Return both token and user details
+        return (token, user);
     }
 
     // Modify user account details
@@ -283,7 +287,7 @@ public class AuthService
             throw new Exception("User deletion failed");
         }
 
-        
+
         await SendNotificationSafely(userId, "Your account has been deleted successfully.");
 
         return true;

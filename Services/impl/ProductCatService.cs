@@ -18,13 +18,13 @@ namespace TechFixBackend.Services
         }
 
         // Retrieves all productCats with vendor details populated
-        public async Task<(List<ProductCatDto> productCats , long totalProductCats) > GetAllProductCatsAsync(int pageNumber, int pageSize)
+        public async Task<(List<ProductCatDto> productCats, long totalProductCats)> GetAllProductCatsAsync(int pageNumber, int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
             var productCats = await _productCatRepository.GetProductCatsAsync(pageNumber, pageSize);
-        
+
             var totalProductCats = await _productCatRepository.GetTotalProductCatsAsync();
 
             var productCatDtos = productCats.Select(pc => new ProductCatDto
@@ -32,7 +32,8 @@ namespace TechFixBackend.Services
                 Id = pc.Id,
                 Category = pc.CatName,
                 CatDescription = pc.CatDescription,
-                ImageUrl = pc.CatImageUrl
+                ImageUrl = pc.CatImageUrl,
+                CatStatus = pc.CatStatus
             }).ToList();
 
             return (productCatDtos, totalProductCats);
@@ -47,7 +48,7 @@ namespace TechFixBackend.Services
 
             // Map productCat to include vendor information
             return new ProductCatDto
-            {   
+            {
                 Id = productCat.Id,
                 Category = productCat.CatName,
                 CatDescription = productCat.CatDescription,
@@ -57,7 +58,7 @@ namespace TechFixBackend.Services
 
         public async Task<ProductCat> CreateProductCatAsync(ProductCatCreateDto productCatDto)
         {
-            
+
             var productCat = new ProductCat
             {
                 CatName = productCatDto.CatName,
@@ -71,22 +72,46 @@ namespace TechFixBackend.Services
 
         public async Task<bool> UpdateProductCatAsync(string productCatId, ProductCatUpdateDto productCatDto)
         {
+            // Validate if productCatDto is null
+            if (productCatDto == null) return false;
+
+            // Retrieve the existing product category from the repository
             var existingProductCat = await _productCatRepository.GetProductCatByIdAsync(productCatId);
+
+            // Return false if the product category does not exist
             if (existingProductCat == null) return false;
 
-            existingProductCat.CatName = productCatDto.CatName ?? existingProductCat.CatName;
-            existingProductCat.CatDescription = productCatDto.CatDescription ?? existingProductCat.CatDescription;
-            existingProductCat.CatImageUrl = productCatDto.CatImageUrl ?? existingProductCat.CatImageUrl;
+            // Update properties only if the new values are provided, otherwise retain the old values
+            existingProductCat.CatName = !string.IsNullOrEmpty(productCatDto.catName)
+                                         ? productCatDto.catName
+                                         : existingProductCat.CatName;
 
+            existingProductCat.CatDescription = !string.IsNullOrEmpty(productCatDto.catDescription)
+                                                ? productCatDto.catDescription
+                                                : existingProductCat.CatDescription;
+
+            existingProductCat.CatImageUrl = !string.IsNullOrEmpty(productCatDto.catImageUrl)
+                                             ? productCatDto.catImageUrl
+                                             : existingProductCat.CatImageUrl;
+
+            // If a new status is provided, update the status
+            if (productCatDto.catStatus.HasValue)
+            {
+                existingProductCat.CatStatus = productCatDto.catStatus.Value;
+            }
+
+
+            // Call the repository to update the product category
             return await _productCatRepository.UpdateProductCatAsync(productCatId, existingProductCat);
         }
+
 
         public async Task<bool> DeleteProductCatAsync(string productCatId)
         {
             return await _productCatRepository.DeleteProductCatAsync(productCatId);
         }
 
-        public async Task< List<ProductCatDto>> GetAllProductCatsAsync()
+        public async Task<List<ProductCatDto>> GetAllProductCatsAsync()
         {
             var productCat = await _productCatRepository.GetAllProductCatAsync();
             if (productCat == null) return null;
