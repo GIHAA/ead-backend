@@ -21,7 +21,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                await _authService.RegisterAsync(model.Email, model.Password, model.Role ?? "customer");
+                await _authService.RegisterAsync(model.Username,model.Email, model.Password, model.Role ?? "customer");
                 return Ok(new { Message = "Registration successful" });
             }
             catch (Exception ex)
