@@ -20,7 +20,7 @@ public class AuthService
     }
 
     // Register a new user
-    public async Task RegisterAsync(string email, string password, string role = "customer")
+    public async Task RegisterAsync(string username , string email, string password, string role = "customer")
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
@@ -35,6 +35,7 @@ public class AuthService
 
         var user = new User
         {
+            Name = username,
             Email = email,
             PasswordHash = HashPassword(password),
             Role = role,
