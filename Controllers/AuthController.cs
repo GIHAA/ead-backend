@@ -37,14 +37,18 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                var token = await _authService.LoginAsync(model.Email, model.Password);
-                return Ok(new { Token = token });
+                // Call LoginAsync and get both token and user details
+                var (token, user) = await _authService.LoginAsync(model.Email, model.Password);
+
+                // Return both token and user in the response
+                return Ok(new { Token = token, User = user });
             }
             catch (Exception ex)
             {
                 return Unauthorized(new { Message = ex.Message });
             }
         }
+
 
         // Allow only CSR and Administrator to get all users
         [Authorize(Roles = "csr,admin")]
@@ -53,7 +57,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                
+
                 if (pageNumber < 1)
                 {
                     return BadRequest(new { Message = "Page number must be greater than 0." });
@@ -95,7 +99,7 @@ namespace TechFixBackend.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { Message = "An error occurred while retrieving users.", Details = ex.Message });
             }
         }

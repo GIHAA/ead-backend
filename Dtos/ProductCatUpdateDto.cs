@@ -1,9 +1,12 @@
+using TechFixBackend._Models;
+
 namespace TechFixBackend.Dtos
 {
     public class ProductCatUpdateDto
     {
-        public string CatName { get; set; }
-        public string CatDescription { get; set; }
-        public string CatImageUrl { get; set; }
+        public string? catName { get; set; }
+        public string? catDescription { get; set; }
+        public string? catImageUrl { get; set; }
+        public CategoryStatus? catStatus { get; set; }
     }
 }

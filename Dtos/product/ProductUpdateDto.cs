@@ -1,3 +1,5 @@
+using TechFixBackend._Models;
+
 namespace TechFixBackend.Dtos
 {
     public class ProductUpdateDto
@@ -8,7 +10,7 @@ namespace TechFixBackend.Dtos
         public string VendorId { get; set; }
         public double Price { get; set; }
         public int StockQuantity { get; set; }
-        public string ProductStatus { get; set; }
+        public ProductStatus ProductStatus { get; set; }
         public string ProductImageUrl { get; set; }
     }
 }

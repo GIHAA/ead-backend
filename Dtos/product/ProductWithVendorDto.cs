@@ -11,7 +11,9 @@ namespace TechFixBackend.Dtos
         public ProductCat Category { get; set; }
         public double Price { get; set; }
         public int StockQuantity { get; set; }
-        public string ProductStatus { get; set; }
+        public ProductStatus ProductStatus { get; set; }
         public string ProductImageUrl { get; set; }
+
+   
     }
 }

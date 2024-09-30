@@ -85,23 +85,23 @@ builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<IProductCatService, ProductCatService>();
 
 // Add CORS policy to allow requests from the Android emulator
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowEmulator",
-        builder =>
-        {
-            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215") 
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowEmulator",
+//         builder =>
+//         {
+//             builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215" , ) 
+//                    .AllowAnyHeader()
+//                    .AllowAnyMethod();
+//         });
 
-    options.AddPolicy("AllowAll", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-});
+//     options.AddPolicy("AllowAll", builder =>
+//     {
+//         builder.AllowAnyOrigin()
+//                .AllowAnyHeader()
+//                .AllowAnyMethod();
+//     });
+// });
 
 var app = builder.Build();
 
@@ -113,7 +113,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.MapControllers().RequireCors("AllowEmulator");
+// app.MapControllers().RequireCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 

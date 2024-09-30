@@ -105,7 +105,6 @@ namespace TechFixBackend.Services
                 CategoryId = productDto.CategoryId,
                 Price = productDto.Price,
                 StockQuantity = productDto.StockQuantity,
-                ProductStatus = productDto.ProductStatus,
                 ProductImageUrl = productDto.ProductImageUrl
             };
 
