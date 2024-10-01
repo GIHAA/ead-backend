@@ -1,28 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\EAD\\ead-backend\\TechFixBackend.csproj": {}
+    "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\EAD\\ead-backend\\TechFixBackend.csproj": {
+    "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\EAD\\ead-backend\\TechFixBackend.csproj",
+        "projectUniqueName": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
         "projectName": "TechFixBackend",
-        "projectPath": "C:\\Users\\User\\Desktop\\EAD\\ead-backend\\TechFixBackend.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\EAD\\ead-backend\\obj\\",
+        "projectPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
+        "packagesPath": "C:\\Users\\sachi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\sachi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -80,7 +77,7 @@
             },
             "MongoDB.Driver": {
               "target": "Package",
-              "version": "[2.28.0, )"
+              "version": "[2.29.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -106,7 +103,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

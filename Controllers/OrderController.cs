@@ -21,14 +21,16 @@ namespace TechFixBackend.Controllers
         {
             try
             {
+                // Assuming the service method correctly handles CategoryId
                 await _orderService.CreateOrderAsync(createOrderDto);
                 return Ok(new { Message = "Order created successfully" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { Message = ex.Message + " ha hah haaaaaaaah" });
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
@@ -55,6 +57,8 @@ namespace TechFixBackend.Controllers
             return Ok(order);
         }
 
+
+
         [HttpPut("update/{orderId}")]
         public async Task<IActionResult> UpdateOrder(string orderId, [FromBody] OrderUpdateDto updateDto)
         {
@@ -68,6 +72,9 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+
+
 
         [HttpPut("request-cancel/{orderId}")]
         public async Task<IActionResult> CancelOrder(string orderId, [FromBody] RequestCancelOrderDto cancelOrderDto)

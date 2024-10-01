@@ -35,4 +35,27 @@ namespace TechFixBackend.Dtos
     {
         public string Reason { get; set; } // Optional cancellation reason provided by the customer
     }
+      public class GetOrderDto
+    {
+        public string OrderId { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; } // Only Customer Name
+        public string CustomerEmail { get; set; } // Only Customer Email
+        public string DeliveryAddress { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string Status { get; set; }
+        public List<GetOrderItemDto> Items { get; set; }
+        public DateTime OrderDate { get; set; }
+
+    }
+
+    public class GetOrderItemDto
+    {
+        public string ProductId { get; set; }
+        public ProductWithVendorDto Product { get; set; } // Use ProductWithVendorDto for product details
+        public int Quantity { get; set; }
+        public float Price { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string Status { get; set; }
+    }
 }
