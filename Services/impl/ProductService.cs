@@ -144,5 +144,34 @@ namespace TechFixBackend.Services
         {
             return await _productRepository.DeleteProductAsync(productId);
         }
+
+
+        public async Task<List<ProductWithVendorDto>> GetProductsByCategoryAsync(string categoryId){
+            var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
+            var productsWithVendors = new List<ProductWithVendorDto>();
+        
+            foreach (var product in products)
+            {
+                var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+                var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
+        
+                var productWithVendor = new ProductWithVendorDto
+                {
+                    Id = product.Id,
+                    Vendor = vendor,
+                    ProductName = product.ProductName,
+                    ProductDescription = product.ProductDescription,
+                    Category = category,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    ProductStatus = product.ProductStatus,
+                    ProductImageUrl = product.ProductImageUrl
+                };
+        
+                productsWithVendors.Add(productWithVendor);
+            }
+        
+            return productsWithVendors;
+        }
     }
 }

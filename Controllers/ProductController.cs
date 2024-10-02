@@ -75,6 +75,16 @@ namespace TechFixBackend.Controllers
             return Ok(product);
         }
 
+
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetProductsByCategory(string categoryId)
+        {
+            var products = await _productService.GetProductsByCategoryAsync(categoryId);
+            if (products == null || !products.Any()) return NotFound(new { Message = "No products found" });
+
+            return Ok(products);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto productDto)
         {

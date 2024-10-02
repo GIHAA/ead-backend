@@ -62,5 +62,10 @@ namespace TechFixBackend.Repository
             var result = await _products.DeleteOneAsync(p => p.Id == productId);
             return result.DeletedCount > 0;
         }
+        Task<List<Product>> IProductRepository.GetProductsByCategoryAsync(string categoryId)
+        {
+            var filter = Builders<Product>.Filter.Where(p => p.CategoryId == categoryId);
+            return _products.Find(filter).ToListAsync();
+        }
     }
 }

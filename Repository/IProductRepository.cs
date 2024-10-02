@@ -8,6 +8,7 @@ namespace TechFixBackend.Repository
     {
         Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize , string search = "");
         Task<Product> GetProductByIdAsync(string productId);
+        Task<List<Product>> GetProductsByCategoryAsync(string categoryId);
         Task<long> GetTotalProductsAsync(string search = "");
         Task CreateProductAsync(Product product);
         Task<bool> UpdateProductAsync(string productId, Product updatedProduct);
