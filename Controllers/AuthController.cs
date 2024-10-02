@@ -14,6 +14,67 @@ namespace TechFixBackend.Controllers
             _authService = authService;
         }
 
+        //[Authorize]
+        [HttpPost("user/{id}/cart/add")]
+        public async Task<IActionResult> AddToCart(string id, [FromBody] CartItemModel model)
+        {
+            try
+            {
+                await _authService.AddToCartAsync(id, model.ProductId, model.Quantity, model.Price);
+                return Ok(new { Message = "Item added to cart" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        //[Authorize]
+        [HttpDelete("user/{id}/cart/remove/{productId}")]
+        public async Task<IActionResult> RemoveFromCart(string id, string productId)
+        {
+            try
+            {
+                await _authService.RemoveFromCartAsync(id, productId);
+                return Ok(new { Message = "Item removed from cart" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        //[Authorize]
+        [HttpPut("user/{id}/cart/update")]
+        public async Task<IActionResult> UpdateCartItemQuantity(string id, [FromBody] CartItemModel model)
+        {
+            try
+            {
+                await _authService.UpdateCartItemQuantityAsync(id, model.ProductId, model.Quantity);
+                return Ok(new { Message = "Cart item updated" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        //[Authorize]
+        [HttpGet("user/{id}/cart")]
+        public async Task<IActionResult> GetCart(string id)
+        {
+            try
+            {
+                var cartWithProducts = await _authService.GetCartAsync(id);
+                return Ok(cartWithProducts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
         // Restrict registration to Administrators only
         //[Authorize(Roles = "admin")]
         [HttpPost("register")]
@@ -21,7 +82,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                await _authService.RegisterAsync(model.Username,model.Email, model.Password, model.Role ?? "customer");
+                await _authService.RegisterAsync(model.Username, model.Email, model.Password, model.Role ?? "customer");
                 return Ok(new { Message = "Registration successful" });
             }
             catch (Exception ex)

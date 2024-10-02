@@ -11,12 +11,14 @@ public class AuthService
     private readonly IUserRepository _userRepository;
     private readonly NotificationService _notificationService;
     private readonly string _key;
+    private readonly IProductRepository _productRepository;
 
-    public AuthService(IUserRepository userRepository, NotificationService notificationService, string key)
+    public AuthService(IUserRepository userRepository, NotificationService notificationService, IProductRepository productRepository  ,  string key)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         _key = key ?? throw new ArgumentNullException(nameof(key));
+        _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
     }
 
     // Register a new user
@@ -308,5 +310,112 @@ public class AuthService
         }
 
         return user;
+    }
+
+
+     public async Task AddToCartAsync(string userId, string productId, int quantity, double price)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        var existingItem = user.Cart.FirstOrDefault(item => item.ProductId == productId);
+        if (existingItem != null)
+        {
+            existingItem.Quantity += quantity;
+        }
+        else
+        {
+            user.Cart.Add(new CartItem
+            {
+                ProductId = productId,
+                Quantity = quantity,
+                Price = price
+            });
+        }
+
+        // Update total price
+        user.TotalPrice = user.Cart.Sum(item => item.Price * item.Quantity);
+
+        // Update user
+        await _userRepository.UpdateUserAsync(userId, user);
+    }
+
+    // Remove an item from the user's cart
+    public async Task RemoveFromCartAsync(string userId, string productId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        var itemToRemove = user.Cart.FirstOrDefault(item => item.ProductId == productId);
+        if (itemToRemove != null)
+        {
+            user.Cart.Remove(itemToRemove);
+
+            // Update total price
+            user.TotalPrice = user.Cart.Sum(item => item.Price * item.Quantity);
+
+            // Update user
+            await _userRepository.UpdateUserAsync(userId, user);
+        }
+    }
+
+    // Update the quantity of an item in the user's cart
+    public async Task UpdateCartItemQuantityAsync(string userId, string productId, int quantity)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        var existingItem = user.Cart.FirstOrDefault(item => item.ProductId == productId);
+        if (existingItem != null)
+        {
+            existingItem.Quantity = quantity;
+
+            // Update total price
+            user.TotalPrice = user.Cart.Sum(item => item.Price * item.Quantity);
+
+            // Update user
+            await _userRepository.UpdateUserAsync(userId, user);
+        }
+    }
+
+    // Get the user's cart
+ public async Task<List<CartItemWithProduct>> GetCartAsync(string userId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        var cartWithProducts = new List<CartItemWithProduct>();
+
+        // Loop through each cart item and fetch product details
+        foreach (var cartItem in user.Cart)
+        {
+            var product = await _productRepository.GetProductByIdAsync(cartItem.ProductId);
+            if (product != null)
+            {
+                cartWithProducts.Add(new CartItemWithProduct
+                {
+                    ProductId = cartItem.ProductId,
+                    ProductName = product.ProductName,
+                    ProductDescription = product.ProductDescription,
+                    Price = cartItem.Price,
+                    Quantity = cartItem.Quantity,
+                    ProductImageUrl = product.ProductImageUrl
+                });
+            }
+        }
+
+        return cartWithProducts;
     }
 }

@@ -31,6 +31,7 @@ builder.Services.AddScoped<AuthService>(provider =>
     new AuthService(
         provider.GetRequiredService<IUserRepository>(),
         provider.GetRequiredService<NotificationService>(),
+        provider.GetRequiredService<IProductRepository>(),
         key
     ));
 
