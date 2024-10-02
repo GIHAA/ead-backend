@@ -7,8 +7,8 @@ namespace TechFixBackend.Services
 {
     public interface IOrderService
     {
-        Task CreateOrderAsync(CreateOrderDto createOrderDto , String id );
-        Task<(List<GetOrderDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null); // Change to GetOrde
+        Task CreateOrderAsync(CreateOrderDto createOrderDto , string customerId);
+        Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null);
         Task<Order> GetOrderByIdAsync(string orderId);
         Task UpdateOrderAsync(string orderId, OrderUpdateDto updateDto);
         Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto);
