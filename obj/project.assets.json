@@ -5530,19 +5530,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/gihan/.nuget/packages/": {}
+    "C:\\Users\\sachi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj",
+      "projectUniqueName": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
       "projectName": "TechFixBackend",
-      "projectPath": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj",
-      "packagesPath": "/Users/gihan/.nuget/packages/",
-      "outputPath": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/obj/",
+      "projectPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
+      "packagesPath": "C:\\Users\\sachi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/gihan/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\sachi\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -5631,16 +5631,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file /Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/obj/project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  }
 }
