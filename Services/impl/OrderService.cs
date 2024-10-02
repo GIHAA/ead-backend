@@ -59,10 +59,10 @@ namespace TechFixBackend.Services
         //     await _orderRepository.CreateOrderAsync(order);
         // }
 
-        public async Task CreateOrderAsync(CreateOrderDto createOrderDto)
+        public async Task CreateOrderAsync(CreateOrderDto createOrderDto , String id)
         {
                 //     // Validate if the customer exists
-            var customer = await _userRepository.GetUserByIdAsync(createOrderDto.CustomerId);
+            var customer = await _userRepository.GetUserByIdAsync(id);
             if (customer == null)
                 throw new Exception("Customer not found."); 
 
@@ -78,7 +78,7 @@ namespace TechFixBackend.Services
 
             var order = new Order
             {
-                CustomerId = createOrderDto.CustomerId,
+                CustomerId = id,
                 Items = createOrderDto.Items.Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
