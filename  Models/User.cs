@@ -9,22 +9,29 @@ public class User
     public string Id { get; set; }
 
     public string Email { get; set; }
-    
-    public string PasswordHash { get; set; } 
-    
+
+    public string PasswordHash { get; set; }
+
     public string Role { get; set; } = "customer"; // Roles: "customer", "admin", "vendor", "csr"
 
     public string Name { get; set; }
-    
+
     public string Address { get; set; }
-    
+
     public string PhoneNumber { get; set; }
-    
+
+    [BsonElement("Cart")]
+    public List<CartItem> Cart { get; set; } = new List<CartItem>();
+
     public string Status { get; set; }
-    
+
     public DateTime AccountCreationDate { get; set; } = DateTime.UtcNow;
 
     // Ensure AverageRating is set and used only for vendor roles
     [BsonIgnoreIfNull]
-    public float? AverageRating { get; set; } 
+    public float? AverageRating { get; set; }
+
+    // Ensure TotalPrice is set and used only for customer roles
+    [BsonElement("TotalPrice")]
+    public double TotalPrice { get; set; } = 0;
 }
