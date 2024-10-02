@@ -53,6 +53,8 @@ namespace TechFixBackend._Models
 
         
         public float TotalPrice => Quantity * Price;
+
+        
     }
 
 
