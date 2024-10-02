@@ -2,7 +2,7 @@ namespace TechFixBackend.Dtos
 {
     public class CreateOrderDto
     {
-        public string CustomerId { get; set; }
+       // public string CustomerId { get; set; }
         public List<OrderItemDto> Items { get; set; }
         public string DeliveryAddress { get; set; }
     }

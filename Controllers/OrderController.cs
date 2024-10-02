@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;
 using TechFixBackend.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TechFixBackend.Controllers
 {
@@ -21,8 +22,33 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                // Assuming the service method correctly handles CategoryId
-                await _orderService.CreateOrderAsync(createOrderDto);
+                // Get the JWT token from the Authorization header
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                // Decode the token
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                Console.WriteLine(jwtToken);
+
+                // Extract the user ID from the token
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "unique_name");
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "User ID not found in the token." });
+                }
+
+                var userId = userIdClaim.Value;
+                Console.WriteLine(userId);
+
+                // Pass the user ID to the service method
+                await _orderService.CreateOrderAsync(createOrderDto, userId);
+
                 return Ok(new { Message = "Order created successfully" });
             }
             catch (Exception ex)
