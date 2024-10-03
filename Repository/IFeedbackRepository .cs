@@ -7,6 +7,7 @@ namespace TechFixBackend.Repository
     {
         Task AddFeedbackAsync(Feedback feedback);
         Task<List<Feedback>> GetFeedbackByVendorIdAsync(string vendorId);
+        Task<List<Feedback>> GetFeedbackByProductIdAsync(string productId);
         Task<List<Feedback>> GetFeedbacksAsync(int pageNumber, int pageSize, string search = "");
         Task<long> GetTotalFeedbacksAsync(string search = "");
         Task<Feedback> GetFeedbackByIdAsync(string feedbackId);

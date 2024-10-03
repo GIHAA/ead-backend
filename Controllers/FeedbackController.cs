@@ -120,6 +120,21 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        // Get all feedback for a specific product
+        [HttpGet("product/{productId}")]
+        public async Task<IActionResult> GetFeedbackForProduct(string productId)
+        {
+            try
+            {
+                var feedbacks = await _feedbackService.GetFeedbackForProductAsync(productId);
+                return Ok(feedbacks);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         // Get the average rating of a vendor
         [HttpGet("vendor/{vendorId}/average-rating")]
         public async Task<IActionResult> GetVendorAverageRating(string vendorId)

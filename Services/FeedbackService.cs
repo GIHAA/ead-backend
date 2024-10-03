@@ -154,6 +154,20 @@ namespace TechFixBackend.Services
                 CreatedDate = fb.CreatedDate
             });
         }
+        // Get all feedback for a product
+        public async Task<List<FeedbackDto>> GetFeedbackForProductAsync(string productId)
+        {
+            var feedbacks = await _feedbackRepository.GetFeedbackByProductIdAsync(productId);
+            return feedbacks.ConvertAll(fb => new FeedbackDto
+            {
+                VendorId = fb.VendorId,
+                CustomerId = fb.CustomerId,
+                ProductId = fb.ProductId,
+                Rating = fb.Rating,
+                Comment = fb.Comment,
+                CreatedDate = fb.CreatedDate
+            });
+        }
 
         // Get the average rating of a vendor
         public async Task<float?> GetVendorAverageRatingAsync(string vendorId)
