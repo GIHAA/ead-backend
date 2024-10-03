@@ -55,22 +55,7 @@ namespace TechFixBackend.Dtos
         public ProductWithVendorDto Product { get; set; } // Use ProductWithVendorDto for product details
         public int Quantity { get; set; }
         public float Price { get; set; }
-        public float TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public string Status { get; set; }
-    }
-
-    public class GetOrderDetailsDto
-    {
-        public string OrderId { get; set; }
-        public User Customer { get; set; }
-        public string DeliveryAddress { get; set; }
-        public float TotalAmount { get; set; }
-        public string Status { get; set; }
-        public List<GetOrderItemDto> Items { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string DeliveryStatus { get; set; }
-        public DateTime? DispatchedDate { get; set; }
-
-       
     }
 }

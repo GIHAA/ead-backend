@@ -44,6 +44,14 @@ namespace TechFixBackend.Services
                 throw new Exception("Invalid product ID or the product does not belong to the specified vendor.");
             }
 
+            // Check if the customer has already provided feedback for this product
+            bool hasProvidedFeedback = await HasCustomerProvidedFeedbackAsync(feedbackCreateDto.CustomerId, feedbackCreateDto.ProductId);
+            if (hasProvidedFeedback)
+            {
+                throw new Exception("Customer has already provided feedback for this product.");
+            }
+
+
             // Create the feedback object with validated data
             var feedback = new Feedback
             {
@@ -93,6 +101,44 @@ namespace TechFixBackend.Services
             // Update the vendor's average rating in the User collection
             await _feedbackRepository.UpdateUserAverageRating(vendorId, avgRating);
         }
+
+        public async Task<(List<FeedbackWithDetailsDto> feedbacks, long totalFeedbacks)> GetAllFeedbackAsync(int pageNumber, int pageSize, string search = "")
+        {
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            // Retrieve paginated feedbacks from repository with optional search
+            var feedbacks = await _feedbackRepository.GetFeedbacksAsync(pageNumber, pageSize, search);
+            var feedbacksWithDetails = new List<FeedbackWithDetailsDto>();
+
+            foreach (var feedback in feedbacks)
+            {
+                // Fetch customer and vendor details
+                var customer = await _userRepository.GetUserByIdAsync(feedback.CustomerId);
+                var vendor = await _userRepository.GetUserByIdAsync(feedback.VendorId);
+                var product = await _productRepository.GetProductByIdAsync(feedback.ProductId);
+
+                // Map feedback to include customer and vendor details
+                var feedbackWithDetails = new FeedbackWithDetailsDto
+                {
+                    Id = feedback.Id,
+                    Customer = customer, // Populate customer details
+                    Vendor = vendor,     // Populate vendor details
+                    Product = product,   // Populate product details
+                    Rating = feedback.Rating,
+                    Comment = feedback.Comment,
+                    CreatedDate = feedback.CreatedDate
+                };
+
+                feedbacksWithDetails.Add(feedbackWithDetails);
+            }
+
+            // Get total count of feedbacks for pagination purposes
+            var totalFeedbacks = await _feedbackRepository.GetTotalFeedbacksAsync(search);
+
+            return (feedbacksWithDetails, totalFeedbacks);
+        }
+
 
         // Get all feedback for a vendor
         public async Task<List<FeedbackDto>> GetFeedbackForVendorAsync(string vendorId)
