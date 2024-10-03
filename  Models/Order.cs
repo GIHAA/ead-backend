@@ -42,6 +42,9 @@ namespace TechFixBackend._Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string ProductId { get; set; }
 
+        // vendorId
+        public string VendorId { get; set; }
+
       
         public int Quantity { get; set; }
 
