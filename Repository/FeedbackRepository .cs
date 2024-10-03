@@ -20,6 +20,36 @@ namespace TechFixBackend.Repository
             await _feedbackCollection.InsertOneAsync(feedback);
         }
 
+        public async Task<List<Feedback>> GetFeedbacksAsync(int pageNumber, int pageSize, string search = "")
+        {
+            // Ensure pageNumber and pageSize are positive
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            // Define the filter to search only in the Comment field
+            var filter = string.IsNullOrEmpty(search)
+                         ? Builders<Feedback>.Filter.Empty
+                         : Builders<Feedback>.Filter.Where(fb => fb.Comment.ToLower().Contains(search.ToLower()));
+
+            // Execute the query with pagination
+            return await _feedbackCollection.Find(filter)
+                .Skip((pageNumber - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<long> GetTotalFeedbacksAsync(string search = "")
+        {
+            // Define the filter for counting feedbacks based on search query
+            var filter = string.IsNullOrEmpty(search)
+                         ? Builders<Feedback>.Filter.Empty
+                         : Builders<Feedback>.Filter.Where(fb => fb.Comment.ToLower().Contains(search.ToLower()));
+
+            // Count the number of documents that match the filter
+            return await _feedbackCollection.CountDocumentsAsync(filter);
+        }
+
+
         // Get all feedback by vendor ID
         public async Task<List<Feedback>> GetFeedbackByVendorIdAsync(string vendorId)
         {
