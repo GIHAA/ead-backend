@@ -244,5 +244,20 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        //get user by id
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            try
+            {
+                var user = await _authService.GetUserByIdAsync(id);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
