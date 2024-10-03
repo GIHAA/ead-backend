@@ -95,77 +95,65 @@ namespace TechFixBackend.Services
 
 
 
-public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
-{
-    // Fetch orders with pagination
-    var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
-
-    // If no orders are found, return an empty list and total count as 0
-    if (orders == null || !orders.Any())
-    {
-        return (new List<GetOrderDetailsDto>(), 0);
-    }
-
-    // Map the Order entity to GetOrderDetailsDto
-    var orderDtos = new List<GetOrderDetailsDto>();
-    foreach (var order in orders)
-    {
-        var orderItems = new List<GetOrderItemDto>();
-        foreach (var item in order.Items)
+        public async Task<(List<GetOrderDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
-            // Fetch product details
-            var product = await _productRepository.GetProductByIdAsync(item.ProductId);
-            if (product == null)
-            {
-                throw new Exception($"Product with ID {item.ProductId} not found.");
-            }
+            var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
 
-            // Fetch vendor details
-            var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
-            if (vendor == null)
-            {
-                throw new Exception($"Vendor with ID {product.VendorId} not found.");
-            }
+            var ordersDto = new List<GetOrderDto>();
 
-            orderItems.Add(new GetOrderItemDto
+            foreach (var order in orders)
             {
-                ProductId = item.ProductId,
-                Product = new ProductWithVendorDto
+                // Fetch Customer Information (Name and Email only)
+                var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
+
+                // Populate Order Items with Product Information
+                var orderItemsDto = new List<GetOrderItemDto>();
+                foreach (var item in order.Items)
                 {
-                    Vendor = vendor, // Map vendor to ProductWithVendorDto
-                    ProductName = product.ProductName,
-                    // You can map other fields from 'product' as necessary
-                },
-                Quantity = item.Quantity,
-                Price = item.Price,
-                TotalPrice = item.TotalPrice,
-                Status = item.Status
-            });
+                    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+
+                    var productDto = product != null ? new ProductWithVendorDto
+                    {
+                        Id = product.Id,
+                        ProductName = product.ProductName,
+                        ProductDescription = product.ProductDescription,
+                        // Category = product.CategoryId,
+                        Price = product.Price,
+                        StockQuantity = product.StockQuantity,
+                        ProductStatus = product.ProductStatus,
+                        ProductImageUrl = product.ProductImageUrl
+                    } : null;
+
+                    orderItemsDto.Add(new GetOrderItemDto
+                    {
+                        ProductId = item.ProductId,
+                        Product = productDto, // Full Product with Vendor
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        TotalPrice = item.Quantity * (decimal)item.Price,
+                        Status = item.Status
+                    });
+                }
+
+                // Create the Order DTO with customer name and email
+                var orderDto = new GetOrderDto
+                {
+                    OrderId = order.Id,
+                    CustomerId = order.CustomerId,
+                    CustomerName = customer?.Name ?? "Unknown", // Assuming the customer model has FullName
+                    CustomerEmail = customer?.Email ?? "Unknown", // Assuming the customer model has Email
+                    DeliveryAddress = order.DeliveryAddress,
+                    TotalAmount = orderItemsDto.Sum(i => i.TotalPrice),
+                    Status = order.Status,
+                    Items = orderItemsDto,
+                    OrderDate = order.OrderDate, 
+                };
+
+                ordersDto.Add(orderDto);
+            }
+
+            return (ordersDto, totalOrders);
         }
-
-        // Fetch customer details
-        var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
-        if (customer == null)
-        {
-            throw new Exception($"Customer with ID {order.CustomerId} not found.");
-        }
-
-        orderDtos.Add(new GetOrderDetailsDto
-        {
-            OrderId = order.Id,
-            Customer = customer, // Map customer to GetOrderDetailsDto
-            DeliveryAddress = order.DeliveryAddress,
-            TotalAmount = order.TotalAmount,
-            Status = order.Status,
-            Items = orderItems,
-            OrderDate = order.OrderDate,
-            DeliveryStatus = order.DeliveryStatus,
-            DispatchedDate = order.DispatchedDate
-        });
-    }
-
-    return (orderDtos, totalOrders);
-}
 
         public async Task<Order> GetOrderByIdAsync(string orderId)
         {

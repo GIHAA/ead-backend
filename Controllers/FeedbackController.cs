@@ -18,6 +18,58 @@ namespace TechFixBackend.Controllers
             _feedbackService = feedbackService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetFeedbacks(int pageNumber = 1, int pageSize = 10, string search = "")
+        {
+            try
+            {
+                // Validate page number and page size
+                if (pageNumber < 1)
+                {
+                    return BadRequest(new { Message = "Page number must be greater than 0." });
+                }
+
+                if (pageSize < 1)
+                {
+                    return BadRequest(new { Message = "Page size must be greater than 0." });
+                }
+
+                // Get feedbacks and total count with search
+                var (pagedFeedbacks, totalFeedbacks) = await _feedbackService.GetAllFeedbackAsync(pageNumber, pageSize, search);
+
+                // Check if no feedbacks are found
+                if (pagedFeedbacks == null || !pagedFeedbacks.Any())
+                {
+                    return NotFound(new { Message = "No feedbacks found." });
+                }
+
+                // Calculate total pages
+                int totalPages = (int)Math.Ceiling((double)totalFeedbacks / pageSize);
+
+                // Ensure pageNumber does not exceed totalPages
+                if (pageNumber > totalPages && totalPages > 0)
+                {
+                    return BadRequest(new { Message = "Page number exceeds total pages." });
+                }
+
+                var response = new
+                {
+                    TotalRecords = totalFeedbacks,
+                    TotalPages = totalPages,
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    Feedbacks = pagedFeedbacks
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving feedbacks.", Details = ex.Message });
+            }
+        }
+
+
         // Add new feedback
         [HttpPost]
         public async Task<IActionResult> AddFeedback([FromBody] FeedbackCreateDto feedbackCreateDto)
