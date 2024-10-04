@@ -11,45 +11,52 @@ namespace TechFixBackend.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IUserRepository _userRepository; // Added to fetch Customer details.
-        private readonly IProductRepository _productRepository; // Added to fetch Product details.
-
+        private readonly IUserRepository _userRepository;
+        private readonly IProductRepository _productRepository;
 
         public OrderService(IOrderRepository orderRepository, IUserRepository userRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
-            _userRepository = userRepository; // Injecting UserRepository.
-            _productRepository = productRepository; // Injecting ProductRepository.
+            _userRepository = userRepository;
+            _productRepository = productRepository;
         }
 
 
         public async Task CreateOrderAsync(CreateOrderDto createOrderDto, String id)
         {
-            //     // Validate if the customer exists
             var customer = await _userRepository.GetUserByIdAsync(id);
+
             if (customer == null)
                 throw new Exception("Customer not found.");
 
-            // Validate if all products exist before creating the order
+            var orderItems = new List<OrderItem>();
+
             foreach (var item in createOrderDto.Items)
             {
                 var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+
                 if (product == null)
-                    throw new Exception($"Product with ID {item.ProductId} not found."); // ProductId comes from Product table.
+                    throw new Exception($"Product with ID {item.ProductId} not found.");
+
+                var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+
+                if (vendor == null)
+                    throw new Exception($"Vendor with ID {product.VendorId} not found.");
+
+                orderItems.Add(new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price,
+                    VendorId = product.VendorId
+                });
             }
-
-
 
             var order = new Order
             {
                 CustomerId = id,
-                Items = createOrderDto.Items.Select(i => new OrderItem
-                {
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity,
-                    Price = i.Price
-                }).ToList(),
-                DeliveryAddress = createOrderDto.DeliveryAddress
+                Items = orderItems,
+                DeliveryAddress = createOrderDto.DeliveryAddress,
             };
 
             order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
@@ -59,32 +66,27 @@ namespace TechFixBackend.Services
 
 
 
+
         public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
-            // Fetch orders with pagination
             var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
 
-            // If no orders are found, return an empty list and total count as 0
             if (orders == null || !orders.Any())
             {
                 return (new List<GetOrderDetailsDto>(), 0);
             }
 
-            // Map the Order entity to GetOrderDetailsDto
             var orderDtos = new List<GetOrderDetailsDto>();
             foreach (var order in orders)
             {
                 var orderItems = new List<GetOrderItemDto>();
                 foreach (var item in order.Items)
                 {
-                    // Fetch product details
                     var product = await _productRepository.GetProductByIdAsync(item.ProductId);
                     if (product == null)
                     {
                         throw new Exception($"Product with ID {item.ProductId} not found.");
                     }
-
-                    // Fetch vendor details
                     var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
                     if (vendor == null)
                     {
@@ -96,9 +98,8 @@ namespace TechFixBackend.Services
                         ProductId = item.ProductId,
                         Product = new ProductWithVendorDto
                         {
-                            Vendor = vendor, // Map vendor to ProductWithVendorDto
+                            Vendor = vendor,
                             ProductName = product.ProductName,
-                            // You can map other fields from 'product' as necessary
                         },
                         Quantity = item.Quantity,
                         Price = item.Price,
@@ -106,8 +107,6 @@ namespace TechFixBackend.Services
                         Status = item.Status
                     });
                 }
-
-                // Fetch customer details
                 var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
                 if (customer == null)
                 {
@@ -117,7 +116,7 @@ namespace TechFixBackend.Services
                 orderDtos.Add(new GetOrderDetailsDto
                 {
                     OrderId = order.Id,
-                    Customer = customer, // Map customer to GetOrderDetailsDto
+                    Customer = customer,
                     DeliveryAddress = order.DeliveryAddress,
                     TotalAmount = order.TotalAmount,
                     Status = order.Status,
@@ -136,32 +135,29 @@ namespace TechFixBackend.Services
 
         public async Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId)
         {
-            // Fetch the order by its ID
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order == null)
             {
                 throw new Exception($"Order with ID {orderId} not found.");
             }
 
-            // Fetch customer details
             var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
             if (customer == null)
             {
                 throw new Exception($"Customer with ID {order.CustomerId} not found.");
             }
 
-            // Map the order items
             var orderItems = new List<GetOrderItemDto>();
             foreach (var item in order.Items)
             {
-                // Fetch product details
+
                 var product = await _productRepository.GetProductByIdAsync(item.ProductId);
                 if (product == null)
                 {
                     throw new Exception($"Product with ID {item.ProductId} not found.");
                 }
 
-                // Fetch vendor details
+
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
                 if (vendor == null)
                 {
@@ -173,10 +169,10 @@ namespace TechFixBackend.Services
                     ProductId = item.ProductId,
                     Product = new ProductWithVendorDto
                     {
-                        Vendor = vendor, // Map vendor to ProductWithVendorDto
+                        Vendor = vendor,
                         ProductName = product.ProductName,
                         ProductImageUrl = product.ProductImageUrl
-                        // You can map other fields from 'product' as necessary
+
                     },
                     Quantity = item.Quantity,
                     Price = item.Price,
@@ -185,15 +181,14 @@ namespace TechFixBackend.Services
                 });
             }
 
-            // Map the order details to the GetOrderDetailsDto
             var orderDto = new GetOrderDetailsDto
             {
                 OrderId = order.Id,
-                Customer = customer, // Map the customer info
+                Customer = customer,
                 DeliveryAddress = order.DeliveryAddress,
                 TotalAmount = order.TotalAmount,
                 Status = order.Status,
-                Items = orderItems, // Add the mapped order items
+                Items = orderItems,
                 OrderDate = order.OrderDate,
                 DeliveryStatus = order.DeliveryStatus,
                 DispatchedDate = order.DispatchedDate
@@ -251,7 +246,7 @@ namespace TechFixBackend.Services
             // await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
-     public async Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto)
+        public async Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto)
         {
             // Fetch the actual Order entity, not the DTO
             var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
@@ -299,5 +294,35 @@ namespace TechFixBackend.Services
             // orderItem.Status = status;
             // await _orderRepository.UpdateOrderAsync(existingOrder);
         }
+
+
+        public async Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId)
+        {
+            var orders = await _orderRepository.GetOrdersByVendorIdAsync(vendorId);
+            if (orders == null || orders.Count == 0)
+            {
+                return null;
+            }
+
+            var orderDtos = orders.Select(order => new VendorOrderDto
+            {
+                OrderId = order.Id.ToString(),
+                OrderDate = order.OrderDate,
+                Items = order.Items
+                            .Where(item => item.VendorId == vendorId)
+                            .Select(item => new VendorOrderItemDto
+                            {
+                                ProductId = item.ProductId,
+                                Quantity = item.Quantity,
+                                TotalPrice = item.Quantity * item.Price
+                            }).ToList()
+            })
+            .Where(orderDto => orderDto.Items.Count > 0)
+            .ToList(); 
+           
+            return orderDtos;
+        }
+
+
     }
 }

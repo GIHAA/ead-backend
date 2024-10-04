@@ -42,7 +42,7 @@ namespace TechFixBackend._Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string ProductId { get; set; }
 
-        // vendorId
+       
         public string VendorId { get; set; }
 
       
@@ -65,16 +65,12 @@ namespace TechFixBackend._Models
     {
         public bool Requested { get; set; } = false;
 
+        public string Status { get; set; } = "none";  
 
-        public string Status { get; set; } = "none";  // "requested", "approved", "denied"
+        public string Reason { get; set; } 
 
-
-        public string Reason { get; set; }  // Reason provided by the customer
-
-
-        public DateTime? RequestedAt { get; set; }  // Timestamp for the cancellation request
+        public DateTime? RequestedAt { get; set; }  
         
-
-        public DateTime? ResolvedAt { get; set; }  // Timestamp for when the request was resolved
+        public DateTime? ResolvedAt { get; set; }  
     }
 }

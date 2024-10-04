@@ -44,5 +44,16 @@ namespace TechFixBackend.Repository
             await _orders.ReplaceOneAsync(o => o.Id == order.Id, order);
         }
 
+public async Task<List<Order>> GetOrdersByVendorIdAsync(string vendorId)
+{
+    var filter = Builders<Order>.Filter.Eq("Items.VendorId", vendorId);
+
+    var orders = await _orders.Find(filter).ToListAsync();
+
+    // Log the number of orders found
+    Console.WriteLine($"Orders found for VendorId {vendorId}: {orders.Count}");
+
+    return orders;
+}
     }
 }
