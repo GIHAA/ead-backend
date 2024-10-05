@@ -19,22 +19,18 @@ namespace TechFixBackend.Services
         }
 
         // Add feedback with proper validation of VendorId, CustomerId, and ProductId
-        public async Task AddFeedbackAsync(FeedbackCreateDto feedbackCreateDto)
+        public async Task AddFeedbackAsync(FeedbackCreateDto feedbackCreateDto, String id)
         {
-            // The IDs for Vendor, Customer, and Product are provided by the client-side and should be validated here.
+             // Validate if the customer exists
+            var customer = await _userRepository.GetUserByIdAsync(id);
+            if (customer == null)
+                throw new Exception("Customer not found.");
 
             // Validate the Vendor and ensure the role is vendor
             var vendor = await _userRepository.GetUserByIdAsync(feedbackCreateDto.VendorId);
             if (vendor == null || vendor.Role != "vendor")
             {
                 throw new Exception("Invalid vendor ID or the user is not a vendor.");
-            }
-
-            // Validate the Customer and ensure the role is customer
-            var customer = await _userRepository.GetUserByIdAsync(feedbackCreateDto.CustomerId);
-            if (customer == null || customer.Role != "customer")
-            {
-                throw new Exception("Invalid customer ID.");
             }
 
             // Validate the Product and ensure it belongs to the Vendor
@@ -45,7 +41,7 @@ namespace TechFixBackend.Services
             }
 
             // Check if the customer has already provided feedback for this product
-            bool hasProvidedFeedback = await HasCustomerProvidedFeedbackAsync(feedbackCreateDto.CustomerId, feedbackCreateDto.ProductId);
+            bool hasProvidedFeedback = await HasCustomerProvidedFeedbackAsync(id, feedbackCreateDto.ProductId);
             if (hasProvidedFeedback)
             {
                 throw new Exception("Customer has already provided feedback for this product.");
@@ -56,7 +52,7 @@ namespace TechFixBackend.Services
             var feedback = new Feedback
             {
                 VendorId = vendor.Id,
-                CustomerId = customer.Id,
+                CustomerId = id,
                 ProductId = product.Id,
                 Rating = feedbackCreateDto.Rating,
                 Comment = feedbackCreateDto.Comment,
@@ -144,6 +140,21 @@ namespace TechFixBackend.Services
         public async Task<List<FeedbackDto>> GetFeedbackForVendorAsync(string vendorId)
         {
             var feedbacks = await _feedbackRepository.GetFeedbackByVendorIdAsync(vendorId);
+            return feedbacks.ConvertAll(fb => new FeedbackDto
+            {
+                VendorId = fb.VendorId,
+                CustomerId = fb.CustomerId,
+                ProductId = fb.ProductId,
+                Rating = fb.Rating,
+                Comment = fb.Comment,
+                CreatedDate = fb.CreatedDate
+            });
+        }
+
+        // Get all feedback for a product
+        public async Task<List<FeedbackDto>> GetFeedbackForProductAsync(string productId)
+        {
+            var feedbacks = await _feedbackRepository.GetFeedbackByProductIdAsync(productId);
             return feedbacks.ConvertAll(fb => new FeedbackDto
             {
                 VendorId = fb.VendorId,

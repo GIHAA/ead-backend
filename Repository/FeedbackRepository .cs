@@ -56,6 +56,12 @@ namespace TechFixBackend.Repository
             return await _feedbackCollection.Find(fb => fb.VendorId == vendorId).ToListAsync();
         }
 
+        // Get all feedback by product ID
+        public async Task<List<Feedback>> GetFeedbackByProductIdAsync(string productId)
+        {
+            return await _feedbackCollection.Find(fb => fb.ProductId == productId).ToListAsync();
+        }
+        
         // Get feedback by feedback ID
         public async Task<Feedback> GetFeedbackByIdAsync(string feedbackId)
         {

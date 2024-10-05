@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;
 using TechFixBackend.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TechFixBackend.Controllers
 {
@@ -76,8 +77,31 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                // Add feedback using the service
-                await _feedbackService.AddFeedbackAsync(feedbackCreateDto);
+                                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                // Decode the token
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                Console.WriteLine(jwtToken);
+
+                // Extract the user ID from the token
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "unique_name");
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "User ID not found in the token." });
+                }
+
+                var userId = userIdClaim.Value;
+                Console.WriteLine(userId);
+
+                // Pass the user ID to the service method
+                await _feedbackService.AddFeedbackAsync(feedbackCreateDto, userId);
                 return CreatedAtAction(nameof(GetFeedbackForVendor), new { vendorId = feedbackCreateDto.VendorId }, feedbackCreateDto);
             }
             catch (Exception ex)
@@ -112,6 +136,21 @@ namespace TechFixBackend.Controllers
             try
             {
                 var feedbacks = await _feedbackService.GetFeedbackForVendorAsync(vendorId);
+                return Ok(feedbacks);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        // Get all feedback for a specific product
+        [HttpGet("product/{productId}")]
+        public async Task<IActionResult> GetFeedbackForProduct(string productId)
+        {
+            try
+            {
+                var feedbacks = await _feedbackService.GetFeedbackForProductAsync(productId);
                 return Ok(feedbacks);
             }
             catch (Exception ex)
