@@ -143,5 +143,25 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+
+           // GET: api/orders/vendor/{vendorId}
+    [HttpGet("vendor/{vendorId}")]
+    public async Task<IActionResult> GetOrdersByVendorId(string vendorId)
+    {
+        try
+        {
+            var orders = await _orderService.GetOrdersByVendorIdAsync(vendorId);
+            if (orders == null || !orders.Any())
+            {
+                return NotFound(new { message = "No orders found for the given vendor." });
+            }
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = ex.Message });
+        }
+    }
     }
 }
