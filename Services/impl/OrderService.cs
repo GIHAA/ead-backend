@@ -131,6 +131,80 @@ namespace TechFixBackend.Services
         }
 
 
+        public async Task<(List<GetCancelledOrderDetailsDto> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null)
+        {
+            var (orders, totalOrders) = await _orderRepository.GetAllCancelReqOrdersAsync(pageNumber, pageSize, customerId);
+
+            if (orders == null || !orders.Any())
+            {
+                return (new List<GetCancelledOrderDetailsDto>(), 0);
+            }
+
+            var orderDtos = new List<GetCancelledOrderDetailsDto>();
+            foreach (var order in orders)
+            {
+                var orderItems = new List<GetOrderItemDto>();
+                foreach (var item in order.Items)
+                {
+                    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        throw new Exception($"Product with ID {item.ProductId} not found.");
+                    }
+                    var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+                    if (vendor == null)
+                    {
+                        throw new Exception($"Vendor with ID {product.VendorId} not found.");
+                    }
+
+                    orderItems.Add(new GetOrderItemDto
+                    {
+                        ProductId = item.ProductId,
+                        Product = new ProductWithVendorDto
+                        {
+                            Vendor = vendor,
+                            ProductName = product.ProductName,
+                        },
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        TotalPrice = item.TotalPrice,
+                        Status = item.Status
+                    });
+                }
+
+                var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
+                if (customer == null)
+                {
+                    throw new Exception($"Customer with ID {order.CustomerId} not found.");
+                }
+                // Map cancellation details
+                var cancellationDto = new CancellationDetailsDto
+                {
+                    Requested = order.Cancellation.Requested,
+                    Status = order.Cancellation.Status,
+                    Reason = order.Cancellation.Reason,
+                    RequestedAt = (DateTime)order.Cancellation.RequestedAt,
+                    ResolvedAt = order.Cancellation.ResolvedAt
+                };
+
+                orderDtos.Add(new GetCancelledOrderDetailsDto
+                {
+                    OrderId = order.Id,
+                    Customer = customer,
+                    DeliveryAddress = order.DeliveryAddress,
+                    TotalAmount = order.TotalAmount,
+                    Status = order.Status,
+                    Items = orderItems,
+                    OrderDate = order.OrderDate,
+                    DeliveryStatus = order.DeliveryStatus,
+                    DispatchedDate = order.DispatchedDate,
+                    Cancellation = cancellationDto
+                });
+            }
+
+            return (orderDtos, totalOrders);
+        }
+
 
 
         public async Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId)
@@ -258,9 +332,13 @@ namespace TechFixBackend.Services
                 existingOrder.Cancellation = new Cancellation();
             }
 
-            if (!string.IsNullOrEmpty(cancelOrderDto.Reason))
+            if (cancelOrderDto.Reason != null)
             {
                 existingOrder.Cancellation.Reason = cancelOrderDto.Reason;
+            }
+            else
+            {
+                throw new Exception("No reason provided!");
             }
 
             // Set the cancellation as requested
