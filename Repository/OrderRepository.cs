@@ -34,6 +34,26 @@ namespace TechFixBackend.Repository
             return (orders, totalOrders);
         }
 
+        public async Task<(List<Order> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null)
+        {
+            var filter = Builders<Order>.Filter.Eq(o => o.Cancellation.Requested, true); // Filter orders where cancellation is requested
+
+            if (!string.IsNullOrEmpty(customerId))
+            {
+                var customerFilter = Builders<Order>.Filter.Eq(o => o.CustomerId, customerId);
+                filter = Builders<Order>.Filter.And(filter, customerFilter); // Add customer filter if provided
+            }
+
+            var totalOrders = await _orders.CountDocumentsAsync(filter);
+            var orders = await _orders.Find(filter)
+                                    .Skip((pageNumber - 1) * pageSize)
+                                    .Limit(pageSize)
+                                    .ToListAsync();
+
+            return (orders, totalOrders);
+        }
+
+
         public async Task<Order> GetOrderByIdAsync(string orderId)
         {
             return await _orders.Find(o => o.Id == orderId).FirstOrDefaultAsync();

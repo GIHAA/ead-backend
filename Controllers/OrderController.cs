@@ -74,6 +74,23 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        //get all order cancellations
+        [HttpGet("cancel-requsted")]
+        public async Task<IActionResult> GetAllCancelReqOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
+        {
+            try
+            {
+                var (orders, totalOrders) = await _orderService.GetAllCancelReqOrdersAsync(pageNumber, pageSize, customerId);
+                if (orders == null || !orders.Any()) return Ok(new { Message = "No cancelled orders found." });
+
+                return Ok(new { totalOrders, orders });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         [HttpGet("view/{orderId}")]
         public async Task<IActionResult> ViewOrder(string orderId)
         {
