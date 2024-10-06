@@ -1,5 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TechFixBackend.Hubs;
@@ -38,12 +40,12 @@ builder.Services.AddScoped<AuthService>(provider =>
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("ReactJSDomain", policy =>
     {
-        builder.SetIsOriginAllowed(_ => true) // Allows any origin
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials(); // This requires listing specific origins
+        policy.WithOrigins("http://localhost:5215", "http://localhost:5173")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
     });
 });
 
@@ -65,7 +67,23 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
+
+    // Extract the token from the SignalR query string
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notifications"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
+
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -84,25 +102,32 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<IProductCatService, ProductCatService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+// Register NotificationManager as a singleton
+builder.Services.AddSingleton<NotificationManager>();
+
+// Register NotificationService
+builder.Services.AddScoped<NotificationService>();
 
 // Add CORS policy to allow requests from the Android emulator
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowEmulator",
-//         builder =>
-//         {
-//             builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215" , ) 
-//                    .AllowAnyHeader()
-//                    .AllowAnyMethod();
-//         });
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowEmulator",
+        builder =>
+        {
+            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
 
-//     options.AddPolicy("AllowAll", builder =>
-//     {
-//         builder.AllowAnyOrigin()
-//                .AllowAnyHeader()
-//                .AllowAnyMethod();
-//     });
-// });
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});*/
 
 var app = builder.Build();
 
@@ -113,15 +138,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-// app.MapControllers().RequireCors("AllowEmulator");
+//app.UseCors("AllowSwaggerUI");
+app.UseCors("ReactJSDomain");
+//app.MapControllers().RequireCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 // Configure SignalR endpoints
-app.MapHub<NotificationHub>("/notifications");
+app.MapHub<NotificationHub>("/notifications").RequireCors("ReactJSDomain"); ;
 
 app.UseHttpsRedirection();
 app.Run();

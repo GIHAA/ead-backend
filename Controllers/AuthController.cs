@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TechFixBackend.Exceptions;
+using TechFixBackend.Services;
 
 namespace TechFixBackend.Controllers
 {
@@ -8,10 +10,11 @@ namespace TechFixBackend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
-
-        public AuthController(AuthService authService)
+        private readonly NotificationService _notificationService;
+        public AuthController(AuthService authService, NotificationService notificationService)
         {
             _authService = authService;
+            _notificationService = notificationService;
         }
 
         //[Authorize]
@@ -77,6 +80,7 @@ namespace TechFixBackend.Controllers
 
         // Restrict registration to Administrators only
         //[Authorize(Roles = "admin")]
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -98,17 +102,44 @@ namespace TechFixBackend.Controllers
         {
             try
             {
+                // Check if model is valid
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { Message = "Invalid input" });
+                }
+
                 // Call LoginAsync and get both token and user details
                 var (token, user) = await _authService.LoginAsync(model.Email, model.Password);
+
+                if (token == null || user == null)
+                {
+                    return Unauthorized(new { Message = "Invalid email or password" });
+                }
+
+                // Notify user of successful login via SignalR
+              await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
 
                 // Return both token and user in the response
                 return Ok(new { Token = token, User = user });
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Log exception here for debugging (optional)
+                return Unauthorized(new { Message = "Unauthorized: " + ex.Message });
+            }
+            catch (AccountLockedException ex)
+            {
+                // You can create custom exceptions for specific cases
+                return StatusCode(403, new { Message = ex.Message ?? "Account is locked. Please contact support." });
+            }
             catch (Exception ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                // Catch any other exceptions and return a generic error message
+                // Log exception for debugging
+                return StatusCode(500, new { Message = "An error occurred while processing your request.", Details = ex.Message });
             }
         }
+
 
 
         // Allow only CSR and Administrator to get all users
@@ -165,8 +196,33 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        // Only CSR and Admin can update user details
-        [Authorize(Roles = "csr,admin")]
+        [Authorize(Roles = "vendor,csr,admin")]
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUsersbyId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest(new { Message = "User ID must be provided." });
+            }
+
+            try
+            {
+                var user = await _authService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "User not found." });
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = $"Error retrieving user: {ex.Message}" });
+            }
+        }
+
+        
+        [Authorize(Roles = "vendor,csr,admin")]
         [HttpPut("user/{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
         {
