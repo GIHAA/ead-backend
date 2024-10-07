@@ -7,6 +7,8 @@ namespace TechFixBackend.Services
         // A thread-safe dictionary to manage user connections
         private readonly ConcurrentDictionary<string, string> _connections = new ConcurrentDictionary<string, string>();
 
+        
+
         // Add a new connection
         public void AddConnection(string userId, string connectionId)
         {
