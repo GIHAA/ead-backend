@@ -147,15 +147,8 @@ namespace TechFixBackend.Services
                 foreach (var item in order.Items)
                 {
                     var product = await _productRepository.GetProductByIdAsync(item.ProductId);
-                    if (product == null)
-                    {
-                        throw new Exception($"Product with ID {item.ProductId} not found.");
-                    }
+
                     var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
-                    if (vendor == null)
-                    {
-                        throw new Exception($"Vendor with ID {product.VendorId} not found.");
-                    }
 
                     orderItems.Add(new GetOrderItemDto
                     {
