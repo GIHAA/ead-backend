@@ -343,7 +343,7 @@ namespace TechFixBackend.Services
 
             // Set the cancellation as requested
             existingOrder.Cancellation.Requested = true;
-            existingOrder.Cancellation.Status = "requested";
+            existingOrder.Cancellation.Status = "Requested";
             existingOrder.Cancellation.RequestedAt = DateTime.UtcNow; // Optionally add the timestamp
 
             // Persist the updated order entity to the database
@@ -358,7 +358,7 @@ namespace TechFixBackend.Services
             if (existingOrder.Cancellation == null) throw new Exception("No cancellation requested for this order");
 
             // Check if the cancellation request is approved
-            if (cancellationResponseDto.Response == "approved")
+            if (cancellationResponseDto.Response == "Approved")
             {
                 // Check if the order's cancellation has already been rejected
                 if (existingOrder.Cancellation.Status == "Rejected")
@@ -381,7 +381,7 @@ namespace TechFixBackend.Services
                 // Set the ResolvedAt to the current time
                 existingOrder.Cancellation.ResolvedAt = DateTime.Now;
             }
-            else if (cancellationResponseDto.Response == "rejected")
+            else if (cancellationResponseDto.Response == "Rejected")
             {
                 // Check if the order's cancellation has already been approved
                 if (existingOrder.Cancellation.Status == "Approved")
