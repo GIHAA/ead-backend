@@ -71,7 +71,7 @@ public class AuthService
         var token = GenerateJwtToken(user.Id, user.Role);
 
         // Send a notification to the user about successful login
-        await SendNotificationSafely(user.Id, "Login successful. Welcome back!");
+       // await SendNotificationSafely(user.Id, "Login successful. Welcome back!");
 
         // Return both token and user details
         return (token, user);
@@ -207,7 +207,7 @@ public class AuthService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, userId),
+                 new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(ClaimTypes.Role, role)
             }),
             Expires = DateTime.UtcNow.AddHours(3),

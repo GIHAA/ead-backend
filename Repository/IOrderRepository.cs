@@ -8,6 +8,7 @@ namespace TechFixBackend.Repository
     {
         Task CreateOrderAsync(Order order);
         Task<(List<Order> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null);
+        Task<(List<Order> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null);
         Task<Order> GetOrderByIdAsync(string orderId);
         Task UpdateOrderAsync(Order order);
         Task<List<Order>> GetOrdersByVendorIdAsync(string vendorId);
