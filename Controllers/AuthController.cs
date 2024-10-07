@@ -196,7 +196,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        [Authorize(Roles = "vendor,csr,admin")]
+        [Authorize(Roles = "vendor,csr,admin,customer")]
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUsersbyId(string id)
         {
