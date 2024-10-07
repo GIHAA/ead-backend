@@ -6,7 +6,8 @@ namespace TechFixBackend._Models
     public enum ProductStatus
     {
         Active,
-        Inactive
+        Inactive,
+        Promoted
     }
     public class Product
     {

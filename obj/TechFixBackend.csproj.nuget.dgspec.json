@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj": {}
+    "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj": {
+    "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
+        "projectUniqueName": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj",
         "projectName": "TechFixBackend",
-        "projectPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\TechFixBackend.csproj",
-        "packagesPath": "C:\\Users\\sachi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sachi\\Desktop\\Y4S1\\new ead be\\ead-backend\\obj\\",
+        "projectPath": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/TechFixBackend.csproj",
+        "packagesPath": "/Users/gihan/.nuget/packages/",
+        "outputPath": "/Users/gihan/Documents/start-up/projects/dotnet-soa/TechFixBackend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\sachi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/gihan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -107,7 +107,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
