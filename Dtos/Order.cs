@@ -35,6 +35,11 @@ namespace TechFixBackend.Dtos
     {
         public string Reason { get; set; } // Optional cancellation reason provided by the customer
     }
+
+    public class CancellationResponseDto 
+    {
+        public string Response { get; set;}
+    }
       public class GetOrderDto
     {
         public string OrderId { get; set; }
@@ -72,6 +77,21 @@ namespace TechFixBackend.Dtos
         public DateTime? DispatchedDate { get; set; }
 
        
+    }
+
+    public class GetCancelOrderDetailsDto
+    {
+        public string OrderId { get; set; }
+        public User Customer { get; set; }
+        public string DeliveryAddress { get; set; }
+        public float TotalAmount { get; set; }
+        public string Status { get; set; }
+        public List<GetOrderItemDto> Items { get; set; }
+        public DateTime OrderDate { get; set; }
+        public string DeliveryStatus { get; set; }
+        public DateTime? DispatchedDate { get; set; }
+        public CancellationDetailsDto Cancellation { get; set; }
+    
     }
 
       public class VendorOrderDto
