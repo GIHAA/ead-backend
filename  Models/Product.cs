@@ -7,7 +7,7 @@ namespace TechFixBackend._Models
     {
         Active,
         Inactive,
-        Promoted
+        Promoted,
     }
     public class Product
     {
