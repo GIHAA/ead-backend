@@ -130,17 +130,42 @@ namespace TechFixBackend.Controllers
         }
 
         // Get all feedback for a specific vendor
-        [HttpGet("vendor/{vendorId}")]
-        public async Task<IActionResult> GetFeedbackForVendor(string vendorId)
+        [HttpGet("vendor-feedback")]
+        public async Task<IActionResult> GetFeedbackForVendor()
         {
-            try
+            
+             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                Console.WriteLine(token);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var vendorIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (vendorIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "Vendor ID not found in the token." });
+                }
+
+                var vendorId = vendorIdClaim.Value;
+
                 var feedbacks = await _feedbackService.GetFeedbackForVendorAsync(vendorId);
+
+                if (feedbacks == null || !feedbacks.Any())
+                {
+                    return NotFound(new { Message = "No feedbacks found for the vendor." });
+                }
+
                 return Ok(feedbacks);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
