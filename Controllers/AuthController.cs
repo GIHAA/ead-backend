@@ -77,7 +77,6 @@ namespace TechFixBackend.Controllers
             }
         }
 
-
         // Restrict registration to Administrators only
         //[Authorize(Roles = "admin")]
         [AllowAnonymous]
@@ -95,20 +94,17 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        // Allow login for all roles
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
             {
-                // Check if model is valid
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(new { Message = "Invalid input" });
                 }
 
-                // Call LoginAsync and get both token and user details
                 var (token, user) = await _authService.LoginAsync(model.Email, model.Password);
 
                 if (token == null || user == null)
@@ -116,29 +112,31 @@ namespace TechFixBackend.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
-                // Notify user of successful login via SignalR
-              await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
+               
+                if (user.Status == "Deactivated")
+                {
+                  
+                    return StatusCode(403, new { Message = "Your account is deactivated. Please contact support for reactivation." });
+                }
 
-                // Return both token and user in the response
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
                 return Ok(new { Token = token, User = user });
             }
             catch (UnauthorizedAccessException ex)
             {
-                // Log exception here for debugging (optional)
                 return Unauthorized(new { Message = "Unauthorized: " + ex.Message });
             }
             catch (AccountLockedException ex)
             {
-                // You can create custom exceptions for specific cases
                 return StatusCode(403, new { Message = ex.Message ?? "Account is locked. Please contact support." });
             }
             catch (Exception ex)
             {
-                // Catch any other exceptions and return a generic error message
-                // Log exception for debugging
                 return StatusCode(500, new { Message = "An error occurred while processing your request.", Details = ex.Message });
             }
         }
+
+
 
 
 
@@ -209,7 +207,7 @@ namespace TechFixBackend.Controllers
             {
                 var user = await _authService.GetUserByIdAsync(id);
                 if (user == null)
-                {
+                { 
                     return NotFound(new { Message = "User not found." });
                 }
 
@@ -222,7 +220,7 @@ namespace TechFixBackend.Controllers
         }
 
         
-        [Authorize(Roles = "vendor,csr,admin")]
+        [Authorize(Roles = "customer,vendor,csr,admin")]
         [HttpPut("user/{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
         {
@@ -254,7 +252,7 @@ namespace TechFixBackend.Controllers
         }
 
         // Deactivate the user's account (CSR/Admin)
-        [Authorize(Roles = "csr,admin")]
+        [Authorize(Roles = ",customer,csr,admin,vendor")]
         [HttpPut("user/{id}/deactivate")]
         public async Task<IActionResult> DeactivateAccount(string id)
         {
