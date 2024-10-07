@@ -22,21 +22,40 @@ namespace TechFixBackend.Services
         }
 
         // Retrieves all products with vendor details populated
-        public async Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize, string search = "")
+        public async Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize, string userId, string search = "")
         {
+            // Ensure valid page number and size
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
-            var products = await _productRepository.GetProductsAsync(pageNumber, pageSize, search);
-            var productsWithVendors = new List<ProductWithVendorDto>();
 
+            // Get user details
+            User user = await _userRepository.GetUserByIdAsync(userId);
+            bool isAdmin = user.Role == "admin";
+
+
+            List<Product> products;
+            long totalProducts;
+
+            // Call the appropriate repository methods depending on user role
+            if (isAdmin)
+            {
+                products = await _productRepository.GetProductsAdminAsync(pageNumber, pageSize, search);
+                totalProducts = await _productRepository.GetTotalProductsAdminAsync(search);
+            }
+            else
+            {
+                products = await _productRepository.GetProductsAsync(pageNumber, pageSize, userId, search);
+                totalProducts = await _productRepository.GetTotalProductsAsync(search, userId);
+            }
+
+            // Map products to include vendor and category information
+            var productsWithVendors = new List<ProductWithVendorDto>();
             foreach (var product in products)
             {
-                // Fetch vendor details individually using existing method
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
                 var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
 
-                // Map product to include vendor information
                 var productWithVendor = new ProductWithVendorDto
                 {
                     Id = product.Id,
@@ -52,8 +71,6 @@ namespace TechFixBackend.Services
 
                 productsWithVendors.Add(productWithVendor);
             }
-
-            var totalProducts = await _productRepository.GetTotalProductsAsync(search);
 
             return (productsWithVendors, totalProducts);
         }
