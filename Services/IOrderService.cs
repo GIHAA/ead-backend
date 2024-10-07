@@ -13,8 +13,9 @@ namespace TechFixBackend.Services
         Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId); 
         Task UpdateOrderAsync(string orderId, OrderUpdateDto updateDto);
         Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto);
+        Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto);
         Task UpdateOrderStatusAsync(string orderId, string status);
         Task UpdateOrderItemStatusAsync(string orderId, string productId, string status);
-         Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId);
+        Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId);
     }
 }

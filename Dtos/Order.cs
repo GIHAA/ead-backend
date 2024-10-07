@@ -35,6 +35,11 @@ namespace TechFixBackend.Dtos
     {
         public string Reason { get; set; } // Optional cancellation reason provided by the customer
     }
+
+    public class CancellationResponseDto 
+    {
+        public string Response { get; set;}
+    }
       public class GetOrderDto
     {
         public string OrderId { get; set; }
@@ -74,18 +79,35 @@ namespace TechFixBackend.Dtos
        
     }
 
-      public class VendorOrderDto
+    public class GetCancelOrderDetailsDto
     {
-        public string OrderId { get; set; } // The ID of the order
-        public DateTime OrderDate { get; set; } // The date of the order
-        public List<VendorOrderItemDto> Items { get; set; } // The list of items in the order
+        public string OrderId { get; set; }
+        public User Customer { get; set; }
+        public string DeliveryAddress { get; set; }
+        public float TotalAmount { get; set; }
+        public string Status { get; set; }
+        public List<GetOrderItemDto> Items { get; set; }
+        public DateTime OrderDate { get; set; }
+        public string DeliveryStatus { get; set; }
+        public DateTime? DispatchedDate { get; set; }
+        public CancellationDetailsDto Cancellation { get; set; }
+    
     }
 
-    public class VendorOrderItemDto
+      public class VendorOrderDto
     {
-        public string ProductId { get; set; } // Product ID
-        public string ProductName { get; set; } // Product Name
-        public int Quantity { get; set; } // Quantity of the product
-        public float TotalPrice { get; set; } // Total price for the product (Quantity * Price)
+        public string OrderId { get; set; } 
+        public string CustomerName { get; set; }
+        public DateTime OrderDate { get; set; } 
+        public List<VendorOrderItemDto> Items { get; set; } 
+    }
+
+  public class VendorOrderItemDto
+    {
+        public string ProductId { get; set; } 
+        public string ProductName { get; set; } 
+        public int Quantity { get; set; } 
+        public float TotalPrice { get; set; } 
+        public string Status { get; set; }
     }
 }

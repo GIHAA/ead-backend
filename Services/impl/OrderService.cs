@@ -147,15 +147,8 @@ namespace TechFixBackend.Services
                 foreach (var item in order.Items)
                 {
                     var product = await _productRepository.GetProductByIdAsync(item.ProductId);
-                    if (product == null)
-                    {
-                        throw new Exception($"Product with ID {item.ProductId} not found.");
-                    }
+
                     var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
-                    if (vendor == null)
-                    {
-                        throw new Exception($"Vendor with ID {product.VendorId} not found.");
-                    }
 
                     orderItems.Add(new GetOrderItemDto
                     {
@@ -343,34 +336,101 @@ namespace TechFixBackend.Services
 
             // Set the cancellation as requested
             existingOrder.Cancellation.Requested = true;
-            existingOrder.Cancellation.Status = "requested";
+            existingOrder.Cancellation.Status = "Requested";
             existingOrder.Cancellation.RequestedAt = DateTime.UtcNow; // Optionally add the timestamp
 
             // Persist the updated order entity to the database
             await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
-        public async Task UpdateOrderStatusAsync(string orderId, string status)
+        public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
         {
-            // var existingOrder = await GetOrderByIdAsync(orderId);
-            // if (existingOrder == null) throw new Exception("Order not found.");
+            // Fetch the existing order
+            var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+            if (existingOrder.Cancellation == null) throw new Exception("No cancellation requested for this order");
 
-            // existingOrder.Status = status;
-            // if (status == "Shipped") existingOrder.DispatchedDate = DateTime.UtcNow;
+            // Check if the cancellation request is approved
+            if (cancellationResponseDto.Response == "Approved")
+            {
+                // Check if the order's cancellation has already been rejected
+                if (existingOrder.Cancellation.Status == "Rejected")
+                {
+                    throw new Exception("This cancellation has already been rejected and cannot be approved.");
+                }
 
-            // await _orderRepository.UpdateOrderAsync(existingOrder);
+                // Loop through all the items in the order and set their status to "Cancelled"
+                foreach (var item in existingOrder.Items)
+                {
+                    item.Status = "Cancelled";
+                }
+
+                // Set the order status to "Cancelled"
+                existingOrder.Status = "Cancelled";
+
+                // Set the cancellation status to "Approved"
+                existingOrder.Cancellation.Status = "Approved";
+
+                // Set the ResolvedAt to the current time
+                existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+            }
+            else if (cancellationResponseDto.Response == "Rejected")
+            {
+                // Check if the order's cancellation has already been approved
+                if (existingOrder.Cancellation.Status == "Approved")
+                {
+                    throw new Exception("This cancellation has already been approved and cannot be rejected.");
+                }
+
+                // Set the cancellation status to "Rejected"
+                existingOrder.Cancellation.Status = "Rejected";
+
+                // Set the ResolvedAt to the current time
+                existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+            }  else {
+                throw new Exception("Response is not valid");
+            }
+
+            // Save the updated order back to the database
+            await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
-        public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string status)
+        public async Task UpdateOrderStatusAsync(string orderId, string status)
         {
-            // var existingOrder = await GetOrderByIdAsync(orderId);
-            // if (existingOrder == null) throw new Exception("Order not found.");
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
 
-            // var orderItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == productId);
-            // if (orderItem == null) throw new Exception("Order item not found.");
+            order.Status = status;
 
-            // orderItem.Status = status;
-            // await _orderRepository.UpdateOrderAsync(existingOrder);
+            await _orderRepository.UpdateOrderAsync(order);
+        }
+
+        public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string newStatus)
+        {
+
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            var item = order.Items.FirstOrDefault(i => i.ProductId.ToString() == productId);
+            if (item == null)
+            {
+                throw new Exception("Product not found in the order.");
+            }
+
+            if (item.Status == newStatus)
+            {
+                throw new Exception("The status is already set to the selected value.");
+            }
+
+            item.Status = newStatus;
+
+            await _orderRepository.UpdateOrderAsync(order);
         }
 
 
@@ -382,22 +442,52 @@ namespace TechFixBackend.Services
                 return null;
             }
 
-            var orderDtos = orders.Select(order => new VendorOrderDto
+            var orderDtos = new List<VendorOrderDto>();
+
+            foreach (var order in orders)
             {
-                OrderId = order.Id.ToString(),
-                OrderDate = order.OrderDate,
-                Items = order.Items
-                            .Where(item => item.VendorId == vendorId)
-                            .Select(item => new VendorOrderItemDto
-                            {
-                                ProductId = item.ProductId,
-                                Quantity = item.Quantity,
-                                TotalPrice = item.Quantity * item.Price
-                            }).ToList()
-            })
-            .Where(orderDto => orderDto.Items.Count > 0)
-            .ToList(); 
-           
+                var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
+
+                if (customer == null)
+                {
+                    continue;
+                }
+
+                var orderDto = new VendorOrderDto
+                {
+                    OrderId = order.Id.ToString(),
+                    CustomerName = customer.Name,
+                    OrderDate = order.OrderDate,
+                    Items = new List<VendorOrderItemDto>()
+                };
+
+                foreach (var item in order.Items.Where(item => item.VendorId == vendorId))
+                {
+                    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+
+                    if (product == null)
+                    {
+                        continue;
+                    }
+
+                    var orderItemDto = new VendorOrderItemDto
+                    {
+                        ProductId = item.ProductId.ToString(),
+                        ProductName = product.ProductName,
+                        Quantity = item.Quantity,
+                        TotalPrice = item.Quantity * item.Price,
+                        Status = item.Status
+                    };
+
+                    orderDto.Items.Add(orderItemDto);
+                }
+
+                if (orderDto.Items.Count > 0)
+                {
+                    orderDtos.Add(orderDto);
+                }
+            }
+
             return orderDtos;
         }
 
