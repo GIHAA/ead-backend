@@ -350,6 +350,58 @@ namespace TechFixBackend.Services
             await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
+        public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
+        {
+            // Fetch the existing order
+            var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (existingOrder == null) throw new Exception("Order not found.");
+            if (existingOrder.Cancellation == null) throw new Exception("No cancellation requested for this order");
+
+            // Check if the cancellation request is approved
+            if (cancellationResponseDto.Response == "approved")
+            {
+                // Check if the order's cancellation has already been rejected
+                if (existingOrder.Cancellation.Status == "Rejected")
+                {
+                    throw new Exception("This cancellation has already been rejected and cannot be approved.");
+                }
+
+                // Loop through all the items in the order and set their status to "Cancelled"
+                foreach (var item in existingOrder.Items)
+                {
+                    item.Status = "Cancelled";
+                }
+
+                // Set the order status to "Cancelled"
+                existingOrder.Status = "Cancelled";
+
+                // Set the cancellation status to "Approved"
+                existingOrder.Cancellation.Status = "Approved";
+
+                // Set the ResolvedAt to the current time
+                existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+            }
+            else if (cancellationResponseDto.Response == "rejected")
+            {
+                // Check if the order's cancellation has already been approved
+                if (existingOrder.Cancellation.Status == "Approved")
+                {
+                    throw new Exception("This cancellation has already been approved and cannot be rejected.");
+                }
+
+                // Set the cancellation status to "Rejected"
+                existingOrder.Cancellation.Status = "Rejected";
+
+                // Set the ResolvedAt to the current time
+                existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+            }  else {
+                throw new Exception("Response is not valid");
+            }
+
+            // Save the updated order back to the database
+            await _orderRepository.UpdateOrderAsync(existingOrder);
+        }
+
         public async Task UpdateOrderStatusAsync(string orderId, string status)
         {
             // var existingOrder = await GetOrderByIdAsync(orderId);

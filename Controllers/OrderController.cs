@@ -133,6 +133,20 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        [HttpPut("cancel-response/{orderId}")]
+        public async Task<IActionResult> CancelResponse(string orderId, [FromBody] CancellationResponseDto cancellationResponseDto)
+        {
+            try
+            {
+                await _orderService.UpdateOrderCancelAsync(orderId, cancellationResponseDto);
+                return Ok(new { Message = "Order cancellation status updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         [HttpPut("update-status/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateDto statusUpdateDto)
         {
