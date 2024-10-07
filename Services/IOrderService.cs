@@ -15,6 +15,6 @@ namespace TechFixBackend.Services
         Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto);
         Task UpdateOrderStatusAsync(string orderId, string status);
         Task UpdateOrderItemStatusAsync(string orderId, string productId, string status);
-         Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId);
+        Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId);
     }
 }

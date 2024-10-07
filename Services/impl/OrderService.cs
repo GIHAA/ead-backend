@@ -352,25 +352,40 @@ namespace TechFixBackend.Services
 
         public async Task UpdateOrderStatusAsync(string orderId, string status)
         {
-            // var existingOrder = await GetOrderByIdAsync(orderId);
-            // if (existingOrder == null) throw new Exception("Order not found.");
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
 
-            // existingOrder.Status = status;
-            // if (status == "Shipped") existingOrder.DispatchedDate = DateTime.UtcNow;
+            order.Status = status;
 
-            // await _orderRepository.UpdateOrderAsync(existingOrder);
+            await _orderRepository.UpdateOrderAsync(order);
         }
 
-        public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string status)
+        public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string newStatus)
         {
-            // var existingOrder = await GetOrderByIdAsync(orderId);
-            // if (existingOrder == null) throw new Exception("Order not found.");
 
-            // var orderItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == productId);
-            // if (orderItem == null) throw new Exception("Order item not found.");
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
 
-            // orderItem.Status = status;
-            // await _orderRepository.UpdateOrderAsync(existingOrder);
+            var item = order.Items.FirstOrDefault(i => i.ProductId.ToString() == productId);
+            if (item == null)
+            {
+                throw new Exception("Product not found in the order.");
+            }
+
+            if (item.Status == newStatus)
+            {
+                throw new Exception("The status is already set to the selected value.");
+            }
+
+            item.Status = newStatus;
+
+            await _orderRepository.UpdateOrderAsync(order);
         }
 
 
@@ -382,22 +397,52 @@ namespace TechFixBackend.Services
                 return null;
             }
 
-            var orderDtos = orders.Select(order => new VendorOrderDto
+            var orderDtos = new List<VendorOrderDto>();
+
+            foreach (var order in orders)
             {
-                OrderId = order.Id.ToString(),
-                OrderDate = order.OrderDate,
-                Items = order.Items
-                            .Where(item => item.VendorId == vendorId)
-                            .Select(item => new VendorOrderItemDto
-                            {
-                                ProductId = item.ProductId,
-                                Quantity = item.Quantity,
-                                TotalPrice = item.Quantity * item.Price
-                            }).ToList()
-            })
-            .Where(orderDto => orderDto.Items.Count > 0)
-            .ToList(); 
-           
+                var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
+
+                if (customer == null)
+                {
+                    continue;
+                }
+
+                var orderDto = new VendorOrderDto
+                {
+                    OrderId = order.Id.ToString(),
+                    CustomerName = customer.Name,
+                    OrderDate = order.OrderDate,
+                    Items = new List<VendorOrderItemDto>()
+                };
+
+                foreach (var item in order.Items.Where(item => item.VendorId == vendorId))
+                {
+                    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+
+                    if (product == null)
+                    {
+                        continue;
+                    }
+
+                    var orderItemDto = new VendorOrderItemDto
+                    {
+                        ProductId = item.ProductId.ToString(),
+                        ProductName = product.ProductName,
+                        Quantity = item.Quantity,
+                        TotalPrice = item.Quantity * item.Price,
+                        Status = item.Status
+                    };
+
+                    orderDto.Items.Add(orderItemDto);
+                }
+
+                if (orderDto.Items.Count > 0)
+                {
+                    orderDtos.Add(orderDto);
+                }
+            }
+
             return orderDtos;
         }
 

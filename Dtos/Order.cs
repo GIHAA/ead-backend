@@ -76,16 +76,18 @@ namespace TechFixBackend.Dtos
 
       public class VendorOrderDto
     {
-        public string OrderId { get; set; } // The ID of the order
-        public DateTime OrderDate { get; set; } // The date of the order
-        public List<VendorOrderItemDto> Items { get; set; } // The list of items in the order
+        public string OrderId { get; set; } 
+        public string CustomerName { get; set; }
+        public DateTime OrderDate { get; set; } 
+        public List<VendorOrderItemDto> Items { get; set; } 
     }
 
-    public class VendorOrderItemDto
+  public class VendorOrderItemDto
     {
-        public string ProductId { get; set; } // Product ID
-        public string ProductName { get; set; } // Product Name
-        public int Quantity { get; set; } // Quantity of the product
-        public float TotalPrice { get; set; } // Total price for the product (Quantity * Price)
+        public string ProductId { get; set; } 
+        public string ProductName { get; set; } 
+        public int Quantity { get; set; } 
+        public float TotalPrice { get; set; } 
+        public string Status { get; set; }
     }
 }

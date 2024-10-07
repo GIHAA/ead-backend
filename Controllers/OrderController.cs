@@ -147,38 +147,82 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        [HttpPut("update-item-status/{orderId}/{productId}")]
-        public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, [FromBody] OrderItemStatusUpdateDto statusUpdateDto)
+        [HttpGet("vendor-orders")]
+        public async Task<IActionResult> GetOrdersByVendor()
         {
             try
             {
-                await _orderService.UpdateOrderItemStatusAsync(orderId, productId, statusUpdateDto.Status);
-                return Ok(new { Message = "Order item status updated successfully" });
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                // Console.WriteLine(token);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var vendorIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (vendorIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "Vendor ID not found in the token." });
+                }
+
+                var vendorId = vendorIdClaim.Value;
+
+                var orders = await _orderService.GetOrdersByVendorIdAsync(vendorId);
+
+                if (orders == null || !orders.Any())
+                {
+                    return NotFound(new { Message = "No orders found for the vendor." });
+                }
+
+                return Ok(orders);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("{orderId}/item/{productId}/status")]
+        public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, [FromBody] string status)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(status))
+                {
+                    return BadRequest(new { message = "Status cannot be empty." });
+                }
+
+                await _orderService.UpdateOrderItemStatusAsync(orderId, productId, status);
+
+                return Ok(new { message = "Order item status updated successfully." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
 
-           // GET: api/orders/vendor/{vendorId}
-    [HttpGet("vendor/{vendorId}")]
-    public async Task<IActionResult> GetOrdersByVendorId(string vendorId)
-    {
-        try
-        {
-            var orders = await _orderService.GetOrdersByVendorIdAsync(vendorId);
-            if (orders == null || !orders.Any())
-            {
-                return NotFound(new { message = "No orders found for the given vendor." });
-            }
-            return Ok(orders);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = ex.Message });
-        }
-    }
+        // GET: api/orders/vendor/{vendorId}
+        // [HttpGet("vendor/{vendorId}")]
+        // public async Task<IActionResult> GetOrdersByVendorId(string vendorId)
+        // {
+        //     try
+        //     {
+        //         var orders = await _orderService.GetOrdersByVendorIdAsync(vendorId);
+        //         if (orders == null || !orders.Any())
+        //         {
+        //             return NotFound(new { message = "No orders found for the given vendor." });
+        //         }
+        //         return Ok(orders);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, new { message = ex.Message });
+        //     }
+        // }
     }
 }
