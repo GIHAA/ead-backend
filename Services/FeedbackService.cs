@@ -135,6 +135,35 @@ namespace TechFixBackend.Services
             return (feedbacksWithDetails, totalFeedbacks);
         }
 
+         // Retrieve a single feedback for a specific customer, product, and vendor
+        public async Task<FeedbackWithDetailsDto> GetFeedbackForCustomerProductVendorAsync(string vendorId, string productId, string customerId)
+        {
+            // Fetch the feedback from the repository
+            var feedback = await _feedbackRepository.GetFeedbackForCustomerProductVendorAsync(vendorId, productId, customerId);
+            
+            if (feedback == null)
+            {
+                return null;
+            }
+
+            // Fetch customer and vendor details
+            var customer = await _userRepository.GetUserByIdAsync(customerId);
+            var vendor = await _userRepository.GetUserByIdAsync(vendorId);
+            var product = await _productRepository.GetProductByIdAsync(productId);
+
+            // Map the feedback entity to a DTO and return it
+            return new FeedbackWithDetailsDto
+            {
+                Id = feedback.Id,
+                Customer = customer,
+                Vendor = vendor,
+                Product = product,   
+                Rating = feedback.Rating,
+                Comment = feedback.Comment,
+                CreatedDate = feedback.CreatedDate
+            };
+        }
+
 
         // Get all feedback for a vendor
         public async Task<List<FeedbackDto>> GetFeedbackForVendorAsync(string vendorId)
