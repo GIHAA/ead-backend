@@ -40,12 +40,11 @@ builder.Services.AddScoped<AuthService>(provider =>
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ReactJSDomain", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:5215", "http://localhost:5173")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -110,24 +109,6 @@ builder.Services.AddSingleton<NotificationManager>();
 // Register NotificationService
 builder.Services.AddScoped<NotificationService>();
 
-// Add CORS policy to allow requests from the Android emulator
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowEmulator",
-        builder =>
-        {
-            builder.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-
-    options.AddPolicy("AllowAll", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-});*/
 
 var app = builder.Build();
 
@@ -138,16 +119,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-//app.UseCors("AllowSwaggerUI");
-app.UseCors("ReactJSDomain");
-//app.MapControllers().RequireCors("AllowEmulator");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 // Configure SignalR endpoints
-app.MapHub<NotificationHub>("/notifications").RequireCors("ReactJSDomain"); ;
+app.MapHub<NotificationHub>("/notifications").RequireCors("AllowAll"); ;
 
 app.UseHttpsRedirection();
 app.Run();
