@@ -91,7 +91,7 @@ namespace TechFixBackend.Controllers
                 Console.WriteLine(jwtToken);
 
                 // Extract the user ID from the token
-                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "unique_name");
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
                 if (userIdClaim == null)
                 {
                     return Unauthorized(new { Message = "User ID not found in the token." });

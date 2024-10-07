@@ -37,7 +37,7 @@ namespace TechFixBackend.Controllers
                 Console.WriteLine(jwtToken);
 
                 // Extract the user ID from the token
-                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "unique_name");
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
                 if (userIdClaim == null)
                 {
                     return Unauthorized(new { Message = "User ID not found in the token." });
@@ -126,6 +126,20 @@ namespace TechFixBackend.Controllers
             {
                 await _orderService.CancelRequestOrderAsync(orderId, cancelOrderDto);
                 return Ok(new { Message = "Order cancelletion requested successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("cancel-response/{orderId}")]
+        public async Task<IActionResult> CancelResponse(string orderId, [FromBody] CancellationResponseDto cancellationResponseDto)
+        {
+            try
+            {
+                await _orderService.UpdateOrderCancelAsync(orderId, cancellationResponseDto);
+                return Ok(new { Message = "Order cancellation status updated successfully" });
             }
             catch (Exception ex)
             {
