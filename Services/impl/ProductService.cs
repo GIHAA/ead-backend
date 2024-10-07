@@ -14,7 +14,7 @@ namespace TechFixBackend.Services
         private readonly IUserRepository _userRepository;
         private readonly IProductCatRepository _producuCatsRepository;
 
-        public ProductService(IProductRepository productRepository, IUserRepository userRepository , IProductCatRepository producuCatsRepository)
+        public ProductService(IProductRepository productRepository, IUserRepository userRepository, IProductCatRepository producuCatsRepository)
         {
             _productRepository = productRepository;
             _userRepository = userRepository;
@@ -111,31 +111,51 @@ namespace TechFixBackend.Services
             await _productRepository.CreateProductAsync(product);
             return product;
         }
-
         public async Task<bool> UpdateProductAsync(string productId, ProductUpdateDto productDto)
         {
             var existingProduct = await _productRepository.GetProductByIdAsync(productId);
             if (existingProduct == null) return false;
 
-            var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
-            if (vendor == null)
+            // Check for VendorId only if it's provided in the update DTO
+            if (!string.IsNullOrEmpty(productDto.VendorId))
             {
-                throw new Exception("Vendor not found");
+                var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
+                if (vendor == null)
+                {
+                    throw new Exception("Vendor not found");
+                }
+                existingProduct.VendorId = productDto.VendorId;
             }
 
-            var category = await _producuCatsRepository.GetProductCatByIdAsync(productDto.CategoryId);
-            if (category == null)
+            if (!string.IsNullOrEmpty(productDto.CategoryId))
             {
-                throw new Exception("Category not found");
+                var category = await _producuCatsRepository.GetProductCatByIdAsync(productDto.CategoryId);
+                if (category == null)
+                {
+                    throw new Exception("Category not found");
+                }
+                existingProduct.CategoryId = productDto.CategoryId;
             }
 
-            existingProduct.ProductName = productDto.ProductName;
-            existingProduct.ProductDescription = productDto.ProductDescription;
-            existingProduct.CategoryId = productDto.CategoryId;
-            existingProduct.Price = productDto.Price;
-            existingProduct.StockQuantity = productDto.StockQuantity;
-            existingProduct.ProductStatus = productDto.ProductStatus;
-            existingProduct.ProductImageUrl = productDto.ProductImageUrl;
+            if (!string.IsNullOrEmpty(productDto.ProductName))
+                existingProduct.ProductName = productDto.ProductName;
+
+            if (!string.IsNullOrEmpty(productDto.ProductDescription))
+                existingProduct.ProductDescription = productDto.ProductDescription;
+
+            if (productDto.Price > 0)
+                existingProduct.Price = productDto.Price;
+
+            if (productDto.StockQuantity >= 0)
+                existingProduct.StockQuantity = productDto.StockQuantity;
+
+            if (Enum.IsDefined(typeof(ProductStatus), productDto.ProductStatus))
+            {
+                existingProduct.ProductStatus = productDto.ProductStatus;
+            }
+
+            if (!string.IsNullOrEmpty(productDto.ProductImageUrl))
+                existingProduct.ProductImageUrl = productDto.ProductImageUrl;
 
             return await _productRepository.UpdateProductAsync(productId, existingProduct);
         }
@@ -146,15 +166,16 @@ namespace TechFixBackend.Services
         }
 
 
-        public async Task<List<ProductWithVendorDto>> GetProductsByCategoryAsync(string categoryId){
+        public async Task<List<ProductWithVendorDto>> GetProductsByCategoryAsync(string categoryId)
+        {
             var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
             var productsWithVendors = new List<ProductWithVendorDto>();
-        
+
             foreach (var product in products)
             {
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
                 var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
-        
+
                 var productWithVendor = new ProductWithVendorDto
                 {
                     Id = product.Id,
@@ -167,10 +188,10 @@ namespace TechFixBackend.Services
                     ProductStatus = product.ProductStatus,
                     ProductImageUrl = product.ProductImageUrl
                 };
-        
+
                 productsWithVendors.Add(productWithVendor);
             }
-        
+
             return productsWithVendors;
         }
     }
