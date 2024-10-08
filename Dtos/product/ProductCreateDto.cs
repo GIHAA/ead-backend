@@ -10,7 +10,7 @@
  * - ProductCreateDto: Data transfer object used for creating a new product in the Healthy Bites system.
  */
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class ProductCreateDto
     {

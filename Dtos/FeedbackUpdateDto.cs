@@ -5,7 +5,7 @@
  *              Rating and Comment, which can be modified by the customer when updating their feedback.
  */
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class FeedbackUpdateDto
     {

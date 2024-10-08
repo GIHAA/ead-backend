@@ -8,9 +8,9 @@
 
 
 
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public interface IFeedbackRepository
     {

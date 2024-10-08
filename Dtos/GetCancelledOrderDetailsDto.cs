@@ -7,7 +7,7 @@
  */
 
 
-using TechFixBackend.Dtos;
+using HealthyBites.Dtos;
 
 public class GetCancelledOrderDetailsDto
 {

@@ -1,4 +1,4 @@
-﻿namespace TechFixBackend.Dtos
+﻿namespace HealthyBites.Dtos
 {
     public class VendorUpdateDto
     {

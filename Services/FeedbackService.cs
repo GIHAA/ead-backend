@@ -8,11 +8,11 @@
 
 
 
-using TechFixBackend.Dtos;
-using TechFixBackend._Models;
-using TechFixBackend.Repository;
+using HealthyBites.Dtos;
+using HealthyBites._Models;
+using HealthyBites.Repository;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class FeedbackService
     {

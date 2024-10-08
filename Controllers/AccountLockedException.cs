@@ -7,7 +7,7 @@
  */
 
 
-namespace TechFixBackend.Exceptions
+namespace HealthyBites.Exceptions
 {
     public class AccountLockedException : Exception
     {

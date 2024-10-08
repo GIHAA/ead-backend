@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: NotificationController.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file contains the NotificationController class, which provides API endpoints for managing notifications in the system.
  *              It allows for broadcasting notifications, sending notifications to specific users or groups, and managing notification statuses (read/unread).
  * 
@@ -25,11 +25,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
-using TechFixBackend._Models;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites._Models;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

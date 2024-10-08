@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: UserRepository.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the UserRepository class, which handles the database operations for user data in MongoDB.
  *              It includes methods to retrieve, add, update, and delete user records in the MongoDB collection.
  * 
@@ -22,7 +22,7 @@
  */
 
 using MongoDB.Driver;
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public class UserRepository : IUserRepository
     {

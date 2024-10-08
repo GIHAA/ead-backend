@@ -10,7 +10,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class CustomUserIdProvider : IUserIdProvider
     {

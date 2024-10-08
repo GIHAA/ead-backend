@@ -1,7 +1,7 @@
 /*
  * File: Order.cs
  * Project: Healthy Bites
- * Description: This file defines the models related to orders in the TechFixBackend system. It includes the Order, OrderItem, and Cancellation classes,
+ * Description: This file defines the models related to orders in the HealthyBites system. It includes the Order, OrderItem, and Cancellation classes,
  *              which represent the structure of order-related data stored in the MongoDB database. Each class contains relevant properties 
  *              to handle the order lifecycle, including order creation, item details, and cancellation requests.
  * 
@@ -10,7 +10,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
     public class Order
     {

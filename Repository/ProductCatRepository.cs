@@ -14,9 +14,9 @@
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public class ProductCatRepository : IProductCatRepository
     {

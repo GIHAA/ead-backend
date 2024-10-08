@@ -1,14 +1,14 @@
 /*
  * File: OrderDtos.cs
  * Project: Healthy Bites
- * Description: This file contains Data Transfer Objects (DTOs) related to order operations in the TechFixBackend system.
+ * Description: This file contains Data Transfer Objects (DTOs) related to order operations in the HealthyBites system.
  *              DTOs are used to transfer data between the client and server layers. They are designed to keep only necessary 
  *              information and omit sensitive or internal fields, ensuring proper abstraction and clean data handling. 
  *              These DTOs are involved in creating orders, updating order statuses, handling cancellations, and retrieving order details.
  * 
  */
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class CreateOrderDto
     {

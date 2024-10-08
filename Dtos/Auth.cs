@@ -10,7 +10,7 @@
 
 /*
  * File: RegisterModel.cs, LoginModel.cs, and UserUpdateModel.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: These files define the data transfer objects (DTOs) used for user registration, login, and user update requests. 
  *              Each class represents the structure of incoming requests, ensuring data consistency and validation when handling user data.
  * 

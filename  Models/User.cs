@@ -8,7 +8,7 @@
 
 /*
  * File: User.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the User class which represents the structure of user data stored in the MongoDB database.
  *              It includes properties such as email, password hash, role, cart items, and user status.
  * 

@@ -6,7 +6,7 @@
  *              structure for feedback data when fetching or displaying feedback information.
  */
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class FeedbackDto
     {

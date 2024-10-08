@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: NotificationManager.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the NotificationManager class, which manages user connections in a thread-safe manner. 
  *              It stores and tracks SignalR connection IDs, allowing the system to send targeted notifications to specific users.
  * 
@@ -21,7 +21,7 @@
 
 using System.Collections.Concurrent;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class NotificationManager
     {

@@ -1,6 +1,6 @@
 /*
  * File: AuthService.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the AuthService class, which handles authentication, registration, and user management functionality. 
  *              It includes logic for hashing passwords, generating JWT tokens, and managing cart operations for users.
  * 
@@ -31,8 +31,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using TechFixBackend.Repository;
-using TechFixBackend.Services;
+using HealthyBites.Repository;
+using HealthyBites.Services;
 
 public class AuthService
 {

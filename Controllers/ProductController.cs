@@ -15,10 +15,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -11,11 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend._Models;
-using TechFixBackend.Repository;
+using HealthyBites.Dtos;
+using HealthyBites._Models;
+using HealthyBites.Repository;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class OrderService : IOrderService
     {

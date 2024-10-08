@@ -14,12 +14,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TechFixBackend._Models;
-using TechFixBackend.Dtos;
-using TechFixBackend.Repository;
+using HealthyBites._Models;
+using HealthyBites.Dtos;
+using HealthyBites.Repository;
 
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class ProductCatService : IProductCatService
     {

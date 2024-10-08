@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using TechFixBackend.Hubs;
-using TechFixBackend.Repository;
-using TechFixBackend.Services;
+using HealthyBites.Hubs;
+using HealthyBites.Repository;
+using HealthyBites.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "TechFixBackend", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthyBites", Version = "v1" });
 });
 
 // Add SignalR

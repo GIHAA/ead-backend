@@ -11,7 +11,7 @@
  */
 
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class ProductCatCreateDto
     {

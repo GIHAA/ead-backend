@@ -9,10 +9,10 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend._Models;
+using HealthyBites.Dtos;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public interface IOrderService
     {

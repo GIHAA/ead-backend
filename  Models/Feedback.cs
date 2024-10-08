@@ -11,7 +11,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
     public class Feedback
     {
