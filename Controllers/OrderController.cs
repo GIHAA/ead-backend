@@ -44,8 +44,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 var userId = userIdClaim.Value;
-                Console.WriteLine(userId);
-
+                
                 // Pass the user ID to the service method
                 await _orderService.CreateOrderAsync(createOrderDto, userId);
 

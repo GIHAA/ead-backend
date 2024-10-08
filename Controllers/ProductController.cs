@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;
 using TechFixBackend.Services;
@@ -21,6 +22,28 @@ namespace TechFixBackend.Controllers
         {
             try
             {
+
+                // Get the JWT token from the Authorization header
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                // Decode the token
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Extract the user ID from the token
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "User ID not found in the token." });
+                }
+
+                var userId = userIdClaim.Value;
+
                 if (pageNumber < 1)
                 {
                     return BadRequest(new { Message = "Page number must be greater than 0." });
@@ -32,7 +55,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 // Get products and total count with search
-                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, search);
+                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, userId , search);
 
                 // Check if no products are found
                 if (pagedProducts == null || !pagedProducts.Any())

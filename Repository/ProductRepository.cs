@@ -14,7 +14,7 @@ namespace TechFixBackend.Repository
             _products = context.Products;
         }
 
-        public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string search = "")
+        public async Task<List<Product>> GetProductsAdminAsync(int pageNumber, int pageSize, string search = "")
         {
             // Apply search filter and status filter (only Active or Promoted)
             var searchFilter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
@@ -31,7 +31,25 @@ namespace TechFixBackend.Repository
         }
 
 
-        public async Task<long> GetTotalProductsAsync(string search = "")
+        public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string userId ,string search = "")
+        {
+            // Apply search filter and status filter (only Active or Promoted)
+            var searchFilter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                                                   p.ProductDescription.ToLower().Contains(search.ToLower()));
+
+
+            var userFilter = Builders<Product>.Filter.Where(p => p.VendorId == userId);
+
+            var combinedFilter = Builders<Product>.Filter.And(searchFilter, userFilter);
+
+            return await _products.Find(combinedFilter)
+                .Skip((pageNumber - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+        }
+
+
+        public async Task<long> GetTotalProductsAdminAsync(string search = "")
         {
             // Apply search filter
             var filter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
@@ -40,6 +58,18 @@ namespace TechFixBackend.Repository
             return await _products.CountDocumentsAsync(filter);
         }
 
+        public async Task<long> GetTotalProductsAsync(string search = "" , string userId = "")
+        {
+            // Apply search filter
+            var searchFilter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                                                   p.ProductDescription.ToLower().Contains(search.ToLower()));
+
+            var userFilter = Builders<Product>.Filter.Where(p => p.VendorId == userId);
+
+            var combinedFilter = Builders<Product>.Filter.And(searchFilter, userFilter);
+
+            return await _products.CountDocumentsAsync(combinedFilter);
+        }
 
         public async Task<Product> GetProductByIdAsync(string productId)
         {
