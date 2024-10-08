@@ -105,10 +105,10 @@ namespace HealthyBites.Services
             return new ProductWithVendorDto
             {
                 Id = product.Id,
-                Vendor = vendor, // Populate vendor details
+                Vendor = vendor, 
                 ProductName = product.ProductName,
                 ProductDescription = product.ProductDescription,
-                Category = category, // Populate category details
+                Category = category, 
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
                 ProductStatus = product.ProductStatus,
@@ -116,6 +116,7 @@ namespace HealthyBites.Services
             };
         }
 
+        // Creates a new product
         public async Task<Product> CreateProductAsync(ProductCreateDto productDto)
         {
             var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
@@ -147,12 +148,13 @@ namespace HealthyBites.Services
 
             return product;
         }
+
+        // Updates an existing product
         public async Task<bool> UpdateProductAsync(string productId, ProductUpdateDto productDto)
         {
             var existingProduct = await _productRepository.GetProductByIdAsync(productId);
             if (existingProduct == null) return false;
 
-            // Check for VendorId only if it's provided in the update DTO
             if (!string.IsNullOrEmpty(productDto.VendorId))
             {
                 var vendor = await _userRepository.GetUserByIdAsync(productDto.VendorId);
@@ -227,10 +229,9 @@ namespace HealthyBites.Services
             }
 
             return deleteSuccess;
-            //return await _productRepository.DeleteProductAsync(productId);
         }
 
-
+        // Retrieves all products by category with vendor details populated
         public async Task<List<ProductWithVendorDto>> GetProductsByCategoryAsync(string categoryId)
         {
             var products = await _productRepository.GetProductsByCategoryAsync(categoryId);

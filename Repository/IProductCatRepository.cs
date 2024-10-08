@@ -18,12 +18,19 @@ namespace HealthyBites.Repository
 {
     public interface IProductCatRepository
     {
+        // Retrieves a paginated list of product categories
         Task<List<ProductCat>> GetProductCatsAsync(int pageNumber, int pageSize);
+        // Retrieves a specific product category by its ID
         Task<List<ProductCat>> GetAllProductCatAsync();
+        // Retrieves a specific product category by its ID
         Task<ProductCat> GetProductCatByIdAsync(string productCatId);
+        // Retrieves the total count of product categories
         Task<long> GetTotalProductCatsAsync();
+        // Creates a new product category
         Task CreateProductCatAsync(ProductCat productCat);
+        // Updates an existing product category
         Task<bool> UpdateProductCatAsync(string productCatId, ProductCat updatedProductCat);
+        // Deletes an existing product category
         Task<bool> DeleteProductCatAsync(string productCatId);
     }
 }

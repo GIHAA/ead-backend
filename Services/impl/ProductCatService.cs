@@ -59,7 +59,6 @@ namespace HealthyBites.Services
             if (productCat == null) return null;
             Console.WriteLine(productCat);
 
-            // Map productCat to include vendor information
             return new ProductCatDto
             {
                 Id = productCat.Id,
@@ -69,6 +68,7 @@ namespace HealthyBites.Services
             };
         }
 
+        // Creates a new product Catetory
         public async Task<ProductCat> CreateProductCatAsync(ProductCatCreateDto productCatDto)
         {
 
@@ -83,6 +83,7 @@ namespace HealthyBites.Services
             return productCat;
         }
 
+        // Updates an existing product category
         public async Task<bool> UpdateProductCatAsync(string productCatId, ProductCatUpdateDto productCatDto)
         {
             // Validate if productCatDto is null
@@ -118,12 +119,13 @@ namespace HealthyBites.Services
             return await _productCatRepository.UpdateProductCatAsync(productCatId, existingProductCat);
         }
 
-
+        // Deletes an existing product category
         public async Task<bool> DeleteProductCatAsync(string productCatId)
         {
             return await _productCatRepository.DeleteProductCatAsync(productCatId);
         }
 
+        // Retrieves all productCats without pagination
         public async Task<List<ProductCatDto>> GetAllProductCatsAsync()
         {
             var productCat = await _productCatRepository.GetAllProductCatAsync();

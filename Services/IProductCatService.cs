@@ -19,11 +19,17 @@ namespace HealthyBites.Services
 {
     public interface IProductCatService
     {
+        // Retrieves a paginated list of product categories
         Task<(List<ProductCatDto> productCats, long totalProductCats)> GetAllProductCatsAsync(int pageNumber, int pageSize);
+        // Retrieves a list of all product categories
         Task<List<ProductCatDto>> GetAllProductCatsAsync();
+        // Retrieves a specific product category by its ID
         Task<ProductCatDto> GetProductCatByIdAsync(string productCatId);
+        // Creates a new product category
         Task<ProductCat> CreateProductCatAsync(ProductCatCreateDto productCatDto);
+        // Updates an existing product category
         Task<bool> UpdateProductCatAsync(string productCatId, ProductCatUpdateDto productCatDto);
+        // Deletes an existing product category
         Task<bool> DeleteProductCatAsync(string productCatId);
     }
 }

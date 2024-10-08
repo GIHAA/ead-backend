@@ -161,7 +161,6 @@ namespace HealthyBites.Controllers
             try
             {
                 var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                // Console.WriteLine(token);
 
                 if (string.IsNullOrEmpty(token))
                 {

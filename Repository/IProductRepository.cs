@@ -19,15 +19,25 @@ namespace HealthyBites.Repository
 {
     public interface IProductRepository
     {
+        // Retrieves a paginated list of products for admin use
         Task<List<Product>> GetProductsAdminAsync(int pageNumber, int pageSize, string search = "");
+        // Retrieves a paginated list of products for a specific vendor
         Task<bool> DecreaseProductQuantityAsync(string productId, int quantity);
+        // Retrieves a paginated list of products for a specific vendor
         Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string userId, string search = "");
+        // Retrieves a specific product by its ID
         Task<Product> GetProductByIdAsync(string productId);
+        // Retrieves a list of products by category
         Task<List<Product>> GetProductsByCategoryAsync(string categoryId);
+        // Retrieves the total count of products for admin use
         Task<long> GetTotalProductsAdminAsync(string search = "");
+        // Retrieves the total count of products for a specific vendor
         Task<long> GetTotalProductsAsync(string search = "", string userId = "");
+        // Creates a new product
         Task CreateProductAsync(Product product);
+        // Updates an existing product
         Task<bool> UpdateProductAsync(string productId, Product updatedProduct);
+        // Deletes an existing product
         Task<bool> DeleteProductAsync(string productId);
     }
 }

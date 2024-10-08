@@ -120,13 +120,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 
-    //options.AddPolicy("AllowEmulator", policy =>
-    //{
-    //    policy.WithOrigins("https://10.0.2.2:5215", "http://10.0.2.2:5215")
-    //          .AllowAnyHeader()
-    //          .AllowAnyMethod();
-    //});
-
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()

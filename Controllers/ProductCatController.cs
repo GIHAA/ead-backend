@@ -30,6 +30,7 @@ namespace HealthyBites.Controllers
             _productCatService = productCatService;
         }
 
+        // get all with pagination
         [HttpGet]
         public async Task<IActionResult> GetProductCats(int pageNumber = 1, int pageSize = 10)
         {
@@ -84,7 +85,6 @@ namespace HealthyBites.Controllers
         }
 
         // get all without pagination 
-
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProductCats()
         {
@@ -94,6 +94,7 @@ namespace HealthyBites.Controllers
             return Ok(productCats);
         }
 
+        // get by id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductCatById(string id)
         {
@@ -103,6 +104,7 @@ namespace HealthyBites.Controllers
             return Ok(productCat);
         }
 
+        //  create product Catetory
         [HttpPost("create")]
         public async Task<IActionResult> CreateProductCat([FromBody] ProductCatCreateDto productCatDto)
         {
@@ -117,6 +119,7 @@ namespace HealthyBites.Controllers
             }
         }
 
+        // update product category
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProductCat(string id, [FromBody] ProductCatUpdateDto productCatDto)
         {
@@ -126,6 +129,7 @@ namespace HealthyBites.Controllers
             return BadRequest(new { Message = "Update failed" });
         }
 
+        // delete product category
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductCat(string id)
         {

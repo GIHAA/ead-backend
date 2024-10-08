@@ -27,6 +27,7 @@ namespace HealthyBites.Repository
             _products = context.Products;
         }
 
+        // Retrieves a paginated list of products for admin use 
         public async Task<List<Product>> GetProductsAdminAsync(int pageNumber, int pageSize, string search = "")
         {
             // Apply search filter and status filter (only Active or Promoted)
@@ -43,7 +44,7 @@ namespace HealthyBites.Repository
                 .ToListAsync();
         }
 
-
+        // Retrieves a paginated list of products for a specific vendor
         public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string userId, string search = "")
         {
             // Apply search filter and status filter (only Active or Promoted)
@@ -62,6 +63,7 @@ namespace HealthyBites.Repository
         }
 
 
+        // Retrieves the total count of products for admin use
         public async Task<long> GetTotalProductsAdminAsync(string search = "")
         {
             // Apply search filter
@@ -71,6 +73,7 @@ namespace HealthyBites.Repository
             return await _products.CountDocumentsAsync(filter);
         }
 
+        // Retrieves the total count of products for a specific vendor
         public async Task<long> GetTotalProductsAsync(string search = "", string userId = "")
         {
             // Apply search filter
@@ -84,38 +87,46 @@ namespace HealthyBites.Repository
             return await _products.CountDocumentsAsync(combinedFilter);
         }
 
+        // Retrieves a specific product by its ID
         public async Task<Product> GetProductByIdAsync(string productId)
         {
             return await _products.Find(p => p.Id == productId).FirstOrDefaultAsync();
         }
 
+        // Creates a new product
         public async Task CreateProductAsync(Product product)
         {
             await _products.InsertOneAsync(product);
         }
 
+        // Retrieves a paginated list of products by category
         public async Task<long> GetTotalProductsAsync()
         {
             return await _products.CountDocumentsAsync(u => true);
         }
 
+        // Updates an existing product
         public async Task<bool> UpdateProductAsync(string productId, Product updatedProduct)
         {
             var result = await _products.ReplaceOneAsync(p => p.Id == productId, updatedProduct);
             return result.ModifiedCount > 0;
         }
 
+        // Deletes an existing product
         public async Task<bool> DeleteProductAsync(string productId)
         {
             var result = await _products.DeleteOneAsync(p => p.Id == productId);
             return result.DeletedCount > 0;
         }
+
+        // Retrieves a paginated list of products by category
         Task<List<Product>> IProductRepository.GetProductsByCategoryAsync(string categoryId)
         {
             var filter = Builders<Product>.Filter.Where(p => p.CategoryId == categoryId);
             return _products.Find(filter).ToListAsync();
         }
 
+        // Decreases the stock quantity of a product
         public async Task<bool> DecreaseProductQuantityAsync(string productId, int quantity)
         {
             var filter = Builders<Product>.Filter.Where(p => p.Id == productId && p.StockQuantity >= quantity);
