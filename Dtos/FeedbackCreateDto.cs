@@ -1,4 +1,12 @@
-﻿namespace TechFixBackend.Dtos
+﻿/*
+ * File: FeedbackCreateDto.cs
+ * Project: TechFixBackend.Dtos
+ * Description: Data Transfer Object (DTO) for creating new feedback. This class contains properties 
+ *              such as VendorId, ProductId, Rating, and Comment that are required for creating feedback.
+ */
+
+
+namespace TechFixBackend.Dtos
 {
     public class FeedbackCreateDto
     {

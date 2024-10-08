@@ -1,4 +1,14 @@
-﻿using MongoDB.Bson;
+﻿/*
+ * File: Feedback.cs
+ * Project: TechFixBackend._Models
+ * Description: Defines the Feedback model with relevant fields including vendor ID, customer ID, product ID, rating, and comments. 
+ *              Each feedback is associated with a vendor, customer, and product, along with a timestamp for when it was created.
+ * Author: Perera W.H.T.H. it21165498
+ * 
+ */
+
+
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace TechFixBackend._Models

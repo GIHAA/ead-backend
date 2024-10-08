@@ -7,11 +7,6 @@
  * 
  * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
  * 
- * Classes:
- * - Order: Represents an order made by a customer, containing order items, status, and cancellation details.
- * - OrderItem: Represents individual items within an order, including product and vendor details.
- * - Cancellation: Represents the details of a cancellation request for an order.
- * 
  */
 
 using MongoDB.Bson;
