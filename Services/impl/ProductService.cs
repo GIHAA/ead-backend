@@ -1,3 +1,16 @@
+/*
+ * File: ProductService.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductService class, which implements the IProductService interface for managing products in the Healthy Bites system.
+ *              It provides methods for retrieving, creating, updating, and deleting products, along with handling vendor and category associations, 
+ *              pagination, and search functionality.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductService: Implements business logic for managing products, including interactions with vendors and categories in the Healthy Bites system.
+ */
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

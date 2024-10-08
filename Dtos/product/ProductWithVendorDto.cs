@@ -1,3 +1,16 @@
+/*
+ * File: ProductWithVendorDto.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductWithVendorDto data transfer object for the Healthy Bites system. It represents product data along with 
+ *              vendor information, including product details such as name, description, category, price, stock, status, and image URL.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductWithVendorDto: Data transfer object that includes product details and associated vendor information for the Healthy Bites system.
+ */
+
+
 using TechFixBackend._Models;
 
 namespace TechFixBackend.Dtos

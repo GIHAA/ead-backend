@@ -1,3 +1,17 @@
+/*
+ * File: ProductController.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductController for the Healthy Bites system, which manages API requests related to products, including 
+ *              product retrieval, creation, updating, and deletion. The controller uses JWT authentication to validate users and supports pagination,
+ *              searching, and category filtering for product listings.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductController: Handles HTTP requests related to products, including retrieval of products, product creation, updates, and deletion.
+ */
+
+
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;

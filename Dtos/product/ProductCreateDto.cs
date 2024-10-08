@@ -1,3 +1,15 @@
+/*
+ * File: ProductCreateDto.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCreateDto data transfer object for the Healthy Bites system. It represents the data required to create 
+ *              a new product, including vendor ID, product name, description, category ID, price, stock quantity, and image URL.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCreateDto: Data transfer object used for creating a new product in the Healthy Bites system.
+ */
+
 namespace TechFixBackend.Dtos
 {
     public class ProductCreateDto

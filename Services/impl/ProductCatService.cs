@@ -1,3 +1,16 @@
+/*
+ * File: ProductCatService.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatService class, which implements the IProductCatService interface for managing product categories 
+ *              in the Healthy Bites system. It provides methods for retrieving, creating, updating, and deleting product categories, along with 
+ *              handling pagination and DTO mapping for API responses.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatService: Implements business logic for managing product categories in the Healthy Bites system.
+ */
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

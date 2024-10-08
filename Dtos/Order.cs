@@ -27,8 +27,6 @@
  * 
  */
 
-
-
 namespace TechFixBackend.Dtos
 {
     public class CreateOrderDto
