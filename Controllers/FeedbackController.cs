@@ -131,7 +131,7 @@ namespace TechFixBackend.Controllers
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
 
-                Console.WriteLine(jwtToken);
+                // Console.WriteLine(jwtToken);
 
                 // Extract the user ID from the token
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
@@ -197,7 +197,7 @@ namespace TechFixBackend.Controllers
             try
             {
                 var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                Console.WriteLine(token);
+                // Console.WriteLine(token);
 
                 if (string.IsNullOrEmpty(token))
                 {

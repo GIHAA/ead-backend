@@ -17,6 +17,7 @@ namespace TechFixBackend.Controllers
             _orderService = orderService;
         }
 
+        //customer create order
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
         {
@@ -56,7 +57,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
-
+        //admin get all orders
         [HttpGet]
         public async Task<IActionResult> GetAllOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
         {
@@ -73,7 +74,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        //get all order cancellations
+        //customer send cancel request
         [HttpGet("cancel-requsted")]
         public async Task<IActionResult> GetAllCancelReqOrders(int pageNumber = 1, int pageSize = 10, string customerId = null)
         {
@@ -99,25 +100,7 @@ namespace TechFixBackend.Controllers
             return Ok(order);
         }
 
-
-
-        [HttpPut("update/{orderId}")]
-        public async Task<IActionResult> UpdateOrder(string orderId, [FromBody] OrderUpdateDto updateDto)
-        {
-            try
-            {
-                await _orderService.UpdateOrderAsync(orderId, updateDto);
-                return Ok(new { Message = "Order updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
-
-
-
-
+        
         [HttpPut("request-cancel/{orderId}")]
         public async Task<IActionResult> CancelOrder(string orderId, [FromBody] RequestCancelOrderDto cancelOrderDto)
         {
@@ -132,6 +115,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        //update cancllation response 
         [HttpPut("cancel-response/{orderId}")]
         public async Task<IActionResult> CancelResponse(string orderId, [FromBody] CancellationResponseDto cancellationResponseDto)
         {
@@ -146,6 +130,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        //update entire order status
         [HttpPut("update-status/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus(string orderId, [FromBody] OrderStatusUpdateDto statusUpdateDto)
         {
@@ -159,7 +144,8 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
+        
+        //get all orders for currently logged in vendor
         [HttpGet("vendor-orders")]
         public async Task<IActionResult> GetOrdersByVendor()
         {
@@ -198,6 +184,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        //update order item status
         [HttpPut("{orderId}/item/{productId}/status")]
         public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, [FromBody] string status)
         {
@@ -218,24 +205,5 @@ namespace TechFixBackend.Controllers
             }
         }
 
-
-        // GET: api/orders/vendor/{vendorId}
-        // [HttpGet("vendor/{vendorId}")]
-        // public async Task<IActionResult> GetOrdersByVendorId(string vendorId)
-        // {
-        //     try
-        //     {
-        //         var orders = await _orderService.GetOrdersByVendorIdAsync(vendorId);
-        //         if (orders == null || !orders.Any())
-        //         {
-        //             return NotFound(new { message = "No orders found for the given vendor." });
-        //         }
-        //         return Ok(orders);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, new { message = ex.Message });
-        //     }
-        // }
     }
 }

@@ -32,7 +32,6 @@ namespace TechFixBackend._Models
         
         public DateTime? DispatchedDate { get; set; }
 
-        // New Cancellation property
         public Cancellation? Cancellation { get; set; }
     }
 
