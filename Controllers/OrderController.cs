@@ -52,7 +52,7 @@ namespace TechFixBackend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message + " ha hah haaaaaaaah" });
+                return BadRequest(new { ex.Message  });
             }
         }
 

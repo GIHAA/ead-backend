@@ -31,7 +31,7 @@ namespace TechFixBackend.Repository
         }
 
 
-        public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string userId ,string search = "")
+        public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string userId, string search = "")
         {
             // Apply search filter and status filter (only Active or Promoted)
             var searchFilter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
@@ -58,7 +58,7 @@ namespace TechFixBackend.Repository
             return await _products.CountDocumentsAsync(filter);
         }
 
-        public async Task<long> GetTotalProductsAsync(string search = "" , string userId = "")
+        public async Task<long> GetTotalProductsAsync(string search = "", string userId = "")
         {
             // Apply search filter
             var searchFilter = Builders<Product>.Filter.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
@@ -102,5 +102,14 @@ namespace TechFixBackend.Repository
             var filter = Builders<Product>.Filter.Where(p => p.CategoryId == categoryId);
             return _products.Find(filter).ToListAsync();
         }
+
+        public async Task<bool> DecreaseProductQuantityAsync(string productId, int quantity)
+        {
+            var filter = Builders<Product>.Filter.Where(p => p.Id == productId && p.StockQuantity >= quantity);
+            var update = Builders<Product>.Update.Inc(p => p.StockQuantity, -quantity);
+            var result = await _products.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
+
     }
 }
