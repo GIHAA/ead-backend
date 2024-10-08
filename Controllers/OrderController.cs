@@ -198,6 +198,42 @@ namespace TechFixBackend.Controllers
             }
         }
 
+
+        [HttpGet("customer-orders")]
+        public async Task<IActionResult> GetOrdersByCustomer(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                // Console.WriteLine(token);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var customerIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (customerIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "Customer ID not found in the token." });
+                }
+
+                var customerId = customerIdClaim.Value;
+
+                var (orders, totalOrders) = await _orderService.GetOrdersByCustomerIdAsync(customerId, pageNumber, pageSize);
+                if (orders == null || !orders.Any()) return Ok(new { Message = "No orders found." });
+
+                return Ok(new { totalOrders, orders });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
         [HttpPut("{orderId}/item/{productId}/status")]
         public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, [FromBody] string status)
         {

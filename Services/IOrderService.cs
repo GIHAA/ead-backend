@@ -9,6 +9,7 @@ namespace TechFixBackend.Services
     {
         Task CreateOrderAsync(CreateOrderDto createOrderDto , string customerId);
         Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null);
+        Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetOrdersByCustomerIdAsync(string customerId, int pageNumber, int pageSize);
         Task<(List<GetCancelledOrderDetailsDto> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null);
         Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId); 
         Task UpdateOrderAsync(string orderId, OrderUpdateDto updateDto);
