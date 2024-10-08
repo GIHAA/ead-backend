@@ -1,4 +1,27 @@
-﻿using MongoDB.Driver;
+﻿
+/*
+ * File: UserRepository.cs
+ * Project: TechFixBackend
+ * Description: This file defines the UserRepository class, which handles the database operations for user data in MongoDB.
+ *              It includes methods to retrieve, add, update, and delete user records in the MongoDB collection.
+ * 
+ * Authors: Cooray N.T.L. it21177996 
+ * 
+ * Classes:
+ * - UserRepository: Provides an interface between the MongoDB database and the application, managing user-related operations.
+ * 
+ * Methods:
+ * - GetUserByIdAsync: Retrieves a user by their unique userId.
+ * - GetUsersAsync: Retrieves a paginated list of users.
+ * - GetTotalUsersAsync: Returns the total number of users in the database.
+ * - AddUserAsync: Adds a new user to the database.
+ * - UpdateUserAsync: Updates an existing user's details.
+ * - DeleteUserAsync: Deletes a user from the database.
+ * - GetUserByEmailAsync: Retrieves a user by their email address.
+ * 
+ */
+
+using MongoDB.Driver;
 namespace TechFixBackend.Repository
 {
     public class UserRepository : IUserRepository

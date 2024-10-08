@@ -1,3 +1,36 @@
+/*
+ * File: OrderService.cs
+ * Project: TechFixBackend
+ * Description: This file contains the implementation of the OrderService class which handles all operations related to orders. 
+ *              This includes creating orders, retrieving orders (with pagination), handling order cancellation requests, 
+ *              updating order statuses, and managing vendor-specific orders. 
+ *              The class depends on repositories for orders, users, and products to perform its operations.
+ * 
+ * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
+ * 
+ * Dependencies:
+ * - IOrderRepository: Interface for accessing order-related data operations.
+ * - IUserRepository: Interface for accessing user-related data operations.
+ * - IProductRepository: Interface for accessing product-related data operations.
+ * 
+ * Methods:
+ * - CreateOrderAsync(CreateOrderDto, String): Creates a new order with the provided details.
+ * - GetAllOrdersAsync(int, int, string): Retrieves a paginated list of all orders.
+ * - GetAllCancelReqOrdersAsync(int, int, string): Retrieves a paginated list of all cancellation request orders.
+ * - GetOrderByIdAsync(string): Retrieves order details by order ID.
+ * - CancelRequestOrderAsync(string, RequestCancelOrderDto): Handles the request to cancel an order.
+ * - UpdateOrderCancelAsync(string, CancellationResponseDto): Updates the status of an order cancellation request.
+ * - UpdateOrderStatusAsync(string, string): Updates the status of an order.
+ * - UpdateOrderItemStatusAsync(string, string, string): Updates the status of a specific item in an order.
+ * - GetOrdersByVendorIdAsync(string): Retrieves vendor-specific orders.
+ * 
+ * Notes:
+ * - Exception handling is applied to various operations to manage errors when entities (like orders, products, or users) are not found.
+ * - Cancellation requests and statuses are updated based on customer or vendor actions.
+ * - Pagination is applied to order and cancellation requests to enhance performance and usability.
+ * 
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +56,7 @@ namespace TechFixBackend.Services
             _notificationService = notificationService;
         }
 
+
         public async Task CreateOrderAsync(CreateOrderDto createOrderDto, String id)
         {
             var customer = await _userRepository.GetUserByIdAsync(id);
@@ -38,6 +72,11 @@ namespace TechFixBackend.Services
 
                 if (product == null)
                     throw new Exception($"Product with ID {item.ProductId} not found.");
+
+                var decreasedProduct =  await _productRepository.DecreaseProductQuantityAsync(item.ProductId, item.Quantity);
+
+                if (!decreasedProduct)
+                    throw new Exception($"Product with ID {item.ProductId} did not have enough stock.");
 
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
 
@@ -69,6 +108,7 @@ namespace TechFixBackend.Services
             }
         }
 
+        //get all orders and handle pagination
         public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
             var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
@@ -109,6 +149,74 @@ namespace TechFixBackend.Services
                         Status = item.Status
                     });
                 }
+                var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
+                if (customer == null)
+                {
+                    throw new Exception($"Customer with ID {order.CustomerId} not found.");
+                }
+
+                orderDtos.Add(new GetOrderDetailsDto
+                {
+                    OrderId = order.Id,
+                    Customer = customer,
+                    DeliveryAddress = order.DeliveryAddress,
+                    TotalAmount = order.TotalAmount,
+                    Status = order.Status,
+                    Items = orderItems,
+                    OrderDate = order.OrderDate,
+                    DeliveryStatus = order.DeliveryStatus,
+                    DispatchedDate = order.DispatchedDate
+                });
+            }
+
+            return (orderDtos, totalOrders);
+        }
+
+        // The new GetOrdersByCustomerIdAsync function
+  // The new GetOrdersByCustomerIdAsync function
+        public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetOrdersByCustomerIdAsync(string customerId, int pageNumber, int pageSize)
+        {
+            var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);
+
+            if (orders == null || !orders.Any())
+            {
+                return (new List<GetOrderDetailsDto>(), 0);
+            }
+
+            var orderDtos = new List<GetOrderDetailsDto>();
+
+            foreach (var order in orders)
+            {
+                var orderItems = new List<GetOrderItemDto>();
+                foreach (var item in order.Items)
+                {
+                    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        throw new Exception($"Product with ID {item.ProductId} not found.");
+                    }
+
+                    var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+                    if (vendor == null)
+                    {
+                        throw new Exception($"Vendor with ID {product.VendorId} not found.");
+                    }
+
+                    orderItems.Add(new GetOrderItemDto
+                    {
+                        ProductId = item.ProductId,
+                        Product = new ProductWithVendorDto
+                        {
+                            Vendor = vendor,
+                            ProductName = product.ProductName,
+                        },
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        TotalPrice = item.TotalPrice,
+                        Status = item.Status
+                    });
+                }
+
                 var customer = await _userRepository.GetUserByIdAsync(order.CustomerId);
                 if (customer == null)
                 {
@@ -199,6 +307,8 @@ namespace TechFixBackend.Services
             return (orderDtos, totalOrders);
         }
 
+
+
         public async Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
@@ -263,55 +373,7 @@ namespace TechFixBackend.Services
             return orderDto;
         }
 
-        // Updated: Validate ProductId when updating order items.
-        public async Task UpdateOrderAsync(string orderId, OrderUpdateDto updateDto)
-        {
-            // var existingOrder = await GetOrderByIdAsync(orderId);
-            // if (existingOrder == null) throw new Exception("Order not found.");
-
-            // if (!string.IsNullOrEmpty(updateDto.DeliveryAddress))
-            // {
-            //     existingOrder.DeliveryAddress = updateDto.DeliveryAddress;
-            // }
-
-            // if (updateDto.Items != null && updateDto.Items.Any())
-            // {
-            //     foreach (var item in updateDto.Items)
-            //     {
-            //         // Validate if the product exists before updating the item
-            //         var product = await _productRepository.GetProductByIdAsync(item.ProductId);
-            //         if (product == null)
-            //             throw new Exception($"Product with ID {item.ProductId} not found.");
-
-            //         var existingItem = existingOrder.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
-
-            //         if (existingItem != null)
-            //         {
-            //             if (existingItem.Status == "Processing")
-            //             {
-            //                 existingItem.Quantity = item.Quantity;
-            //             }
-            //             else
-            //             {
-            //                 throw new InvalidOperationException($"Cannot update item '{existingItem.ProductId}' as it is not in 'Processing' status.");
-            //             }
-            //         }
-            //         else
-            //         {
-            //             existingOrder.Items.Add(new OrderItem
-            //             {
-            //                 ProductId = item.ProductId,
-            //                 Quantity = item.Quantity,
-            //                 Price = item.Price
-            //             });
-            //         }
-            //     }
-            // }
-
-            // existingOrder.TotalAmount = existingOrder.Items.Sum(i => i.TotalPrice);
-            // await _orderRepository.UpdateOrderAsync(existingOrder);
-        }
-
+        //send order cancellation request
         public async Task CancelRequestOrderAsync(string orderId, RequestCancelOrderDto cancelOrderDto)
         {
             // Fetch the actual Order entity, not the DTO
@@ -348,6 +410,7 @@ namespace TechFixBackend.Services
             }
         }
 
+        //update order cancellation status
         public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
         {
             // Fetch the existing order
@@ -392,7 +455,9 @@ namespace TechFixBackend.Services
 
                 // Set the ResolvedAt to the current time
                 existingOrder.Cancellation.ResolvedAt = DateTime.Now;
-            }  else {
+            }
+            else
+            {
                 throw new Exception("Response is not valid");
             }
 
@@ -400,6 +465,7 @@ namespace TechFixBackend.Services
             await _orderRepository.UpdateOrderAsync(existingOrder);
         }
 
+        //update order status
         public async Task UpdateOrderStatusAsync(string orderId, string status)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
@@ -413,6 +479,7 @@ namespace TechFixBackend.Services
             await _orderRepository.UpdateOrderAsync(order);
         }
 
+        //update order item status
         public async Task UpdateOrderItemStatusAsync(string orderId, string productId, string newStatus)
         {
 
@@ -437,6 +504,7 @@ namespace TechFixBackend.Services
 
             await _orderRepository.UpdateOrderAsync(order);
         }
+
 
         public async Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId)
         {

@@ -1,4 +1,25 @@
 ﻿
+/*
+ * File: NotificationService.cs
+ * Project: TechFixBackend
+ * Description: This file contains the implementation of the NotificationService class, which is responsible for sending and managing notifications in the system.
+ *              It provides methods to send notifications to individual users, groups, or all clients. It also integrates with SignalR to manage user connections
+ *              and supports sending notifications with additional details related to products and orders.
+ * 
+ * Authors: Cooray N.T.L. it21177996 
+ * 
+ * Classes:
+ * - NotificationService: Handles sending notifications to users, managing SignalR groups, and storing notifications in MongoDB.
+ * 
+ * Methods:
+ * - SendNotificationAsync: Sends a notification to all connected clients.
+ * - SendNotificationToUserAsync: Sends a notification to a specific user.
+ * - SendNotificationToGroupAsync: Sends a notification to a specific group of users.
+ * - SendNotificationWithDetailsAsync: Sends a notification to a user with product and order details.
+ * 
+ */
+
+
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using TechFixBackend._Models;

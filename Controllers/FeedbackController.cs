@@ -70,6 +70,49 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        // Get a single feedback for a specific product and vendor by the customer identified by the token
+        [HttpGet("vendor/{vendorId}/product/{productId}")]
+        public async Task<IActionResult> GetFeedbackForCustomerProductVendor(string vendorId, string productId)
+        {
+            try
+            {
+                // Extract token from the Authorization header
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                // Decode the JWT token
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Extract customerId (e.g., claim type 'nameid')
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "User ID not found in the token." });
+                }
+
+                var customerId = userIdClaim.Value;
+
+                // Use the service method to get the feedback for the specified product, vendor, and customer
+                var feedback = await _feedbackService.GetFeedbackForCustomerProductVendorAsync(vendorId, productId, customerId);
+
+                if (feedback == null)
+                {
+                    return NotFound(new { Message = "No feedback found for this product, vendor, and customer." });
+                }
+
+                return Ok(feedback);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving feedback.", Details = ex.Message });
+            }
+        }
+
 
         // Add new feedback
         [HttpPost]
@@ -77,7 +120,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrEmpty(token))
                 {
@@ -88,7 +131,7 @@ namespace TechFixBackend.Controllers
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
 
-                Console.WriteLine(jwtToken);
+                // Console.WriteLine(jwtToken);
 
                 // Extract the user ID from the token
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
@@ -116,8 +159,25 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                // Assume customerId is extracted from the current user context (replace with actual retrieval method)
-                string customerId = "60f0fcb9874bb37187ba7383"; // Replace with actual customer ID retrieval
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                // Decode the token
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Extract the user ID from the token
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (userIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "User ID not found in the token." });
+                }
+
+                var customerId = userIdClaim.Value;
 
                 // Update feedback using the service
                 await _feedbackService.UpdateFeedbackAsync(feedbackId, customerId, feedbackUpdateDto);
@@ -130,17 +190,42 @@ namespace TechFixBackend.Controllers
         }
 
         // Get all feedback for a specific vendor
-        [HttpGet("vendor/{vendorId}")]
-        public async Task<IActionResult> GetFeedbackForVendor(string vendorId)
+        [HttpGet("vendor-feedback")]
+        public async Task<IActionResult> GetFeedbackForVendor()
         {
+
             try
             {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                // Console.WriteLine(token);
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Message = "Token is missing." });
+                }
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var vendorIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+                if (vendorIdClaim == null)
+                {
+                    return Unauthorized(new { Message = "Vendor ID not found in the token." });
+                }
+
+                var vendorId = vendorIdClaim.Value;
+
                 var feedbacks = await _feedbackService.GetFeedbackForVendorAsync(vendorId);
+
+                if (feedbacks == null || !feedbacks.Any())
+                {
+                    return NotFound(new { Message = "No feedbacks found for the vendor." });
+                }
+
                 return Ok(feedbacks);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 

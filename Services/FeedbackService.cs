@@ -135,20 +135,73 @@ namespace TechFixBackend.Services
             return (feedbacksWithDetails, totalFeedbacks);
         }
 
+         // Retrieve a single feedback for a specific customer, product, and vendor
+        public async Task<FeedbackWithDetailsDto> GetFeedbackForCustomerProductVendorAsync(string vendorId, string productId, string customerId)
+        {
+            // Fetch the feedback from the repository
+            var feedback = await _feedbackRepository.GetFeedbackForCustomerProductVendorAsync(vendorId, productId, customerId);
+            
+            if (feedback == null)
+            {
+                return null;
+            }
+
+            // Fetch customer and vendor details
+            var customer = await _userRepository.GetUserByIdAsync(customerId);
+            var vendor = await _userRepository.GetUserByIdAsync(vendorId);
+            var product = await _productRepository.GetProductByIdAsync(productId);
+
+            // Map the feedback entity to a DTO and return it
+            return new FeedbackWithDetailsDto
+            {
+                Id = feedback.Id,
+                Customer = customer,
+                Vendor = vendor,
+                Product = product,   
+                Rating = feedback.Rating,
+                Comment = feedback.Comment,
+                CreatedDate = feedback.CreatedDate
+            };
+        }
+
 
         // Get all feedback for a vendor
-        public async Task<List<FeedbackDto>> GetFeedbackForVendorAsync(string vendorId)
+        public async Task<List<FeedbackWithDetailsDto>> GetFeedbackForVendorAsync(string vendorId ) 
         {
+            
             var feedbacks = await _feedbackRepository.GetFeedbackByVendorIdAsync(vendorId);
-            return feedbacks.ConvertAll(fb => new FeedbackDto
+            var feedbacksWithDetails = new List<FeedbackWithDetailsDto>();
+
+            if (feedbacks == null)
             {
-                VendorId = fb.VendorId,
-                CustomerId = fb.CustomerId,
-                ProductId = fb.ProductId,
-                Rating = fb.Rating,
-                Comment = fb.Comment,
-                CreatedDate = fb.CreatedDate
-            });
+                return null;
+            }
+
+
+           
+            foreach (var feedback in feedbacks)
+            {
+                // Fetch customer and vendor details
+                var customer = await _userRepository.GetUserByIdAsync(feedback.CustomerId);
+                var vendor = await _userRepository.GetUserByIdAsync(feedback.VendorId);
+                var product = await _productRepository.GetProductByIdAsync(feedback.ProductId);
+
+                // Map feedback to include customer and vendor details
+                var feedbackWithDetails = new FeedbackWithDetailsDto
+                {
+                    Id = feedback.Id,
+                    Customer = customer, // Populate customer details
+                    Vendor = vendor,     // Populate vendor details
+                    Product = product,   // Populate product details
+                    Rating = feedback.Rating,
+                    Comment = feedback.Comment,
+                    CreatedDate = feedback.CreatedDate
+                };
+
+                feedbacksWithDetails.Add(feedbackWithDetails);
+            }
+
+            return feedbacksWithDetails;
         }
 
         // Get all feedback for a product

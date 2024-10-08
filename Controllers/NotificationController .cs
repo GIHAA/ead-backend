@@ -1,4 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+/*
+ * File: NotificationController.cs
+ * Project: TechFixBackend
+ * Description: This file contains the NotificationController class, which provides API endpoints for managing notifications in the system.
+ *              It allows for broadcasting notifications, sending notifications to specific users or groups, and managing notification statuses (read/unread).
+ * 
+ * Authors: Cooray N.T.L. it21177996
+ * 
+ * Classes:
+ * - NotificationController: Handles HTTP requests for managing notifications in the system.
+ * 
+ * Methods:
+ * - BroadcastMessage: Sends a notification to all connected clients.
+ * - SendMessageToUser: Sends a notification to a specific user based on their userId.
+ * - SendMessageToGroup: Sends a notification to a specific group.
+ * - AddConnectionToGroup: Adds a client connection to a SignalR group.
+ * - RemoveConnectionFromGroup: Removes a client connection from a SignalR group.
+ * - GetUserNotifications: Retrieves all notifications for a specific user.
+ * - MarkNotificationAsRead: Updates the status of a user's notifications (e.g., marking them as read).
+ * 
+ */
+
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using TechFixBackend._Models;

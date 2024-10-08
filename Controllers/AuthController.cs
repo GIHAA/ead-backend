@@ -1,3 +1,30 @@
+/*
+ * File: AuthController.cs
+ * Project: TechFixBackend
+ * Description: This file defines the AuthController class that manages user authentication, authorization, and cart-related functionality.
+ *              It provides API endpoints for user registration, login, adding/removing items from the cart, and updating user details.
+ * 
+ * Authors: Cooray N.T.L. it21177996 
+ * 
+ * Classes:
+ * - AuthController: Exposes HTTP endpoints to handle user authentication, cart management, and account updates.
+ * 
+ * Methods:
+ * - Register: Registers a new user in the system.
+ * - Login: Authenticates a user and returns a JWT token for authorization.
+ * - AddToCart: Adds an item to a user's cart.
+ * - RemoveFromCart: Removes an item from the user's cart.
+ * - UpdateCartItemQuantity: Updates the quantity of an item in the user's cart.
+ * - GetCart: Retrieves the contents of a user's cart.
+ * - GetUsers: Allows CSR/Admin to retrieve paginated users.
+ * - UpdateUser: Allows user updates based on UserUpdateModel.
+ * - DeleteUser: Deletes a user by their ID.
+ * - DeactivateAccount: Deactivates a user's account.
+ * - RequestReactivation: Submits a request to reactivate a deactivated account.
+ * - ApproveReactivation: Allows CSR/Admin to approve a user's reactivation request.
+ * 
+ */
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechFixBackend.Exceptions;

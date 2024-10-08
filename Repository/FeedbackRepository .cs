@@ -95,5 +95,17 @@ namespace TechFixBackend.Repository
 
             await _userCollection.UpdateOneAsync(filter, update);
         }
+
+        // Fetch a single feedback for a specific customer, product, and vendor
+        public async Task<Feedback> GetFeedbackForCustomerProductVendorAsync(string vendorId, string productId, string customerId)
+        {
+            // Query the feedback collection
+            var filter = Builders<Feedback>.Filter.Where(f => f.VendorId == vendorId 
+                                                           && f.ProductId == productId 
+                                                           && f.CustomerId == customerId);
+
+            // Return the first match
+            return await _feedbackCollection.Find(filter).FirstOrDefaultAsync();
+        }
     }
 }

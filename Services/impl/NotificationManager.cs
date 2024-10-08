@@ -1,4 +1,25 @@
-﻿using System.Collections.Concurrent;
+﻿
+/*
+ * File: NotificationManager.cs
+ * Project: TechFixBackend
+ * Description: This file defines the NotificationManager class, which manages user connections in a thread-safe manner. 
+ *              It stores and tracks SignalR connection IDs, allowing the system to send targeted notifications to specific users.
+ * 
+ * Authors: Cooray N.T.L. it21177996 
+ * 
+ * Classes:
+ * - NotificationManager: Manages SignalR connections for users and groups.
+ * 
+ * Methods:
+ * - AddConnection: Adds a new connection for a user.
+ * - RemoveConnection: Removes a connection when a user disconnects.
+ * - GetUserByConnectionId: Retrieves a userId based on their connectionId.
+ * - GetConnections: Retrieves all connection IDs associated with a userId.
+ * 
+ */
+
+
+using System.Collections.Concurrent;
 
 namespace TechFixBackend.Services
 {

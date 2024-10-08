@@ -1,4 +1,20 @@
-﻿using MongoDB.Bson;
+﻿/*
+ * File: Notification.cs
+ * Project: TechFixBackend
+ * Description: This file defines the models and methods related to notifications in the TechFixBackend system.
+ *              It handles the structure of notification data stored in the MongoDB database, including details such as message, status (read/unread),
+ *              product, order ID, and timestamps. It also includes the functionality for updating notification statuses.
+ * 
+ * Authors: Cooray N.T.L. it21177996 | Perera W.H.T.H. it21165498
+ * 
+ * Classes:
+ * - Notification: Represents a notification sent to users regarding different events such as order updates or messages.
+ * - NotificationStatusUpdateRequest: Represents the structure of a request to update the status of a notification.
+ * 
+ */
+
+
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace TechFixBackend._Models
