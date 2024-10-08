@@ -14,11 +14,13 @@ namespace TechFixBackend.Repository
             _orders = context.Orders;
         }
 
+        //create order
         public async Task CreateOrderAsync(Order order)
         {
             await _orders.InsertOneAsync(order);
         }
 
+        //get all orders
         public async Task<(List<Order> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
             var filter = string.IsNullOrEmpty(customerId)
@@ -34,6 +36,7 @@ namespace TechFixBackend.Repository
             return (orders, totalOrders);
         }
 
+        //get all cancellation requests
         public async Task<(List<Order> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
             var filter = Builders<Order>.Filter.Eq(o => o.Cancellation.Requested, true); // Filter orders where cancellation is requested
@@ -53,17 +56,19 @@ namespace TechFixBackend.Repository
             return (orders, totalOrders);
         }
 
-
+        //get order details by id
         public async Task<Order> GetOrderByIdAsync(string orderId)
         {
             return await _orders.Find(o => o.Id == orderId).FirstOrDefaultAsync();
         }
 
+        //update order
         public async Task UpdateOrderAsync(Order order)
         {
             await _orders.ReplaceOneAsync(o => o.Id == order.Id, order);
         }
 
+        //get vendor specid orders
         public async Task<List<Order>> GetOrdersByVendorIdAsync(string vendorId)
         {
             var filter = Builders<Order>.Filter.Eq("Items.VendorId", vendorId);
