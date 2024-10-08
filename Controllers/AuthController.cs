@@ -1,3 +1,30 @@
+/*
+ * File: AuthController.cs
+ * Project: TechFixBackend
+ * Description: This file defines the AuthController class that manages user authentication, authorization, and cart-related functionality.
+ *              It provides API endpoints for user registration, login, adding/removing items from the cart, and updating user details.
+ * 
+ * Authors: Cooray N.T.L. it21177996 
+ * 
+ * Classes:
+ * - AuthController: Exposes HTTP endpoints to handle user authentication, cart management, and account updates.
+ * 
+ * Methods:
+ * - Register: Registers a new user in the system.
+ * - Login: Authenticates a user and returns a JWT token for authorization.
+ * - AddToCart: Adds an item to a user's cart.
+ * - RemoveFromCart: Removes an item from the user's cart.
+ * - UpdateCartItemQuantity: Updates the quantity of an item in the user's cart.
+ * - GetCart: Retrieves the contents of a user's cart.
+ * - GetUsers: Allows CSR/Admin to retrieve paginated users.
+ * - UpdateUser: Allows user updates based on UserUpdateModel.
+ * - DeleteUser: Deletes a user by their ID.
+ * - DeactivateAccount: Deactivates a user's account.
+ * - RequestReactivation: Submits a request to reactivate a deactivated account.
+ * - ApproveReactivation: Allows CSR/Admin to approve a user's reactivation request.
+ * 
+ */
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechFixBackend.Exceptions;
@@ -77,7 +104,6 @@ namespace TechFixBackend.Controllers
             }
         }
 
-
         // Restrict registration to Administrators only
         //[Authorize(Roles = "admin")]
         [AllowAnonymous]
@@ -95,20 +121,17 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        // Allow login for all roles
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
             {
-                // Check if model is valid
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(new { Message = "Invalid input" });
                 }
 
-                // Call LoginAsync and get both token and user details
                 var (token, user) = await _authService.LoginAsync(model.Email, model.Password);
 
                 if (token == null || user == null)
@@ -116,30 +139,29 @@ namespace TechFixBackend.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
-                // Notify user of successful login via SignalR
-              await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
+               
+                if (user.Status == "Deactivated")
+                {
+                  
+                    return StatusCode(403, new { Message = "Your account is deactivated. Please contact support for reactivation." });
+                }
 
-                // Return both token and user in the response
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
                 return Ok(new { Token = token, User = user });
             }
             catch (UnauthorizedAccessException ex)
             {
-                // Log exception here for debugging (optional)
                 return Unauthorized(new { Message = "Unauthorized: " + ex.Message });
             }
             catch (AccountLockedException ex)
             {
-                // You can create custom exceptions for specific cases
                 return StatusCode(403, new { Message = ex.Message ?? "Account is locked. Please contact support." });
             }
             catch (Exception ex)
             {
-                // Catch any other exceptions and return a generic error message
-                // Log exception for debugging
                 return StatusCode(500, new { Message = "An error occurred while processing your request.", Details = ex.Message });
             }
         }
-
 
 
         // Allow only CSR and Administrator to get all users
@@ -209,7 +231,7 @@ namespace TechFixBackend.Controllers
             {
                 var user = await _authService.GetUserByIdAsync(id);
                 if (user == null)
-                {
+                { 
                     return NotFound(new { Message = "User not found." });
                 }
 
@@ -222,7 +244,7 @@ namespace TechFixBackend.Controllers
         }
 
         
-        [Authorize(Roles = "vendor,csr,admin")]
+        [Authorize(Roles = "customer,vendor,csr,admin")]
         [HttpPut("user/{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
         {
@@ -254,7 +276,7 @@ namespace TechFixBackend.Controllers
         }
 
         // Deactivate the user's account (CSR/Admin)
-        [Authorize(Roles = "csr,admin")]
+        [Authorize(Roles = ",customer,csr,admin,vendor")]
         [HttpPut("user/{id}/deactivate")]
         public async Task<IActionResult> DeactivateAccount(string id)
         {

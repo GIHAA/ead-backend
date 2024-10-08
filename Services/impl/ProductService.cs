@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using TechFixBackend._Models;
 using TechFixBackend.Dtos;
@@ -26,12 +27,14 @@ namespace TechFixBackend.Services
         private readonly IProductRepository _productRepository;
         private readonly IUserRepository _userRepository;
         private readonly IProductCatRepository _producuCatsRepository;
+        private readonly NotificationService _notificationService;
 
-        public ProductService(IProductRepository productRepository, IUserRepository userRepository, IProductCatRepository producuCatsRepository)
+        public ProductService(IProductRepository productRepository, IUserRepository userRepository , IProductCatRepository producuCatsRepository, NotificationService notificationService)
         {
             _productRepository = productRepository;
             _userRepository = userRepository;
             _producuCatsRepository = producuCatsRepository;
+            _notificationService = notificationService;
         }
 
         // Retrieves all products with vendor details populated
@@ -139,6 +142,9 @@ namespace TechFixBackend.Services
             };
 
             await _productRepository.CreateProductAsync(product);
+
+            await _notificationService.SendNotificationWithDetailsAsync(vendor.Id,$"Product '{product.ProductName}' has been created.",product.Id,null);
+
             return product;
         }
         public async Task<bool> UpdateProductAsync(string productId, ProductUpdateDto productDto)
@@ -187,12 +193,41 @@ namespace TechFixBackend.Services
             if (!string.IsNullOrEmpty(productDto.ProductImageUrl))
                 existingProduct.ProductImageUrl = productDto.ProductImageUrl;
 
-            return await _productRepository.UpdateProductAsync(productId, existingProduct);
+            var updateSuccess = await _productRepository.UpdateProductAsync(productId, existingProduct);
+
+            if (updateSuccess)
+            {
+                await _notificationService.SendNotificationWithDetailsAsync(
+                    productDto.VendorId,
+                    $"Product '{existingProduct.ProductName}' has been updated.",
+                    existingProduct.Id,
+                    null 
+                );
+            }
+
+            return updateSuccess;
+           // return await _productRepository.UpdateProductAsync(productId, existingProduct);
         }
 
         public async Task<bool> DeleteProductAsync(string productId)
         {
-            return await _productRepository.DeleteProductAsync(productId);
+            var deleteSuccess = await _productRepository.DeleteProductAsync(productId);
+
+            if (deleteSuccess)
+            {
+                var existingProduct = await _productRepository.GetProductByIdAsync(productId);
+
+                var vendor = await _userRepository.GetUserByIdAsync(existingProduct.VendorId);
+                await _notificationService.SendNotificationWithDetailsAsync(
+                    vendor.Id,
+                    $"Product '{existingProduct.ProductName}' has been deleted.",
+                    null, 
+                    null
+                );
+            }
+
+            return deleteSuccess;
+            //return await _productRepository.DeleteProductAsync(productId);
         }
 
 
