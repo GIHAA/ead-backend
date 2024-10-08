@@ -139,7 +139,13 @@ namespace HealthyBites.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
-               
+
+                if (user.Role == "customer" && user.Status == "Inactive")
+                {
+                    throw new UnauthorizedAccessException("Your account is inactive. Please contact admin for activation.");
+                }
+
+
                 if (user.Status == "Deactivated")
                 {
                   
@@ -323,6 +329,54 @@ namespace HealthyBites.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpGet("users/inactive")]
+        public async Task<IActionResult> GetInactiveUsers(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                var (users, totalUsers) = await _authService.GetInactiveUsersAsync(pageNumber, pageSize);
+
+                var response = new
+                {
+                    TotalRecords = totalUsers,
+                    Users = users
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("user/{id}/activate")]
+        public async Task<IActionResult> ActivateUser(string id)
+        {
+            try
+            {
+                var user = await _authService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "User not found." });
+                }
+
+                
+                user.Status = "Active";
+                await _authService.UpdateUserAsync(id, new UserUpdateModel { Status = "Active" });
+
+               
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Your account has been activated. You can now log in.");
+
+                return Ok(new { Message = "User account activated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
 
         ////get user by id
         //[HttpGet("user/{id}")]

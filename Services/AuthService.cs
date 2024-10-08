@@ -40,6 +40,7 @@ public class AuthService
     private readonly NotificationService _notificationService;
     private readonly string _key;
     private readonly IProductRepository _productRepository;
+    private readonly UserRepository _userRepositorynew;
 
     public AuthService(IUserRepository userRepository, NotificationService notificationService, IProductRepository productRepository  ,  string key)
     {
@@ -63,13 +64,16 @@ public class AuthService
             throw new Exception("Username or Email already exists");
         }
 
+        var userStatus = role.ToLower() == "customer" ? "Inactive" : "Active"; 
+
         var user = new User
         {
             Name = username,
             Email = email,
             PasswordHash = HashPassword(password),
             Role = role,
-            AccountCreationDate = DateTime.UtcNow
+            AccountCreationDate = DateTime.UtcNow,
+            Status = userStatus,
         };
 
         await _userRepository.AddUserAsync(user);
@@ -416,7 +420,7 @@ public class AuthService
     }
 
     // Get the user's cart
- public async Task<List<CartItemWithProduct>> GetCartAsync(string userId)
+    public async Task<List<CartItemWithProduct>> GetCartAsync(string userId)
     {
         var user = await _userRepository.GetUserByIdAsync(userId);
         if (user == null)
@@ -446,4 +450,14 @@ public class AuthService
 
         return cartWithProducts;
     }
+
+    public async Task<(List<User> users, long totalUsers)> GetInactiveUsersAsync(int pageNumber, int pageSize)
+    {
+        var users = await _userRepositorynew.GetUsersByStatusAsync("Inactive", pageNumber, pageSize);
+        var totalUsers = await _userRepositorynew.GetTotalUsersByStatusAsync("Inactive");
+
+        return (users, totalUsers);
+    }
+
+
 }

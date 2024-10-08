@@ -81,5 +81,20 @@ namespace HealthyBites.Repository
         {
             return await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
         }
+
+        public async Task<List<User>> GetUsersByStatusAsync(string status, int pageNumber, int pageSize)
+        {
+            return await _users
+                .Find(u => u.Status == status)
+                .Skip((pageNumber - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<long> GetTotalUsersByStatusAsync(string status)
+        {
+            return await _users.CountDocumentsAsync(u => u.Status == status);
+        }
+
     }
 }
