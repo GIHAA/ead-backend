@@ -36,6 +36,8 @@ public class AuthService
             throw new Exception("Username or Email already exists");
         }
 
+        var userStatus = role.ToLower() == "customer" ? "Inactive" : "Active"; 
+
         var user = new User
         {
             Name = username,
@@ -43,7 +45,7 @@ public class AuthService
             PasswordHash = HashPassword(password),
             Role = role,
             AccountCreationDate = DateTime.UtcNow,
-            Status = "Inactive"
+            Status = userStatus,
         };
 
         await _userRepository.AddUserAsync(user);

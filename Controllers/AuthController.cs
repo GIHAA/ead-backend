@@ -116,7 +116,7 @@ namespace TechFixBackend.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
-                if (user.Status == "Inactive")
+                if (user.Role == "customer" && user.Status == "Inactive")
                 {
                     throw new UnauthorizedAccessException("Your account is inactive. Please contact admin for activation.");
                 }
