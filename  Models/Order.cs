@@ -1,3 +1,19 @@
+/*
+ * File: Order.cs
+ * Project: TechFixBackend
+ * Description: This file defines the models related to orders in the TechFixBackend system. It includes the Order, OrderItem, and Cancellation classes,
+ *              which represent the structure of order-related data stored in the MongoDB database. Each class contains relevant properties 
+ *              to handle the order lifecycle, including order creation, item details, and cancellation requests.
+ * 
+ * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
+ * 
+ * Classes:
+ * - Order: Represents an order made by a customer, containing order items, status, and cancellation details.
+ * - OrderItem: Represents individual items within an order, including product and vendor details.
+ * - Cancellation: Represents the details of a cancellation request for an order.
+ * 
+ */
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -32,7 +48,6 @@ namespace TechFixBackend._Models
         
         public DateTime? DispatchedDate { get; set; }
 
-        // New Cancellation property
         public Cancellation? Cancellation { get; set; }
     }
 

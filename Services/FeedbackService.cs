@@ -166,18 +166,42 @@ namespace TechFixBackend.Services
 
 
         // Get all feedback for a vendor
-        public async Task<List<FeedbackDto>> GetFeedbackForVendorAsync(string vendorId)
+        public async Task<List<FeedbackWithDetailsDto>> GetFeedbackForVendorAsync(string vendorId ) 
         {
+            
             var feedbacks = await _feedbackRepository.GetFeedbackByVendorIdAsync(vendorId);
-            return feedbacks.ConvertAll(fb => new FeedbackDto
+            var feedbacksWithDetails = new List<FeedbackWithDetailsDto>();
+
+            if (feedbacks == null)
             {
-                VendorId = fb.VendorId,
-                CustomerId = fb.CustomerId,
-                ProductId = fb.ProductId,
-                Rating = fb.Rating,
-                Comment = fb.Comment,
-                CreatedDate = fb.CreatedDate
-            });
+                return null;
+            }
+
+
+           
+            foreach (var feedback in feedbacks)
+            {
+                // Fetch customer and vendor details
+                var customer = await _userRepository.GetUserByIdAsync(feedback.CustomerId);
+                var vendor = await _userRepository.GetUserByIdAsync(feedback.VendorId);
+                var product = await _productRepository.GetProductByIdAsync(feedback.ProductId);
+
+                // Map feedback to include customer and vendor details
+                var feedbackWithDetails = new FeedbackWithDetailsDto
+                {
+                    Id = feedback.Id,
+                    Customer = customer, // Populate customer details
+                    Vendor = vendor,     // Populate vendor details
+                    Product = product,   // Populate product details
+                    Rating = feedback.Rating,
+                    Comment = feedback.Comment,
+                    CreatedDate = feedback.CreatedDate
+                };
+
+                feedbacksWithDetails.Add(feedbackWithDetails);
+            }
+
+            return feedbacksWithDetails;
         }
 
         // Get all feedback for a product
