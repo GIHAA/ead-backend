@@ -1,6 +1,6 @@
 /*
  * File: ProductCreateDto.cs
- * Project: TechFixBackend.Dtos
+ * Project: Healthy Bites.Dtos
  * Description: Data Transfer Object (DTO) for creating a new product. It contains properties such as VendorId, 
  *              ProductName, ProductDescription, CategoryId, Price, StockQuantity, and ProductImageUrl. 
  *              This DTO is used when submitting product creation requests.
@@ -11,7 +11,7 @@ namespace TechFixBackend.Dtos
 {
     public class ProductCreateDto
     {
-        public string VendorId  { get; set; }
+        public string VendorId { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
         public string CategoryId { get; set; }

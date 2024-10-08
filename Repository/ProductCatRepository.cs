@@ -1,6 +1,6 @@
 /*
  * File: ProductCatRepository.cs
- * Project: TechFixBackend.Repository
+ * Project: Healthy Bites.Repository
  * Description: Repository implementation for managing product categories (ProductCat) in a MongoDB database. 
  *              This class includes methods for retrieving, creating, updating, and deleting product categories, 
  *              as well as methods for pagination and counting the total number of product categories.
@@ -59,7 +59,7 @@ namespace TechFixBackend.Repository
 
         public Task<List<ProductCat>> GetAllProductCatAsync()
         {
-            return _productCats.Find(p => p.CatStatus == 0 ).ToListAsync();
+            return _productCats.Find(p => p.CatStatus == 0).ToListAsync();
         }
     }
 }

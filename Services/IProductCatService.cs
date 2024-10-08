@@ -1,6 +1,6 @@
 /*
  * File: IProductCatService.cs
- * Project: TechFixBackend.Services
+ * Project: Healthy Bites.Services
  * Description: Interface defining the service layer for managing product categories. 
  *              Provides method signatures for retrieving, creating, updating, and deleting product categories, 
  *              as well as handling pagination and retrieving detailed category information.

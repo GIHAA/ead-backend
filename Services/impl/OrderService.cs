@@ -1,6 +1,6 @@
 /*
  * File: OrderService.cs
- * Project: TechFixBackend
+ * Project: Healthy Bites
  * Description: This file contains the implementation of the OrderService class which handles all operations related to orders. 
  *              This includes creating orders, retrieving orders (with pagination), handling order cancellation requests, 
  *              updating order statuses, and managing vendor-specific orders. 
@@ -47,7 +47,7 @@ namespace TechFixBackend.Services
                 if (product == null)
                     throw new Exception($"Product with ID {item.ProductId} not found.");
 
-                var decreasedProduct =  await _productRepository.DecreaseProductQuantityAsync(item.ProductId, item.Quantity);
+                var decreasedProduct = await _productRepository.DecreaseProductQuantityAsync(item.ProductId, item.Quantity);
 
                 if (!decreasedProduct)
                     throw new Exception($"Product with ID {item.ProductId} did not have enough stock.");
@@ -143,7 +143,7 @@ namespace TechFixBackend.Services
         }
 
         // The new GetOrdersByCustomerIdAsync function
-  // The new GetOrdersByCustomerIdAsync function
+        // The new GetOrdersByCustomerIdAsync function
         public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetOrdersByCustomerIdAsync(string customerId, int pageNumber, int pageSize)
         {
             var (orders, totalOrders) = await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, customerId);

@@ -1,6 +1,6 @@
 ﻿/*
  * File: FeedbackController.cs
- * Project: TechFixBackend.Controllers
+ * Project: Healthy Bites.Controllers
  * Description: Controller for managing feedback-related operations such as retrieving feedbacks, adding new feedback, 
  *              updating feedback, and fetching feedback for a vendor or product. It also handles JWT token validation 
  *              to ensure proper authentication for each request.

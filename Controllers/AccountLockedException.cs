@@ -1,6 +1,6 @@
 ﻿/*
  * File: AccountLockedException.cs
- * Project: TechFixBackend.Exceptions
+ * Project: Healthy Bites.Exceptions
  * Description: Custom exception class representing an account lock scenario. This exception is thrown when a user's 
  *              account is locked. It provides constructors to pass a default message, a custom message, or a message 
  *              with an inner exception.

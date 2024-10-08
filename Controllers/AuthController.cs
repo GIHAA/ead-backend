@@ -1,6 +1,6 @@
 /*
  * File: AuthController.cs
- * Project: TechFixBackend.Controllers
+ * Project: Healthy Bites.Controllers
  * Description: Controller responsible for managing authentication and user-related operations such as registration, 
  *              login, cart management, user management (CRUD operations), and account activation/deactivation. 
  *              It also handles role-based authorization to restrict certain operations to specific roles (admin, csr, vendor, etc.).
@@ -127,7 +127,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 // Notify user of successful login via SignalR
-              await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
 
                 // Return both token and user in the response
                 return Ok(new { Token = token, User = user });
@@ -231,7 +231,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
-        
+
         [Authorize(Roles = "vendor,csr,admin")]
         [HttpPut("user/{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)

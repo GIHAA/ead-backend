@@ -1,6 +1,6 @@
 /*
  * File: Product.cs
- * Project: TechFixBackend._Models
+ * Project: Healthy Bites._Models
  * Description: Represents the Product model in the database. This class includes properties such as VendorId, 
  *              ProductName, ProductDescription, CategoryId, Price, StockQuantity, and ProductStatus.
  *              The status of the product is represented by an enum (Active, Inactive, Promoted), and it 

@@ -1,6 +1,6 @@
 /*
  * File: ProductController.cs
- * Project: TechFixBackend.Controllers
+ * Project: Healthy Bites.Controllers
  * Description: Controller responsible for managing product-related operations, such as creating, updating, deleting,
  *              and retrieving products. It includes methods for retrieving paginated products, products by category,
  *              and individual product details. JWT token authentication is required to ensure user identification.
@@ -64,7 +64,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 // Get products and total count with search
-                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, userId , search);
+                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, userId, search);
 
                 // Check if no products are found
                 if (pagedProducts == null || !pagedProducts.Any())

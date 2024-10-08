@@ -1,6 +1,6 @@
 /*
  * File: OrderDtos.cs
- * Project: TechFixBackend
+ * Project: Healthy Bites
  * Description: This file contains Data Transfer Objects (DTOs) related to order operations in the TechFixBackend system.
  *              DTOs are used to transfer data between the client and server layers. They are designed to keep only necessary 
  *              information and omit sensitive or internal fields, ensuring proper abstraction and clean data handling. 
@@ -14,7 +14,7 @@ namespace TechFixBackend.Dtos
 {
     public class CreateOrderDto
     {
-       // public string CustomerId { get; set; }
+        // public string CustomerId { get; set; }
         public List<OrderItemDto> Items { get; set; }
         public string DeliveryAddress { get; set; }
     }
@@ -27,7 +27,7 @@ namespace TechFixBackend.Dtos
         public string Status { get; set; } = "Processing";
     }
 
-   
+
 
     public class OrderStatusUpdateDto
     {
@@ -40,11 +40,11 @@ namespace TechFixBackend.Dtos
         public string Reason { get; set; } // Optional cancellation reason provided by the customer
     }
 
-    public class CancellationResponseDto 
+    public class CancellationResponseDto
     {
-        public string Response { get; set;}
+        public string Response { get; set; }
     }
-   
+
     public class GetOrderItemDto
     {
         public string ProductId { get; set; }
@@ -67,7 +67,7 @@ namespace TechFixBackend.Dtos
         public string DeliveryStatus { get; set; }
         public DateTime? DispatchedDate { get; set; }
 
-       
+
     }
 
     public class GetCancelOrderDetailsDto
@@ -82,23 +82,23 @@ namespace TechFixBackend.Dtos
         public string DeliveryStatus { get; set; }
         public DateTime? DispatchedDate { get; set; }
         public CancellationDetailsDto Cancellation { get; set; }
-    
+
     }
 
-      public class VendorOrderDto
+    public class VendorOrderDto
     {
-        public string OrderId { get; set; } 
+        public string OrderId { get; set; }
         public string CustomerName { get; set; }
-        public DateTime OrderDate { get; set; } 
-        public List<VendorOrderItemDto> Items { get; set; } 
+        public DateTime OrderDate { get; set; }
+        public List<VendorOrderItemDto> Items { get; set; }
     }
 
-  public class VendorOrderItemDto
+    public class VendorOrderItemDto
     {
-        public string ProductId { get; set; } 
-        public string ProductName { get; set; } 
-        public int Quantity { get; set; } 
-        public float TotalPrice { get; set; } 
+        public string ProductId { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
+        public float TotalPrice { get; set; }
         public string Status { get; set; }
     }
 }

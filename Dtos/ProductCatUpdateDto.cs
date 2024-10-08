@@ -1,6 +1,6 @@
 /*
  * File: ProductCatUpdateDto.cs
- * Project: TechFixBackend.Dtos
+ * Project: Healthy Bites.Dtos
  * Description: Data Transfer Object (DTO) for updating an existing product category (ProductCat). It includes optional 
  *              properties such as catName, catDescription, catImageUrl, and catStatus (represented by an enum CategoryStatus).
  *              This DTO is used for submitting update requests for product categories.

@@ -1,6 +1,6 @@
 /*
  * File: ProductCatController.cs
- * Project: TechFixBackend.Controllers
+ * Project: Healthy Bites.Controllers
  * Description: Controller responsible for managing product categories (ProductCat). This includes handling operations 
  *              like creating, updating, deleting, and retrieving product categories with or without pagination.
  *              The controller interacts with the IProductCatService to execute the necessary business logic.
@@ -31,7 +31,7 @@ namespace TechFixBackend.Controllers
 
             try
             {
-                
+
                 if (pageNumber < 1)
                 {
                     return BadRequest(new { Message = "Page number must be greater than 0." });
@@ -66,14 +66,14 @@ namespace TechFixBackend.Controllers
                     TotalPages = totalPages,
                     CurrentPage = pageNumber,
                     PageSize = pageSize,
-                    ProductCats = pagedProductCats  
+                    ProductCats = pagedProductCats
                 };
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { Message = "An error occurred while retrieving users.", Details = ex.Message });
             }
         }

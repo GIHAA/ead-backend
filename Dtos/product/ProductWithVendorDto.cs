@@ -1,6 +1,6 @@
 /*
  * File: ProductWithVendorDto.cs
- * Project: TechFixBackend.Dtos
+ * Project: Healthy Bites.Dtos
  * Description: Data Transfer Object (DTO) that represents a product along with its vendor information. 
  *              It includes properties such as Id, Vendor, ProductName, ProductDescription, Category, Price, 
  *              StockQuantity, ProductStatus, and ProductImageUrl. This DTO is used when returning product data 
@@ -24,6 +24,6 @@ namespace TechFixBackend.Dtos
         public ProductStatus ProductStatus { get; set; }
         public string ProductImageUrl { get; set; }
 
-   
+
     }
 }

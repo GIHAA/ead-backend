@@ -1,6 +1,6 @@
 /*
  * File: ProductUpdateDto.cs
- * Project: TechFixBackend.Dtos
+ * Project: Healthy Bites.Dtos
  * Description: Data Transfer Object (DTO) for updating an existing product. It contains optional fields such as 
  *              ProductName, ProductDescription, CategoryId, VendorId, Price, StockQuantity, ProductStatus, and 
  *              ProductImageUrl. This DTO is used when updating product details.

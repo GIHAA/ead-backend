@@ -1,6 +1,6 @@
 ﻿/*
  * File: IUserRepository.cs
- * Project: TechFixBackend.Repository
+ * Project: Healthy Bites.Repository
  * Description: Interface for the UserRepository, defining the contract for data access operations related to users. 
  *              It includes methods for retrieving, creating, updating, and deleting users, as well as methods for 
  *              pagination, getting user details by email, and counting the total number of users.

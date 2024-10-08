@@ -1,6 +1,6 @@
 ﻿/*
  * File: UserRepository.cs
- * Project: TechFixBackend.Repository
+ * Project: Healthy Bites.Repository
  * Description: Repository implementation for managing users in a MongoDB database. 
  *              This class includes methods for retrieving, creating, updating, and deleting users, 
  *              as well as methods for pagination and getting user details by email.

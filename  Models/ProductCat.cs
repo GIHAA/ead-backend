@@ -1,6 +1,6 @@
 /*
  * File: ProductCat.cs
- * Project: TechFixBackend._Models
+ * Project: Healthy Bites._Models
  * Description: Represents the Product Category model in the database. This class includes properties such as 
  *              CategoryName, CategoryDescription, CategoryImageUrl, and CategoryStatus. The CategoryStatus is 
  *              represented by an enum (Active, Inactive), with the default status set to Active.

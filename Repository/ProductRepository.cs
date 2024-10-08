@@ -1,6 +1,6 @@
 /*
  * File: ProductRepository.cs
- * Project: TechFixBackend.Repository
+ * Project: Healthy Bites.Repository
  * Description: Repository implementation for managing products in a MongoDB database. 
  *              This class includes methods for retrieving, creating, updating, and deleting products, 
  *              as well as methods for searching, pagination, managing product quantities, and filtering products by category.
