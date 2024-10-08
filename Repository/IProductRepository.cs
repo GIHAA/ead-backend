@@ -7,6 +7,7 @@ namespace TechFixBackend.Repository
     public interface IProductRepository
     {
         Task<List<Product>> GetProductsAdminAsync(int pageNumber, int pageSize , string search = "");
+        Task<bool> DecreaseProductQuantityAsync(string productId, int quantity);
         Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize ,string userId  , string search = "");
         Task<Product> GetProductByIdAsync(string productId);
         Task<List<Product>> GetProductsByCategoryAsync(string categoryId);

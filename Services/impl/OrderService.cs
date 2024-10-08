@@ -71,6 +71,11 @@ namespace TechFixBackend.Services
                 if (product == null)
                     throw new Exception($"Product with ID {item.ProductId} not found.");
 
+                var decreasedProduct =  await _productRepository.DecreaseProductQuantityAsync(item.ProductId, item.Quantity);
+
+                if (!decreasedProduct)
+                    throw new Exception($"Product with ID {item.ProductId} did not have enough stock.");
+
                 var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
 
                 if (vendor == null)
