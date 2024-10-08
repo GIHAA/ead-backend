@@ -6,6 +6,29 @@
  *              account creation date, and optionally includes AverageRating for vendor roles and TotalPrice for customer roles.
  */
 
+/*
+ * File: User.cs
+ * Project: TechFixBackend
+ * Description: This file defines the User class which represents the structure of user data stored in the MongoDB database.
+ *              It includes properties such as email, password hash, role, cart items, and user status.
+ * 
+ * Authors: Cooray N.T.L. it21177996
+ * 
+ * Classes:
+ * - User: Represents the user model in the MongoDB database, storing essential details such as email, password hash, and role.
+ * 
+ * Properties:
+ * - Id: The unique identifier for a user (MongoDB ObjectId).
+ * - Email: The user's email address.
+ * - PasswordHash: The hashed version of the user's password for security.
+ * - Role: The role assigned to the user (customer, admin, vendor, csr).
+ * - Cart: The list of cart items associated with the user.
+ * - TotalPrice: Represents the total price of items in the user's cart.
+ * - AverageRating: Represents the average rating for vendors.
+ * 
+ */
+
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

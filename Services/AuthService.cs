@@ -1,9 +1,29 @@
 /*
  * File: AuthService.cs
- * Project: [Your Project Name]
- * Description: Service class responsible for authentication and user management operations. 
- *              It handles user registration, login, updating user profiles, deactivation, reactivation, and cart management. 
- *              The class also generates JWT tokens for user authentication and interacts with user notifications.
+ * Project: TechFixBackend
+ * Description: This file defines the AuthService class, which handles authentication, registration, and user management functionality. 
+ *              It includes logic for hashing passwords, generating JWT tokens, and managing cart operations for users.
+ * 
+ * Authors: Cooray N.T.L. it21177996
+ * 
+ * Classes:
+ * - AuthService: Provides methods for user authentication, registration, and account management.
+ * 
+ * Methods:
+ * - RegisterAsync: Registers a new user in the system.
+ * - LoginAsync: Authenticates a user and generates a JWT token for them.
+ * - UpdateUserAsync: Updates an existing user's details based on the provided UserUpdateModel.
+ * - DeactivateAccountAsync: Deactivates a user's account.
+ * - RequestAccountReactivationAsync: Submits a request to reactivate a deactivated account.
+ * - ApproveAccountReactivationAsync: Approves the reactivation of a user's account.
+ * - AddToCartAsync: Adds an item to the user's cart.
+ * - RemoveFromCartAsync: Removes an item from the user's cart.
+ * - UpdateCartItemQuantityAsync: Updates the quantity of an item in the user's cart.
+ * - GetCartAsync: Retrieves the user's cart with detailed product information.
+ * - HashPassword: Hashes the user's password using SHA256.
+ * - VerifyPassword: Verifies that the provided password matches the stored password hash.
+ * - GenerateJwtToken: Generates a JWT token for the authenticated user.
+ * 
  */
 
 using System.Security.Cryptography;

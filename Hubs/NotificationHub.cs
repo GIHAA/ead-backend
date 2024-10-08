@@ -1,4 +1,25 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿
+/*
+ * File: NotificationHub.cs
+ * Project: TechFixBackend
+ * Description: This file defines the NotificationHub class, which is responsible for managing real-time notifications using SignalR.
+ *              It handles user connections, disconnections, and the sending of messages to users or groups in real-time.
+ * 
+ * Authors: Cooray N.T.L. it21177996 | Perera W.H.T.H. it21165498
+ * 
+ * Classes:
+ * - NotificationHub: Handles real-time SignalR communication for notifications.
+ * 
+ * Methods:
+ * - OnConnectedAsync: Manages user connections to the hub.
+ * - OnDisconnectedAsync: Handles user disconnections and cleans up connection data.
+ * - SendMessageToGroup: Sends a message to a specific SignalR group (e.g., admins or vendors).
+ * - SendNotification: Sends a notification to a specific user.
+ * 
+ */
+
+
+using Microsoft.AspNetCore.SignalR;
 using TechFixBackend.Services;
 
 namespace TechFixBackend.Hubs

@@ -1,8 +1,13 @@
 /*
  * File: ProductCatCreateDto.cs
- * Project: Healthy Bites.Dtos
- * Description: Data Transfer Object (DTO) for creating a new product category (ProductCat). It contains properties such as 
- *              CatName, CatDescription, and CatImageUrl that are required when submitting a new category creation request.
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatCreateDto data transfer object for the Healthy Bites system. It represents the data required to create 
+ *              a new product category, including category name, description, and image URL.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatCreateDto: Data transfer object used for creating a new product category in the Healthy Bites system.
  */
 
 

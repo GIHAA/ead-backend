@@ -1,9 +1,14 @@
 /*
  * File: IProductRepository.cs
- * Project: Healthy Bites.Repository
- * Description: Interface for the ProductRepository, defining the contract for data access operations related to products. 
- *              It includes methods for retrieving, creating, updating, and deleting products, as well as methods for 
- *              managing product quantities and performing search and pagination operations.
+ * Project: Healthy Bites
+ * Description: This file defines the interface IProductRepository for the Healthy Bites system. It outlines the methods for interacting 
+ *              with products, including retrieval, creation, updating, and deletion of products, as well as handling search functionality, 
+ *              pagination, and product quantity management.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Interfaces:
+ * - IProductRepository: Interface that defines the repository methods for managing products in the Healthy Bites system.
  */
 
 using System.Collections.Generic;

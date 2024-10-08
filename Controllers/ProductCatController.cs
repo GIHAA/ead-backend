@@ -1,9 +1,14 @@
 /*
  * File: ProductCatController.cs
- * Project: Healthy Bites.Controllers
- * Description: Controller responsible for managing product categories (ProductCat). This includes handling operations 
- *              like creating, updating, deleting, and retrieving product categories with or without pagination.
- *              The controller interacts with the IProductCatService to execute the necessary business logic.
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatController for the Healthy Bites system. It manages API requests related to product categories, 
+ *              including category retrieval, creation, updating, and deletion. The controller supports both paginated and non-paginated retrieval 
+ *              of categories.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatController: Handles HTTP requests for product categories, including retrieval of categories, category creation, updates, and deletion.
  */
 
 

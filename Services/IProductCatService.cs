@@ -1,9 +1,13 @@
 /*
  * File: IProductCatService.cs
- * Project: Healthy Bites.Services
- * Description: Interface defining the service layer for managing product categories. 
- *              Provides method signatures for retrieving, creating, updating, and deleting product categories, 
- *              as well as handling pagination and retrieving detailed category information.
+ * Project: Healthy Bites
+ * Description: This file defines the IProductCatService interface for the Healthy Bites system. It outlines the service methods for managing 
+ *              product categories, including methods for retrieval, creation, updating, and deletion of categories.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Interfaces:
+ * - IProductCatService: Interface that defines the service methods for managing product categories in the Healthy Bites system.
  */
 
 using System.Collections.Generic;

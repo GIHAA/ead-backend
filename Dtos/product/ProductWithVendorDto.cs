@@ -1,10 +1,13 @@
 /*
  * File: ProductWithVendorDto.cs
- * Project: Healthy Bites.Dtos
- * Description: Data Transfer Object (DTO) that represents a product along with its vendor information. 
- *              It includes properties such as Id, Vendor, ProductName, ProductDescription, Category, Price, 
- *              StockQuantity, ProductStatus, and ProductImageUrl. This DTO is used when returning product data 
- *              that includes vendor details.
+ * Project: Healthy Bites
+ * Description: This file defines the ProductWithVendorDto data transfer object for the Healthy Bites system. It represents product data along with 
+ *              vendor information, including product details such as name, description, category, price, stock, status, and image URL.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductWithVendorDto: Data transfer object that includes product details and associated vendor information for the Healthy Bites system.
  */
 
 

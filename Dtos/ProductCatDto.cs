@@ -1,12 +1,14 @@
 /*
  * File: ProductCatDto.cs
- * Project: Healthy Bites.Dtos
- * Description: Data Transfer Object (DTO) for representing a product category (ProductCat). It includes properties 
- *              such as Id, Category, CatDescription, ImageUrl, and CatStatus (represented by an enum CategoryStatus).
- *              This DTO is used for retrieving product category data.
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatDto data transfer object for the Healthy Bites system. It represents the data related to a product 
+ *              category, including category ID, name, description, image URL, and status.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatDto: Data transfer object used for representing a product category in the Healthy Bites system.
  */
-
-
 
 using TechFixBackend._Models;
 
