@@ -1,6 +1,18 @@
-using TechFixBackend._Models;
+/*
+ * File: ProductUpdateDto.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductUpdateDto data transfer object for the Healthy Bites system. It represents the data required to update 
+ *              an existing product, including product name, description, category ID, vendor ID, price, stock quantity, product status, and image URL.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductUpdateDto: Data transfer object used for updating an existing product in the Healthy Bites system.
+ */
 
-namespace TechFixBackend.Dtos
+using HealthyBites._Models;
+
+namespace HealthyBites.Dtos
 {
     public class ProductUpdateDto
     {

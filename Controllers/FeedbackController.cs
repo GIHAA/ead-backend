@@ -1,12 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * File: FeedbackController.cs
+ * Project: Healthy Bites.Controllers
+ * Description: Controller for managing feedback-related operations such as retrieving feedbacks, adding new feedback, 
+ *              updating feedback, and fetching feedback for a vendor or product. It also handles JWT token validation 
+ *              to ensure proper authentication for each request.
+ *              The controller interacts with the FeedbackService for executing business logic.
+ */
+
+
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,6 +1,15 @@
-﻿using TechFixBackend._Models;
+﻿/*
+ * File: FeedbackWithDetailsDto.cs
+ * Project: Healthy Bites.Dtos
+ * Description: Data Transfer Object (DTO) for feedback that includes detailed information about the feedback, 
+ *              such as customer, vendor, and product details. It provides additional context beyond the basic 
+ *              feedback data with properties like Id, Rating, Comment, and CreatedDate.
+ */
 
-namespace TechFixBackend.Dtos
+
+using HealthyBites._Models;
+
+namespace HealthyBites.Dtos
 {
     public class FeedbackWithDetailsDto
     {

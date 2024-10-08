@@ -1,9 +1,22 @@
+/*
+ * File: ProductRepository.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductRepository class, implementing the IProductRepository interface for interacting with the products 
+ *              stored in MongoDB. It provides functionality for retrieving, creating, updating, and deleting products, as well as handling 
+ *              product searches, pagination, category filtering, and stock management.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductRepository: Implements methods to manage CRUD operations on products in the Healthy Bites system using MongoDB.
+ */
+
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public class ProductRepository : IProductRepository
     {

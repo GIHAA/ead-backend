@@ -1,7 +1,17 @@
-﻿using MongoDB.Bson;
+﻿/*
+ * File: Feedback.cs
+ * Project: Healthy Bites._Models
+ * Description: Defines the Feedback model with relevant fields including vendor ID, customer ID, product ID, rating, and comments. 
+ *              Each feedback is associated with a vendor, customer, and product, along with a timestamp for when it was created.
+ * Author: Perera W.H.T.H. it21165498
+ * 
+ */
+
+
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
     public class Feedback
     {
@@ -22,13 +32,13 @@ namespace TechFixBackend._Models
         public string ProductId { get; set; } // ObjectId of the Product related to this feedback
 
         [BsonElement("rating")]
-        public float Rating { get; set; } 
+        public float Rating { get; set; }
 
         [BsonElement("comment")]
         public string Comment { get; set; }
 
         [BsonElement("createdDate")]
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow; 
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
-  
+
 }

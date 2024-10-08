@@ -1,9 +1,9 @@
 ﻿
-using TechFixBackend._Models;
-using TechFixBackend.Dtos;
+using HealthyBites._Models;
+using HealthyBites.Dtos;
 
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public interface IVendorService
     {

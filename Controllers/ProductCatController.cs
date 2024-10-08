@@ -1,9 +1,23 @@
+/*
+ * File: ProductCatController.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatController for the Healthy Bites system. It manages API requests related to product categories, 
+ *              including category retrieval, creation, updating, and deletion. The controller supports both paginated and non-paginated retrieval 
+ *              of categories.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatController: Handles HTTP requests for product categories, including retrieval of categories, category creation, updates, and deletion.
+ */
+
+
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -22,7 +36,7 @@ namespace TechFixBackend.Controllers
 
             try
             {
-                
+
                 if (pageNumber < 1)
                 {
                     return BadRequest(new { Message = "Page number must be greater than 0." });
@@ -57,14 +71,14 @@ namespace TechFixBackend.Controllers
                     TotalPages = totalPages,
                     CurrentPage = pageNumber,
                     PageSize = pageSize,
-                    ProductCats = pagedProductCats  
+                    ProductCats = pagedProductCats
                 };
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { Message = "An error occurred while retrieving users.", Details = ex.Message });
             }
         }

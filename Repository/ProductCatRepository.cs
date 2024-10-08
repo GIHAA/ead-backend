@@ -1,9 +1,22 @@
+/*
+ * File: ProductCatRepository.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCatRepository class, implementing the IProductCatRepository interface for interacting with the 
+ *              product categories stored in MongoDB. It provides functionality for retrieving, creating, updating, and deleting product categories, 
+ *              as well as paginated queries and total count calculations.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCatRepository: Implements methods to manage CRUD operations on product categories in the Healthy Bites system using MongoDB.
+ */
+
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public class ProductCatRepository : IProductCatRepository
     {
@@ -51,7 +64,7 @@ namespace TechFixBackend.Repository
 
         public Task<List<ProductCat>> GetAllProductCatAsync()
         {
-            return _productCats.Find(p => p.CatStatus == 0 ).ToListAsync();
+            return _productCats.Find(p => p.CatStatus == 0).ToListAsync();
         }
     }
 }

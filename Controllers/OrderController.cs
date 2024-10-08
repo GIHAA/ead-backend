@@ -1,10 +1,20 @@
+/*
+ * File: OrderController.cs
+ * Project: Healthy Bites.Controllers
+ * Description: Controller responsible for handling all order-related operations such as creating orders, 
+ *              updating order status, requesting cancellations, and retrieving orders for customers and vendors.
+ *              It handles operations with proper JWT token authentication and calls the IOrderService for the core logic.
+ * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
+ */
+
+
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -45,7 +55,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 var userId = userIdClaim.Value;
-                
+
                 // Pass the user ID to the service method
                 await _orderService.CreateOrderAsync(createOrderDto, userId);
 
@@ -53,7 +63,7 @@ namespace TechFixBackend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { ex.Message  });
+                return BadRequest(new { ex.Message });
             }
         }
 
@@ -91,7 +101,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
-            [HttpGet("view/{orderId}")]
+        [HttpGet("view/{orderId}")]
         public async Task<IActionResult> ViewOrder(string orderId)
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
@@ -99,7 +109,7 @@ namespace TechFixBackend.Controllers
 
             return Ok(order);
         }
-        
+
         [HttpPut("request-cancel/{orderId}")]
         public async Task<IActionResult> CancelOrder(string orderId, [FromBody] RequestCancelOrderDto cancelOrderDto)
         {
@@ -143,7 +153,7 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         //get all orders for currently logged in vendor
         [HttpGet("vendor-orders")]
         public async Task<IActionResult> GetOrdersByVendor()
@@ -183,7 +193,7 @@ namespace TechFixBackend.Controllers
             }
         }
 
- [HttpGet("customer-orders")]
+        [HttpGet("customer-orders")]
         public async Task<IActionResult> GetOrdersByCustomer(int pageNumber = 1, int pageSize = 10)
         {
             try

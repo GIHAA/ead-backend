@@ -1,7 +1,16 @@
-﻿
-using TechFixBackend._Models;
+﻿/*
+ * File: IFeedbackRepository.cs
+ * Project: Healthy Bites.Repository
+ * Description: Interface for the FeedbackRepository, defining the contract for feedback-related data access operations.
+ *              It provides methods for adding, updating, retrieving feedback, checking if feedback exists, 
+ *              and updating user (vendor) ratings.
+ */
 
-namespace TechFixBackend.Repository
+
+
+using HealthyBites._Models;
+
+namespace HealthyBites.Repository
 {
     public interface IFeedbackRepository
     {

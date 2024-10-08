@@ -1,9 +1,21 @@
+/*
+ * File: ProductCat.cs
+ * Project: Healthy Bites
+ * Description: This file defines the ProductCat model for the Healthy Bites system. It represents product categories, including details such as
+ *              category name, description, image URL, and status. The data is stored in MongoDB, with BSON attributes used for proper serialization.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - ProductCat: Represents a product category in the Healthy Bites system, including name, description, and status.
+ * - CategoryStatus: Enum representing the status of a category (Active, Inactive).
+ */
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
-    // Enum to represent the Category Status
     public enum CategoryStatus
     {
         Active,
@@ -25,7 +37,6 @@ namespace TechFixBackend._Models
         [BsonElement("CategoryImageUrl")]
         public string CatImageUrl { get; set; }
 
-        // Use enum for status and set default to Active
         [BsonElement("CategoryStatus")]
         [BsonRepresentation(BsonType.String)]
         public CategoryStatus CatStatus { get; set; } = CategoryStatus.Active;

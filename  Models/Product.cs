@@ -1,7 +1,21 @@
+/*
+ * File: Product.cs
+ * Project: Healthy Bites
+ * Description: This file defines the Product model for the Healthy Bites system. It includes the Product and ProductStatus enum, representing
+ *              the various states of a product in the system. The Product class contains properties related to product details, such as name,
+ *              description, price, stock quantity, and status. This model is designed to store product information in MongoDB.
+ * 
+ * Authors: Kuruppu K.A.G.S.R it21165252
+ * 
+ * Classes:
+ * - Product: Represents a product in the Healthy Bites system, including vendor details, price, stock, and status.
+ * - ProductStatus: Enum representing different states of a product (Active, Inactive, Promoted).
+ */
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
     public enum ProductStatus
     {
@@ -9,6 +23,7 @@ namespace TechFixBackend._Models
         Inactive,
         Promoted,
     }
+
     public class Product
     {
         [BsonId]
