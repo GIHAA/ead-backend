@@ -1,3 +1,36 @@
+/*
+ * File: OrderService.cs
+ * Project: TechFixBackend
+ * Description: This file contains the implementation of the OrderService class which handles all operations related to orders. 
+ *              This includes creating orders, retrieving orders (with pagination), handling order cancellation requests, 
+ *              updating order statuses, and managing vendor-specific orders. 
+ *              The class depends on repositories for orders, users, and products to perform its operations.
+ * 
+ * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
+ * 
+ * Dependencies:
+ * - IOrderRepository: Interface for accessing order-related data operations.
+ * - IUserRepository: Interface for accessing user-related data operations.
+ * - IProductRepository: Interface for accessing product-related data operations.
+ * 
+ * Methods:
+ * - CreateOrderAsync(CreateOrderDto, String): Creates a new order with the provided details.
+ * - GetAllOrdersAsync(int, int, string): Retrieves a paginated list of all orders.
+ * - GetAllCancelReqOrdersAsync(int, int, string): Retrieves a paginated list of all cancellation request orders.
+ * - GetOrderByIdAsync(string): Retrieves order details by order ID.
+ * - CancelRequestOrderAsync(string, RequestCancelOrderDto): Handles the request to cancel an order.
+ * - UpdateOrderCancelAsync(string, CancellationResponseDto): Updates the status of an order cancellation request.
+ * - UpdateOrderStatusAsync(string, string): Updates the status of an order.
+ * - UpdateOrderItemStatusAsync(string, string, string): Updates the status of a specific item in an order.
+ * - GetOrdersByVendorIdAsync(string): Retrieves vendor-specific orders.
+ * 
+ * Notes:
+ * - Exception handling is applied to various operations to manage errors when entities (like orders, products, or users) are not found.
+ * - Cancellation requests and statuses are updated based on customer or vendor actions.
+ * - Pagination is applied to order and cancellation requests to enhance performance and usability.
+ * 
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

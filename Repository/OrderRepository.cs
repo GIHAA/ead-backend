@@ -1,3 +1,32 @@
+/*
+ * File: OrderRepository.cs
+ * Project: TechFixBackend
+ * Description: This file contains the implementation of the OrderRepository class, responsible for interacting with the MongoDB database
+ *              to perform CRUD operations related to orders. It handles retrieving, creating, updating orders, and fetching orders
+ *              based on customer or vendor filters. The repository pattern ensures clean separation of concerns and allows
+ *              easy modification or replacement of data sources in the future.
+ * 
+ * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
+ * 
+ * Dependencies:
+ * - IMongoCollection<Order>: MongoDB collection for Order documents.
+ * - MongoDBContext: The database context for accessing MongoDB collections.
+ * 
+ * Methods:
+ * - CreateOrderAsync(Order): Inserts a new order into the database.
+ * - GetAllOrdersAsync(int, int, string): Retrieves a paginated list of all orders with optional customer filtering.
+ * - GetAllCancelReqOrdersAsync(int, int, string): Retrieves a paginated list of all orders with cancellation requests, with optional customer filtering.
+ * - GetOrderByIdAsync(string): Retrieves an order by its unique ID.
+ * - UpdateOrderAsync(Order): Updates an existing order document in the database.
+ * - GetOrdersByVendorIdAsync(string): Retrieves all orders related to a specific vendor by filtering items within orders.
+ * 
+ * Notes:
+ * - Pagination is applied for both order retrieval and cancellation requests.
+ * - Filters are used to conditionally apply customer or vendor-specific retrieval logic.
+ * - The repository pattern helps with the separation of data access logic from business logic.
+ * 
+ */
+
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
