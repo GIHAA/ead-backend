@@ -11,9 +11,9 @@
  */
 
 
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class ProductWithVendorDto
     {
@@ -27,6 +27,6 @@ namespace TechFixBackend.Dtos
         public ProductStatus ProductStatus { get; set; }
         public string ProductImageUrl { get; set; }
 
-   
+
     }
 }

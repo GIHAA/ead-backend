@@ -1,7 +1,14 @@
+/*
+ * File: User.cs
+ * Project: Healthy Bites._Models
+ * Description: Represents the User model in the database. This class includes properties such as Id, Email, PasswordHash,
+ *              Role (customer, admin, vendor, csr), Name, Address, PhoneNumber, Cart, and Status. It also tracks the 
+ *              account creation date, and optionally includes AverageRating for vendor roles and TotalPrice for customer roles.
+ */
 
 /*
  * File: User.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the User class which represents the structure of user data stored in the MongoDB database.
  *              It includes properties such as email, password hash, role, cart items, and user status.
  * 

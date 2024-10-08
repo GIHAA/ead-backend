@@ -1,7 +1,16 @@
-﻿using MongoDB.Driver;
-using TechFixBackend._Models;
+﻿/*
+ * File: FeedbackRepository.cs
+ * Project: Healthy Bites.Repository
+ * Description: Repository responsible for interacting with the MongoDB collections for feedback and users.
+ *              It includes methods for adding, updating, retrieving feedback, and updating vendor ratings.
+ *              Provides data access functionality for managing feedback-related operations in the database.
+ */
 
-namespace TechFixBackend.Repository
+
+using MongoDB.Driver;
+using HealthyBites._Models;
+
+namespace HealthyBites.Repository
 {
     public class FeedbackRepository : IFeedbackRepository
     {
@@ -61,7 +70,7 @@ namespace TechFixBackend.Repository
         {
             return await _feedbackCollection.Find(fb => fb.ProductId == productId).ToListAsync();
         }
-        
+
         // Get feedback by feedback ID
         public async Task<Feedback> GetFeedbackByIdAsync(string feedbackId)
         {
@@ -100,8 +109,8 @@ namespace TechFixBackend.Repository
         public async Task<Feedback> GetFeedbackForCustomerProductVendorAsync(string vendorId, string productId, string customerId)
         {
             // Query the feedback collection
-            var filter = Builders<Feedback>.Filter.Where(f => f.VendorId == vendorId 
-                                                           && f.ProductId == productId 
+            var filter = Builders<Feedback>.Filter.Where(f => f.VendorId == vendorId
+                                                           && f.ProductId == productId
                                                            && f.CustomerId == customerId);
 
             // Return the first match

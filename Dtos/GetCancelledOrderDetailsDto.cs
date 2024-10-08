@@ -1,4 +1,13 @@
-using TechFixBackend.Dtos;
+/*
+ * File: GetCancelledOrderDetailsDto.cs
+ * Project: Healthy Bites.Dtos
+ * Description: Data Transfer Object (DTO) for retrieving the details of a cancelled order. It contains order-specific
+ *              properties such as OrderId, Customer, DeliveryAddress, TotalAmount, Status, Items, and cancellation details.
+ *              The `CancellationDetailsDto` class is nested within, providing information about the cancellation request.
+ */
+
+
+using HealthyBites.Dtos;
 
 public class GetCancelledOrderDetailsDto
 {

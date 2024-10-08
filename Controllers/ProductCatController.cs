@@ -14,10 +14,10 @@
 
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -36,7 +36,7 @@ namespace TechFixBackend.Controllers
 
             try
             {
-                
+
                 if (pageNumber < 1)
                 {
                     return BadRequest(new { Message = "Page number must be greater than 0." });
@@ -71,14 +71,14 @@ namespace TechFixBackend.Controllers
                     TotalPages = totalPages,
                     CurrentPage = pageNumber,
                     PageSize = pageSize,
-                    ProductCats = pagedProductCats  
+                    ProductCats = pagedProductCats
                 };
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { Message = "An error occurred while retrieving users.", Details = ex.Message });
             }
         }

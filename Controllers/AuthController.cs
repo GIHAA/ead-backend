@@ -1,6 +1,6 @@
 /*
  * File: AuthController.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the AuthController class that manages user authentication, authorization, and cart-related functionality.
  *              It provides API endpoints for user registration, login, adding/removing items from the cart, and updating user details.
  * 
@@ -27,10 +27,10 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TechFixBackend.Exceptions;
-using TechFixBackend.Services;
+using HealthyBites.Exceptions;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

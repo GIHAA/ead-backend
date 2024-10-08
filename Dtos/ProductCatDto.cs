@@ -10,9 +10,9 @@
  * - ProductCatDto: Data transfer object used for representing a product category in the Healthy Bites system.
  */
 
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class ProductCatDto
     {

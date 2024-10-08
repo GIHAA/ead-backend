@@ -10,9 +10,9 @@
  * - ProductUpdateDto: Data transfer object used for updating an existing product in the Healthy Bites system.
  */
 
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class ProductUpdateDto
     {

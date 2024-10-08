@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: NotificationHub.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the NotificationHub class, which is responsible for managing real-time notifications using SignalR.
  *              It handles user connections, disconnections, and the sending of messages to users or groups in real-time.
  * 
@@ -20,9 +20,9 @@
 
 
 using Microsoft.AspNetCore.SignalR;
-using TechFixBackend.Services;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Hubs
+namespace HealthyBites.Hubs
 {
     public class NotificationHub : Hub
     {

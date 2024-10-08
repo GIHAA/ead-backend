@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: IUserRepository.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file defines the IUserRepository interface, which outlines the contract for operations on user data in the MongoDB database.
  *              It includes methods to retrieve, add, update, and delete user records, along with user-specific operations such as fetching by email.
  * 
@@ -20,7 +20,7 @@
  * 
  */
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public interface IUserRepository
     {

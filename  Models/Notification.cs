@@ -1,7 +1,7 @@
 ﻿/*
  * File: Notification.cs
- * Project: TechFixBackend
- * Description: This file defines the models and methods related to notifications in the TechFixBackend system.
+ * Project: HealthyBites
+ * Description: This file defines the models and methods related to notifications in the HealthyBites system.
  *              It handles the structure of notification data stored in the MongoDB database, including details such as message, status (read/unread),
  *              product, order ID, and timestamps. It also includes the functionality for updating notification statuses.
  * 
@@ -17,7 +17,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend._Models
+namespace HealthyBites._Models
 {
     public class Notification
     {

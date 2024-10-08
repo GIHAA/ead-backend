@@ -15,10 +15,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using TechFixBackend.Dtos;
-using TechFixBackend.Services;
+using HealthyBites.Dtos;
+using HealthyBites.Services;
 
-namespace TechFixBackend.Controllers
+namespace HealthyBites.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -69,7 +69,7 @@ namespace TechFixBackend.Controllers
                 }
 
                 // Get products and total count with search
-                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, userId , search);
+                var (pagedProducts, totalProducts) = await _productService.GetAllProductsAsync(pageNumber, pageSize, userId, search);
 
                 // Check if no products are found
                 if (pagedProducts == null || !pagedProducts.Any())

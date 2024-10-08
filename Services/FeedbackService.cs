@@ -1,9 +1,18 @@
-﻿
-using TechFixBackend.Dtos;
-using TechFixBackend._Models;
-using TechFixBackend.Repository;
+﻿/*
+ * File: FeedbackService.cs
+ * Project: Healthy Bites.Services
+ * Description: Service responsible for handling business logic related to feedback, including adding, updating,
+ *              and retrieving feedback. It also manages the calculation of vendor ratings and ensures feedback
+ *              validity through interactions with repositories for users, products, and feedback.
+ */
 
-namespace TechFixBackend.Services
+
+
+using HealthyBites.Dtos;
+using HealthyBites._Models;
+using HealthyBites.Repository;
+
+namespace HealthyBites.Services
 {
     public class FeedbackService
     {
@@ -21,7 +30,7 @@ namespace TechFixBackend.Services
         // Add feedback with proper validation of VendorId, CustomerId, and ProductId
         public async Task AddFeedbackAsync(FeedbackCreateDto feedbackCreateDto, String id)
         {
-             // Validate if the customer exists
+            // Validate if the customer exists
             var customer = await _userRepository.GetUserByIdAsync(id);
             if (customer == null)
                 throw new Exception("Customer not found.");
@@ -135,12 +144,12 @@ namespace TechFixBackend.Services
             return (feedbacksWithDetails, totalFeedbacks);
         }
 
-         // Retrieve a single feedback for a specific customer, product, and vendor
+        // Retrieve a single feedback for a specific customer, product, and vendor
         public async Task<FeedbackWithDetailsDto> GetFeedbackForCustomerProductVendorAsync(string vendorId, string productId, string customerId)
         {
             // Fetch the feedback from the repository
             var feedback = await _feedbackRepository.GetFeedbackForCustomerProductVendorAsync(vendorId, productId, customerId);
-            
+
             if (feedback == null)
             {
                 return null;
@@ -157,7 +166,7 @@ namespace TechFixBackend.Services
                 Id = feedback.Id,
                 Customer = customer,
                 Vendor = vendor,
-                Product = product,   
+                Product = product,
                 Rating = feedback.Rating,
                 Comment = feedback.Comment,
                 CreatedDate = feedback.CreatedDate
@@ -166,9 +175,9 @@ namespace TechFixBackend.Services
 
 
         // Get all feedback for a vendor
-        public async Task<List<FeedbackWithDetailsDto>> GetFeedbackForVendorAsync(string vendorId ) 
+        public async Task<List<FeedbackWithDetailsDto>> GetFeedbackForVendorAsync(string vendorId)
         {
-            
+
             var feedbacks = await _feedbackRepository.GetFeedbackByVendorIdAsync(vendorId);
             var feedbacksWithDetails = new List<FeedbackWithDetailsDto>();
 
@@ -178,7 +187,7 @@ namespace TechFixBackend.Services
             }
 
 
-           
+
             foreach (var feedback in feedbacks)
             {
                 // Fetch customer and vendor details

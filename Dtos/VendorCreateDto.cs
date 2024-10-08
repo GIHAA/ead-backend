@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class VendorCreateDto
     {

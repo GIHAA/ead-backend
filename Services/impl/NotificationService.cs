@@ -1,7 +1,7 @@
 ﻿
 /*
  * File: NotificationService.cs
- * Project: TechFixBackend
+ * Project: HealthyBites
  * Description: This file contains the implementation of the NotificationService class, which is responsible for sending and managing notifications in the system.
  *              It provides methods to send notifications to individual users, groups, or all clients. It also integrates with SignalR to manage user connections
  *              and supports sending notifications with additional details related to products and orders.
@@ -22,10 +22,10 @@
 
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
-using TechFixBackend._Models;
-using TechFixBackend.Hubs;
+using HealthyBites._Models;
+using HealthyBites.Hubs;
 
-namespace TechFixBackend.Services
+namespace HealthyBites.Services
 {
     public class NotificationService
     {

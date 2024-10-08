@@ -1,5 +1,5 @@
 using MongoDB.Driver;
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
 public class MongoDBContext
 {

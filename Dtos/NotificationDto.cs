@@ -1,6 +1,6 @@
-﻿using TechFixBackend._Models;
+﻿using HealthyBites._Models;
 
-namespace TechFixBackend.Dtos
+namespace HealthyBites.Dtos
 {
     public class NotificationDto
     {

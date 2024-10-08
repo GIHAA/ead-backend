@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
-using TechFixBackend._Models;
+using HealthyBites._Models;
 
-namespace TechFixBackend.Repository
+namespace HealthyBites.Repository
 {
     public class VendorRepository(MongoDBContext context) : IVendorRepository
     {
