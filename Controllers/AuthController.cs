@@ -137,9 +137,6 @@ namespace TechFixBackend.Controllers
         }
 
 
-
-
-
         // Allow only CSR and Administrator to get all users
         [Authorize(Roles = "csr,admin")]
         [HttpGet("users")]

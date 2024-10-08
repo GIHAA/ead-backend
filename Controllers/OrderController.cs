@@ -100,8 +100,6 @@ namespace TechFixBackend.Controllers
             return Ok(order);
         }
 
-
-
         [HttpPut("update/{orderId}")]
         public async Task<IActionResult> UpdateOrder(string orderId, [FromBody] OrderUpdateDto updateDto)
         {
@@ -115,8 +113,6 @@ namespace TechFixBackend.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
-
 
 
         [HttpPut("request-cancel/{orderId}")]

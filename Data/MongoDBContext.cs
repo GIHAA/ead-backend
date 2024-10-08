@@ -16,6 +16,6 @@ public class MongoDBContext
     public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
     public IMongoCollection<ProductCat> ProductCats => _database.GetCollection<ProductCat>("ProductCatesgories");
     public IMongoCollection<Feedback> Feedback => _database.GetCollection<Feedback>("Feedback");
-
+    public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>("Notifications");
 
 }

@@ -13,14 +13,15 @@ namespace TechFixBackend.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
         private readonly IProductRepository _productRepository;
+        private readonly NotificationService _notificationService;
 
-        public OrderService(IOrderRepository orderRepository, IUserRepository userRepository, IProductRepository productRepository)
+        public OrderService(IOrderRepository orderRepository, IUserRepository userRepository, IProductRepository productRepository, NotificationService notificationService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _productRepository = productRepository;
+            _notificationService = notificationService;
         }
-
 
         public async Task CreateOrderAsync(CreateOrderDto createOrderDto, String id)
         {
@@ -62,10 +63,11 @@ namespace TechFixBackend.Services
             order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
 
             await _orderRepository.CreateOrderAsync(order);
+            foreach (var item in order.Items)
+            {
+                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, "Your order has been placed.", item.ProductId, order.Id);
+            }
         }
-
-
-
 
         public async Task<(List<GetOrderDetailsDto> orders, long totalOrders)> GetAllOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
@@ -129,7 +131,6 @@ namespace TechFixBackend.Services
 
             return (orderDtos, totalOrders);
         }
-
 
         public async Task<(List<GetCancelledOrderDetailsDto> orders, long totalOrders)> GetAllCancelReqOrdersAsync(int pageNumber, int pageSize, string customerId = null)
         {
@@ -197,8 +198,6 @@ namespace TechFixBackend.Services
 
             return (orderDtos, totalOrders);
         }
-
-
 
         public async Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId)
         {
@@ -341,6 +340,12 @@ namespace TechFixBackend.Services
 
             // Persist the updated order entity to the database
             await _orderRepository.UpdateOrderAsync(existingOrder);
+
+            var customer = await _userRepository.GetUserByIdAsync(existingOrder.CustomerId);
+            foreach (var item in existingOrder.Items)
+            {
+                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, "Your cancellation request has been submitted.", item.ProductId, existingOrder.Id);
+            }
         }
 
         public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
@@ -432,7 +437,6 @@ namespace TechFixBackend.Services
 
             await _orderRepository.UpdateOrderAsync(order);
         }
-
 
         public async Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId)
         {
