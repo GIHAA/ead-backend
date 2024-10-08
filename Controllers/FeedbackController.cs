@@ -99,7 +99,7 @@ namespace TechFixBackend.Controllers
 
                 // Use the service method to get the feedback for the specified product, vendor, and customer
                 var feedback = await _feedbackService.GetFeedbackForCustomerProductVendorAsync(vendorId, productId, customerId);
-                
+
                 if (feedback == null)
                 {
                     return NotFound(new { Message = "No feedback found for this product, vendor, and customer." });
@@ -120,7 +120,7 @@ namespace TechFixBackend.Controllers
         {
             try
             {
-                                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrEmpty(token))
                 {
@@ -193,8 +193,8 @@ namespace TechFixBackend.Controllers
         [HttpGet("vendor-feedback")]
         public async Task<IActionResult> GetFeedbackForVendor()
         {
-            
-             try
+
+            try
             {
                 var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 Console.WriteLine(token);
