@@ -116,10 +116,18 @@ namespace TechFixBackend.Controllers
                     return Unauthorized(new { Message = "Invalid email or password" });
                 }
 
-                // Notify user of successful login via SignalR
-              await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
+                if (user.Status == "Inactive")
+                {
+                    throw new UnauthorizedAccessException("Your account is inactive. Please contact admin for activation.");
+                }
 
-                // Return both token and user in the response
+                if (user.Status == "Deactivated")
+                {
+                  
+                    return StatusCode(403, new { Message = "Your account is deactivated. Please contact support for reactivation." });
+                }
+
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Login successful. Welcome back!");
                 return Ok(new { Token = token, User = user });
             }
             catch (UnauthorizedAccessException ex)
@@ -301,6 +309,54 @@ namespace TechFixBackend.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpGet("users/inactive")]
+        public async Task<IActionResult> GetInactiveUsers(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                var (users, totalUsers) = await _authService.GetInactiveUsersAsync(pageNumber, pageSize);
+
+                var response = new
+                {
+                    TotalRecords = totalUsers,
+                    Users = users
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("user/{id}/activate")]
+        public async Task<IActionResult> ActivateUser(string id)
+        {
+            try
+            {
+                var user = await _authService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "User not found." });
+                }
+
+                
+                user.Status = "Active";
+                await _authService.UpdateUserAsync(id, new UserUpdateModel { Status = "Active" });
+
+               
+                await _notificationService.SendNotificationToUserAsync(user.Id, "Your account has been activated. You can now log in.");
+
+                return Ok(new { Message = "User account activated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
 
         ////get user by id
         //[HttpGet("user/{id}")]
