@@ -5,8 +5,6 @@
  *              which represent the structure of order-related data stored in the MongoDB database. Each class contains relevant properties 
  *              to handle the order lifecycle, including order creation, item details, and cancellation requests.
  * 
- * Authors: Kandambige S.T. it21181856 | Perera W.H.T.H. it21165498
- * 
  */
 
 using MongoDB.Bson;

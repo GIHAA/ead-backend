@@ -1,3 +1,12 @@
+/*
+ * File: ProductCatController.cs
+ * Project: TechFixBackend.Controllers
+ * Description: Controller responsible for managing product categories (ProductCat). This includes handling operations 
+ *              like creating, updating, deleting, and retrieving product categories with or without pagination.
+ *              The controller interacts with the IProductCatService to execute the necessary business logic.
+ */
+
+
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TechFixBackend.Dtos;

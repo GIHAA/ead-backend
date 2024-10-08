@@ -1,3 +1,15 @@
+/*
+ * File: Product.cs
+ * Project: TechFixBackend._Models
+ * Description: Represents the Product model in the database. This class includes properties such as VendorId, 
+ *              ProductName, ProductDescription, CategoryId, Price, StockQuantity, and ProductStatus.
+ *              The status of the product is represented by an enum (Active, Inactive, Promoted), and it 
+ *              includes the URL for the product image.
+ */
+
+
+
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

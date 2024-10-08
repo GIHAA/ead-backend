@@ -1,3 +1,11 @@
+/*
+ * File: IProductCatService.cs
+ * Project: TechFixBackend.Services
+ * Description: Interface defining the service layer for managing product categories. 
+ *              Provides method signatures for retrieving, creating, updating, and deleting product categories, 
+ *              as well as handling pagination and retrieving detailed category information.
+ */
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TechFixBackend._Models;

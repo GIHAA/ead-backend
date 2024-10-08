@@ -1,3 +1,11 @@
+/*
+ * File: ProductCatService.cs
+ * Project: TechFixBackend.Services
+ * Description: Service class responsible for handling business logic related to product categories (ProductCat). 
+ *              It includes methods for retrieving, creating, updating, and deleting product categories. 
+ *              The service interacts with the ProductCatRepository to perform data access operations.
+ */
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

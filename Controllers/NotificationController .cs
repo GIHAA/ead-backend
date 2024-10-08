@@ -1,4 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * File: NotificationController.cs
+ * Project: TechFixBackend.Controllers
+ * Description: Controller responsible for managing notifications in the system. It handles broadcasting messages 
+ *              to all users, sending notifications to specific users or groups, and managing connections for 
+ *              notifications. It interacts with the NotificationService and NotificationManager for executing these operations.
+ */
+
+using Microsoft.AspNetCore.Mvc;
 using TechFixBackend.Services;
 
 namespace TechFixBackend.Controllers

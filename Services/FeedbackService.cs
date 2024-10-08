@@ -1,4 +1,13 @@
-﻿
+﻿/*
+ * File: FeedbackService.cs
+ * Project: TechFixBackend.Services
+ * Description: Service responsible for handling business logic related to feedback, including adding, updating,
+ *              and retrieving feedback. It also manages the calculation of vendor ratings and ensures feedback
+ *              validity through interactions with repositories for users, products, and feedback.
+ */
+
+
+
 using TechFixBackend.Dtos;
 using TechFixBackend._Models;
 using TechFixBackend.Repository;

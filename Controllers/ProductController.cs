@@ -1,3 +1,12 @@
+/*
+ * File: ProductController.cs
+ * Project: TechFixBackend.Controllers
+ * Description: Controller responsible for managing product-related operations, such as creating, updating, deleting,
+ *              and retrieving products. It includes methods for retrieving paginated products, products by category,
+ *              and individual product details. JWT token authentication is required to ensure user identification.
+ */
+
+
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;

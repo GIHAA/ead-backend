@@ -1,4 +1,12 @@
-// Data transfer objects for requests
+/*
+ * File: RegisterModel.cs, LoginModel.cs, UserUpdateModel.cs
+ * Project: TechFixBackend.Dtos
+ * Description: These Data Transfer Objects (DTOs) represent the models used for requests related to user registration, login, 
+ *              and user updates. 
+ *              - `RegisterModel`: Contains Username, Email, Password, and Role (default is "customer") for user registration.
+ *              - `LoginModel`: Contains Email and Password for user login.
+ *              - `UserUpdateModel`: Contains optional fields like Email, Role, Name, Address, PhoneNumber, and Status for updating user details.
+ */
 
 public class RegisterModel
 {

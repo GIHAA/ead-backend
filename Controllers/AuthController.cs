@@ -1,3 +1,13 @@
+/*
+ * File: AuthController.cs
+ * Project: TechFixBackend.Controllers
+ * Description: Controller responsible for managing authentication and user-related operations such as registration, 
+ *              login, cart management, user management (CRUD operations), and account activation/deactivation. 
+ *              It also handles role-based authorization to restrict certain operations to specific roles (admin, csr, vendor, etc.).
+ */
+
+
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechFixBackend.Exceptions;

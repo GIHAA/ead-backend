@@ -1,4 +1,13 @@
-﻿using MongoDB.Driver;
+﻿/*
+ * File: FeedbackRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Repository responsible for interacting with the MongoDB collections for feedback and users.
+ *              It includes methods for adding, updating, retrieving feedback, and updating vendor ratings.
+ *              Provides data access functionality for managing feedback-related operations in the database.
+ */
+
+
+using MongoDB.Driver;
 using TechFixBackend._Models;
 
 namespace TechFixBackend.Repository

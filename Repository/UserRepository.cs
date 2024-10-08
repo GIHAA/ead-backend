@@ -1,4 +1,14 @@
-﻿using MongoDB.Driver;
+﻿/*
+ * File: UserRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Repository implementation for managing users in a MongoDB database. 
+ *              This class includes methods for retrieving, creating, updating, and deleting users, 
+ *              as well as methods for pagination and getting user details by email.
+ *              It also handles specific logic for vendor users by setting the AverageRating property only for vendors.
+ */
+
+
+using MongoDB.Driver;
 namespace TechFixBackend.Repository
 {
     public class UserRepository : IUserRepository

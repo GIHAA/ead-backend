@@ -5,7 +5,6 @@
  *              updating feedback, and fetching feedback for a vendor or product. It also handles JWT token validation 
  *              to ensure proper authentication for each request.
  *              The controller interacts with the FeedbackService for executing business logic.
- * Author: Perera W.H.T.H. it21165498
  */
 
 

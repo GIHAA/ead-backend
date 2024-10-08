@@ -1,3 +1,11 @@
+/*
+ * File: IProductService.cs
+ * Project: TechFixBackend.Services
+ * Description: Interface defining the service layer for managing products. 
+ *              Provides method signatures for retrieving products with vendor details, 
+ *              creating, updating, deleting products, and handling operations based on category or search queries.
+ */
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TechFixBackend._Models;

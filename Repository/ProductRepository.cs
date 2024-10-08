@@ -1,3 +1,11 @@
+/*
+ * File: ProductRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Repository implementation for managing products in a MongoDB database. 
+ *              This class includes methods for retrieving, creating, updating, and deleting products, 
+ *              as well as methods for searching, pagination, managing product quantities, and filtering products by category.
+ */
+
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;

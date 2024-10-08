@@ -1,3 +1,11 @@
+/*
+ * File: ProductCatRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Repository implementation for managing product categories (ProductCat) in a MongoDB database. 
+ *              This class includes methods for retrieving, creating, updating, and deleting product categories, 
+ *              as well as methods for pagination and counting the total number of product categories.
+ */
+
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;

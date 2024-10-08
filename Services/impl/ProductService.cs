@@ -1,3 +1,13 @@
+/*
+ * File: ProductService.cs
+ * Project: TechFixBackend.Services
+ * Description: Service class responsible for handling business logic related to products. It includes methods for 
+ *              retrieving, creating, updating, and deleting products. The service also manages vendor and category 
+ *              information associated with products and interacts with the ProductRepository, UserRepository, and 
+ *              ProductCatRepository to perform data access operations.
+ */
+
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

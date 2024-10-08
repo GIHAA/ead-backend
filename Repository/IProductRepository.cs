@@ -1,3 +1,11 @@
+/*
+ * File: IProductRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Interface for the ProductRepository, defining the contract for data access operations related to products. 
+ *              It includes methods for retrieving, creating, updating, and deleting products, as well as methods for 
+ *              managing product quantities and performing search and pagination operations.
+ */
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TechFixBackend._Models;

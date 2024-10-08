@@ -1,3 +1,11 @@
+/*
+ * File: AuthService.cs
+ * Project: [Your Project Name]
+ * Description: Service class responsible for authentication and user management operations. 
+ *              It handles user registration, login, updating user profiles, deactivation, reactivation, and cart management. 
+ *              The class also generates JWT tokens for user authentication and interacts with user notifications.
+ */
+
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;

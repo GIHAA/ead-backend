@@ -1,3 +1,10 @@
+/*
+ * File: User.cs
+ * Project: TechFixBackend._Models
+ * Description: Represents the User model in the database. This class includes properties such as Id, Email, PasswordHash,
+ *              Role (customer, admin, vendor, csr), Name, Address, PhoneNumber, Cart, and Status. It also tracks the 
+ *              account creation date, and optionally includes AverageRating for vendor roles and TotalPrice for customer roles.
+ */
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

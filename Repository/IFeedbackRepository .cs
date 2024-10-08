@@ -1,4 +1,13 @@
-﻿
+﻿/*
+ * File: IFeedbackRepository.cs
+ * Project: TechFixBackend.Repository
+ * Description: Interface for the FeedbackRepository, defining the contract for feedback-related data access operations.
+ *              It provides methods for adding, updating, retrieving feedback, checking if feedback exists, 
+ *              and updating user (vendor) ratings.
+ */
+
+
+
 using TechFixBackend._Models;
 
 namespace TechFixBackend.Repository
