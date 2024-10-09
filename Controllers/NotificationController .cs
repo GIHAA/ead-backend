@@ -38,7 +38,6 @@ namespace HealthyBites.Controllers
         private readonly NotificationService _notificationService;
         private readonly NotificationManager _notificationManager;
         private readonly MongoDBContext _mongoContext;
-        
 
         public NotificationController(MongoDBContext mongoContext, NotificationService notificationService, NotificationManager notificationManager)
         {
@@ -116,28 +115,28 @@ namespace HealthyBites.Controllers
         [HttpGet("getUserNotifications/{userId}")]
         public async Task<IActionResult> GetUserNotifications(string userId)
         {
-            
+
             var notifications = await _mongoContext.Notifications
                 .Find(n => n.UserId == userId)
                 .ToListAsync();
 
-            
+
             var notificationDtos = new List<NotificationDto>();
 
-            
+
             foreach (var notification in notifications)
             {
-                
+
                 var product = await _mongoContext.Products
                     .Find(p => p.Id == notification.ProductId)
                     .FirstOrDefaultAsync();
 
-              
+
                 var order = await _mongoContext.Orders
                     .Find(o => o.Id == notification.OrderId)
                     .FirstOrDefaultAsync();
 
-               
+
                 var notificationDto = new NotificationDto
                 {
                     Notification = notification,
@@ -145,39 +144,100 @@ namespace HealthyBites.Controllers
                     Orders = order != null ? new List<Order> { order } : new List<Order>()             // Add order if exists
                 };
 
-               
+
                 notificationDtos.Add(notificationDto);
             }
 
-            
+
             return Ok(notificationDtos);
         }
 
-        [HttpPut("markAsRead/{id}")]
-        public async Task<IActionResult> MarkNotificationAsRead(string id, [FromBody] NotificationStatusUpdateRequest request)
-        {
-            // Filter to find notifications for the specific user
-            var filter = Builders<Notification>.Filter.Eq(n => n.UserId, id) & Builders<Notification>.Filter.Eq(n => n.Status, request.OldStatus);
+        // [HttpPut("markAsRead/{id}")]
+        // public async Task<IActionResult> MarkNotificationAsRead(string id, [FromBody] NotificationStatusUpdateRequest request)
+        // {
+        //     var filter = Builders<Notification>.Filter.Eq(n => n.UserId, id)
+        //                   & Builders<Notification>.Filter.Eq(n => n.Status, request.OldStatus);
 
-            // Set the status to the new status provided
+        //     var existingNotification = await _mongoContext.Notifications.Find(filter).FirstOrDefaultAsync();
+
+        //     if (existingNotification == null)
+        //     {
+        //         return NotFound(new { Message = "No notifications found." });
+        //     }
+
+        //     existingNotification.Status = request.NewStatus;
+
+        //     var result = await _mongoContext.Notifications.ReplaceOneAsync(filter, existingNotification);
+
+        //     if (result.ModifiedCount > 0)
+        //     {
+        //         return Ok(new { Message = "Notification status updated successfully." });
+        //     }
+        //     else
+        //     {
+        //         return NotFound(new { Message = "No notifications updated." });
+        //     }
+        // }
+
+        [HttpPut("markAllAsRead/{userId}")]
+        public async Task<IActionResult> MarkAllNotificationsAsRead(string userId, [FromBody] NotificationStatusUpdateRequest request)
+        {
+            var filter = Builders<Notification>.Filter.Eq(n => n.UserId, userId) &
+                         Builders<Notification>.Filter.Eq(n => n.Status, request.OldStatus); // Ensure matching old status
+
             var update = Builders<Notification>.Update.Set(n => n.Status, request.NewStatus);
 
-            // Update the notification
             var result = await _mongoContext.Notifications.UpdateManyAsync(filter, update);
 
             if (result.ModifiedCount > 0)
             {
-                // Return the number of notifications updated
-                return Ok(new { Message = $"{result.ModifiedCount} notifications updated to {request.NewStatus}" });
+                return Ok(new { Message = $"{result.ModifiedCount} notifications updated successfully." });
             }
             else
             {
-                // If no notifications were found or no update was performed
-                return NotFound(new { Message = "No notifications found or already in the desired status" });
+                return NotFound(new { Message = "No notifications found or already in the desired status." });
             }
         }
 
+        [HttpPut("markAsRead/{notificationId}")]
+        public async Task<IActionResult> MarkSingleNotificationAsRead(string notificationId, [FromBody] NotificationStatusUpdateRequest request)
+        {
+            var filter = Builders<Notification>.Filter.Eq(n => n.Id, notificationId) &
+                         Builders<Notification>.Filter.Eq(n => n.Status, request.OldStatus); // Ensure matching old status
 
+            var update = Builders<Notification>.Update.Set(n => n.Status, request.NewStatus);
+
+            var result = await _mongoContext.Notifications.UpdateOneAsync(filter, update);
+
+            if (result.ModifiedCount > 0)
+            {
+                return Ok(new { Message = "Notification status updated successfully." });
+            }
+            else
+            {
+                return NotFound(new { Message = "No notification found or already in the desired status." });
+            }
+        }
+
+        [HttpGet("getUnreadNotifications/{userId}")]
+        public async Task<IActionResult> GetUnreadNotifications(string userId)
+        {
+            // Define the filter to find notifications for the user with status 'unread'
+            var filter = Builders<Notification>.Filter.Eq(n => n.UserId, userId) &
+                         Builders<Notification>.Filter.Eq(n => n.Status, "unread");
+
+            // Fetch the unread notifications
+            var unreadNotifications = await _mongoContext.Notifications.Find(filter).ToListAsync();
+
+            // Check if any unread notifications were found
+            if (unreadNotifications.Count == 0)
+            {
+                return NotFound(new { Message = "No unread notifications found." });
+            }
+
+            // Return the unread notifications
+            return Ok(unreadNotifications);
+        }
 
 
     }
