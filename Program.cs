@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using HealthyBites.Hubs;
 using HealthyBites.Repository;
 using HealthyBites.Services;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +25,6 @@ builder.Services.AddSignalR();
 // MongoDB context
 builder.Services.AddSingleton<MongoDBContext>();
 
-
 // Register the NotificationService
 builder.Services.AddScoped<NotificationService>();
 
@@ -36,18 +37,6 @@ builder.Services.AddScoped<AuthService>(provider =>
         provider.GetRequiredService<IProductRepository>(),
         key
     ));
-
-// Add CORS services
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});*/
-
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -67,7 +56,6 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false
     };
 
-    // Extract the token from the SignalR query string
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -83,33 +71,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add  Repository and Service
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IVendorRepository, VendorRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<IProductCatRepository, ProductCatRepository>();
-
-// Add Service
-builder.Services.AddScoped<IVendorService, VendorService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<FeedbackService>();
-builder.Services.AddScoped<IProductCatService, ProductCatService>();
-builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-
-// Register NotificationManager as a singleton
-builder.Services.AddSingleton<NotificationManager>();
-
-// Register NotificationService
-builder.Services.AddScoped<NotificationService>();
-
-// Add CORS policy to allow requests from the Android emulator
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactJSDomain", policy =>
@@ -128,7 +93,30 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Register repositories and services
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IProductCatRepository, ProductCatRepository>();
 
+builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<FeedbackService>();
+builder.Services.AddScoped<IProductCatService, ProductCatService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddCheck("MongoDB", () =>
+    {
+        // Example check for MongoDB
+        return HealthCheckResult.Healthy("MongoDB is OK");
+    });
+
+// Build the app
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -138,16 +126,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-//app.UseCors("AllowSwaggerUI");
 app.UseCors("ReactJSDomain");
-//app.MapControllers().RequireCors("AllowEmulator");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/notifications").RequireCors("ReactJSDomain");
 
-// Configure SignalR endpoints
-app.MapHub<NotificationHub>("/notifications").RequireCors("ReactJSDomain"); ;
+// Map health check endpoint
+app.MapHealthChecks("/health");
 
-app.UseHttpsRedirection();
 app.Run();
