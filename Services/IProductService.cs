@@ -22,6 +22,10 @@ namespace HealthyBites.Services
     {
         // Retrieves a paginated list of products for admin use
         Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsAsync(int pageNumber, int pageSize, string userId, string search = "");
+
+        // get all products
+        Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsMobileAsync(int pageNumber, int pageSize,  string search = "");
+
         // Retrieves a paginated list of products for a specific vendor
         Task<List<ProductWithVendorDto>> GetProductsByCategoryAsync(string categoryId);
         // Retrieves a specific product by its ID

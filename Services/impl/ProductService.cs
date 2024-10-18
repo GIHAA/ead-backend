@@ -91,6 +91,46 @@ namespace HealthyBites.Services
             return (productsWithVendors, totalProducts);
         }
 
+
+        public async Task<(List<ProductWithVendorDto> products, long totalProducts)> GetAllProductsMobileAsync(int pageNumber, int pageSize, string search = "")
+        {
+            // Ensure valid page number and size
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            List<Product> products;
+            long totalProducts;
+
+                products = await _productRepository.GetProductsAdminAsync(pageNumber, pageSize, search);
+                totalProducts = await _productRepository.GetTotalProductsAdminAsync(search);
+
+            // Map products to include vendor and category information
+            var productsWithVendors = new List<ProductWithVendorDto>();
+            foreach (var product in products)
+            {
+                var vendor = await _userRepository.GetUserByIdAsync(product.VendorId);
+                var category = await _producuCatsRepository.GetProductCatByIdAsync(product.CategoryId);
+
+                var productWithVendor = new ProductWithVendorDto
+                {
+                    Id = product.Id,
+                    Vendor = vendor, // Populate vendor details
+                    ProductName = product.ProductName,
+                    ProductDescription = product.ProductDescription,
+                    Category = category, // Populate category details
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    ProductStatus = product.ProductStatus,
+                    ProductImageUrl = product.ProductImageUrl
+                };
+
+                productsWithVendors.Add(productWithVendor);
+            }
+
+            return (productsWithVendors, totalProducts);
+        }
+
+
         // Retrieves a specific product by its ID with vendor details populated
         public async Task<ProductWithVendorDto> GetProductByIdAsync(string productId)
         {

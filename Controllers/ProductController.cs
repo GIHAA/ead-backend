@@ -103,6 +103,60 @@ namespace HealthyBites.Controllers
             }
         }
 
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllProducts(int pageNumber = 1, int pageSize = 10, string search = "")
+        {
+            try
+            {
+
+
+
+                if (pageNumber < 1)
+                {
+                    return BadRequest(new { Message = "Page number must be greater than 0." });
+                }
+
+                if (pageSize < 1)
+                {
+                    return BadRequest(new { Message = "Page size must be greater than 0." });
+                }
+
+                // Get products and total count with search
+                var (pagedProducts, totalProducts) = await _productService.GetAllProductsMobileAsync(pageNumber, pageSize , search);
+
+                // Check if no products are found
+                if (pagedProducts == null || !pagedProducts.Any())
+                {
+                    return NotFound(new { Message = "No products found." });
+                }
+
+                // Calculate total pages
+                int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+                // Ensure pageNumber does not exceed totalPages
+                if (pageNumber > totalPages && totalPages > 0)
+                {
+                    return BadRequest(new { Message = "Page number exceeds total pages." });
+                }
+
+                var response = new
+                {
+                    TotalRecords = totalProducts,
+                    TotalPages = totalPages,
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    Products = pagedProducts
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving products.", Details = ex.Message });
+            }
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(string id)
         {
