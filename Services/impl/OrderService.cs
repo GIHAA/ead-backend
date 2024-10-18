@@ -382,7 +382,7 @@ namespace HealthyBites.Services
             var customer = await _userRepository.GetUserByIdAsync(existingOrder.CustomerId);
             foreach (var item in existingOrder.Items)
             {
-                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, "Your cancellation request has been submitted.", item.ProductId, existingOrder.Id);
+                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, "Your cancellation request has been submitted.", item?.ProductId, existingOrder.Id);
             }
         }
 
