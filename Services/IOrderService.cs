@@ -26,5 +26,6 @@ namespace HealthyBites.Services
         Task UpdateOrderItemStatusAsync(string orderId, string productId, string status);
         Task<List<VendorOrderDto>> GetOrdersByVendorIdAsync(string vendorId);
         Task<GetOrderDetailsDto> GetOrderByIdAsync(string orderId);
+        Task<string> GetCancellationStatus(string orderId);
     }
 }

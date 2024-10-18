@@ -387,12 +387,101 @@ namespace HealthyBites.Services
         }
 
         //update order cancellation status
+        // public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
+        // {
+        //     // Fetch the existing order
+        //     var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
+        //     if (existingOrder == null) throw new Exception("Order not found.");
+        //     if (existingOrder.Cancellation == null) throw new Exception("No cancellation requested for this order");
+
+        //     // Fetch the customer associated with the order for notification
+        //     var customer = await _userRepository.GetUserByIdAsync(existingOrder.CustomerId);
+        //     if (customer == null) throw new Exception("Customer not found.");
+
+        //     // Check if the cancellation request is approved
+        //     if (cancellationResponseDto.Response == "Approved")
+        //     {
+        //         // Check if the order's cancellation has already been rejected
+        //         if (existingOrder.Cancellation.Status == "Rejected")
+        //         {
+        //             throw new Exception("This cancellation has already been rejected and cannot be approved.");
+        //         }
+
+        //         // Loop through all the items in the order and set their status to "Cancelled"
+        //         foreach (var item in existingOrder.Items)
+        //         {
+        //             item.Status = "Cancelled";
+        //         }
+
+        //         // Set the order status to "Cancelled"
+        //         existingOrder.Status = "Cancelled";
+
+        //         // Set the cancellation status to "Approved"
+        //         existingOrder.Cancellation.Status = "Approved";
+
+        //         // Set the ResolvedAt to the current time
+        //         existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+
+        //         // Send notification to the customer
+        //         string message = "Your cancellation request has been approved. Your order has been cancelled.";
+        //         await _notificationService.SendNotificationWithDetailsAsync(customer.Id, message, null, orderId);
+
+        //         // Optionally notify admin on web
+        //         string adminMessage = $"Order ID: {orderId} has been cancelled by the user: {customer.Email}.";
+        //         await _notificationService.SendNotificationToAdminAsync(adminMessage);
+
+        //     }
+        //     else if (cancellationResponseDto.Response == "Rejected")
+        //     {
+        //         // Check if the order's cancellation has already been approved
+        //         if (existingOrder.Cancellation.Status == "Approved")
+        //         {
+        //             throw new Exception("This cancellation has already been approved and cannot be rejected.");
+        //         }
+
+        //         // Set the cancellation status to "Rejected"
+        //         existingOrder.Cancellation.Status = "Rejected";
+
+        //         // Set the ResolvedAt to the current time
+        //         existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+
+        //         // Send notification to the customer
+        //         string message = "Your cancellation request has been rejected.";
+        //         await _notificationService.SendNotificationWithDetailsAsync(customer.Id, message, null, orderId);
+
+        //         // Optionally notify admin on web
+        //         string adminMessage = $"Order ID: {orderId} cancellation has been rejected by the user: {customer.Email}.";
+        //         await _notificationService.SendNotificationToAdminAsync(adminMessage);
+        //     }
+        //     else
+        //     {
+        //         throw new Exception("Response is not valid");
+        //     }
+
+        //     // Save the updated order back to the database
+        //     await _orderRepository.UpdateOrderAsync(existingOrder);
+        // }
+
         public async Task UpdateOrderCancelAsync(string orderId, CancellationResponseDto cancellationResponseDto)
         {
             // Fetch the existing order
             var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
-            if (existingOrder == null) throw new Exception("Order not found.");
-            if (existingOrder.Cancellation == null) throw new Exception("No cancellation requested for this order");
+            if (existingOrder == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            if (existingOrder.Cancellation == null)
+            {
+                throw new Exception("No cancellation requested for this order.");
+            }
+
+            // Fetch the customer associated with the order for notification
+            var customer = await _userRepository.GetUserByIdAsync(existingOrder.CustomerId);
+            if (customer == null)
+            {
+                throw new Exception("Customer not found.");
+            }
 
             // Check if the cancellation request is approved
             if (cancellationResponseDto.Response == "Approved")
@@ -417,6 +506,17 @@ namespace HealthyBites.Services
 
                 // Set the ResolvedAt to the current time
                 existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+
+                // Send notification to the customer
+                string message = "Your cancellation request has been approved. Your order has been cancelled.";
+                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, message, null, orderId);
+
+                // Optionally notify admin on web
+                string adminMessage = $"Order ID: {orderId} has been cancelled by the user: {customer.Email}.";
+                await _notificationService.SendNotificationToAdminAsync(adminMessage);
+
+                // Call to notify the customer about the cancellation status
+                await GetCancellationStatus(orderId);
             }
             else if (cancellationResponseDto.Response == "Rejected")
             {
@@ -431,10 +531,21 @@ namespace HealthyBites.Services
 
                 // Set the ResolvedAt to the current time
                 existingOrder.Cancellation.ResolvedAt = DateTime.Now;
+
+                // Send notification to the customer
+                string message = "Your cancellation request has been rejected.";
+                await _notificationService.SendNotificationWithDetailsAsync(customer.Id, message, null, orderId);
+
+                // Optionally notify admin on web
+                string adminMessage = $"Order ID: {orderId} cancellation has been rejected by the user: {customer.Email}.";
+                await _notificationService.SendNotificationToAdminAsync(adminMessage);
+
+                // Call to notify the customer about the cancellation status
+                await GetCancellationStatus(orderId);
             }
             else
             {
-                throw new Exception("Response is not valid");
+                throw new Exception("Response is not valid.");
             }
 
             // Save the updated order back to the database
@@ -539,6 +650,35 @@ namespace HealthyBites.Services
             return orderDtos;
         }
 
+        public async Task<string> GetCancellationStatus(string orderId)
+        {
+            var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (existingOrder == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            // Get the cancellation status
+            string status = existingOrder.Cancellation?.Status ?? "No cancellation requested.";
+
+            // Prepare the notification message
+            string notificationMessage = status switch
+            {
+                "Approved" => $"Your cancellation request for Order ID {orderId} has been approved.",
+                "Rejected" => $"Your cancellation request for Order ID {orderId} has been rejected.",
+                _ => $"There is currently no cancellation request for Order ID {orderId}."
+            };
+
+            // Send the notification to the user
+            var customer = await _userRepository.GetUserByIdAsync(existingOrder.CustomerId);
+            if (customer != null)
+            {
+                await _notificationService.SendNotificationToUserAsync(customer.Id, notificationMessage);
+            }
+
+            // Return the cancellation status
+            return status;
+        }
 
     }
 }

@@ -39,7 +39,7 @@ namespace HealthyBites.Services
             _hubContext = hubContext;
             _notifications = dbContext.Notifications;
             _products = dbContext.Products;
-            _orders = dbContext.Orders;  
+            _orders = dbContext.Orders;
         }
         public async Task StoreNotificationAsync(Notification notification)
         {
@@ -64,15 +64,15 @@ namespace HealthyBites.Services
         // Send a notification to a specific user by their userId
         public async Task SendNotificationToUserAsync(string userId, string message)
         {
-            
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Message = message,
-                    CreatedAt = DateTime.UtcNow,
-                    Status = "unread"
-                };
-                await StoreNotificationAsync(notification);
+
+            var notification = new Notification
+            {
+                UserId = userId,
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                Status = "unread"
+            };
+            await StoreNotificationAsync(notification);
 
             await _hubContext.Clients.Group(userId).SendAsync("ReceiveNotification", message);
         }
@@ -141,6 +141,21 @@ namespace HealthyBites.Services
                 OrderStatus = orderStatus
             });
         }
+
+        // Add this method to the NotificationService class
+        public async Task SendNotificationToAdminAsync(string message)
+        {
+            var notification = new Notification
+            {
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                Status = "unread"
+            };
+            await StoreNotificationAsync(notification);
+
+            await _hubContext.Clients.Group("Admins").SendAsync("ReceiveAdminNotification", message);
+        }
+
 
     }
 }

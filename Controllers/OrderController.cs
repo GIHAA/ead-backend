@@ -249,5 +249,18 @@ namespace HealthyBites.Controllers
             }
         }
 
+        [HttpGet("cancellation-status/{orderId}")]
+        public async Task<IActionResult> GetCancellationStatus(string orderId)
+        {
+            try
+            {
+                var status = await _orderService.GetCancellationStatus(orderId);
+                return Ok(new { Status = status });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }

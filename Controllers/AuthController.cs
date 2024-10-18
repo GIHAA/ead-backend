@@ -148,7 +148,6 @@ namespace HealthyBites.Controllers
 
                 if (user.Status == "Deactivated")
                 {
-                  
                     return StatusCode(403, new { Message = "Your account is deactivated. Please contact support for reactivation." });
                 }
 
@@ -237,7 +236,7 @@ namespace HealthyBites.Controllers
             {
                 var user = await _authService.GetUserByIdAsync(id);
                 if (user == null)
-                { 
+                {
                     return NotFound(new { Message = "User not found." });
                 }
 
@@ -249,7 +248,7 @@ namespace HealthyBites.Controllers
             }
         }
 
-        
+
         [Authorize(Roles = "customer,vendor,csr,admin")]
         [HttpPut("user/{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserUpdateModel updateModel)
@@ -363,11 +362,11 @@ namespace HealthyBites.Controllers
                     return NotFound(new { Message = "User not found." });
                 }
 
-                
+
                 user.Status = "Active";
                 await _authService.UpdateUserAsync(id, new UserUpdateModel { Status = "Active" });
 
-               
+
                 await _notificationService.SendNotificationToUserAsync(user.Id, "Your account has been activated. You can now log in.");
 
                 return Ok(new { Message = "User account activated successfully." });
